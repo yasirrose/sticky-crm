@@ -1,0 +1,6 @@
+[submodule "resources/frontend/angular"]
+	path = resources/frontend/angular
+	url = https://github.com/yasirrose/offer-brain.git
+[submodule "resources/angular/frontend"]
+	path = resources/angular/frontend
+	url = https://github.com/yasirrose/offer-brain.git

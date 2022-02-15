@@ -1,0 +1,122 @@
+<div class="padding">
+    <fury-breadcrumbs current="Formula Builder"></fury-breadcrumbs>
+</div>
+
+<fury-page-layout mode="simple">
+    <!-- filters -->
+    <fury-page-layout-content fxLayout="row" fxLayoutAlign="start start">
+        <div fxLayout="column">
+            <h2>Build New Formula</h2>
+            <!-- operand row -->
+            <div fxLayout="row">
+                <div>
+                    <mat-form-field style="width:250px;" appearance="fill">
+                        <mat-label>Select number of operands:</mat-label>
+                        <mat-select [formControl]="totalFields" [(ngModel)]="fieldsCount">
+                            <mat-option *ngFor="let option of options" [value]="option">{{option}}</mat-option>
+                        </mat-select>
+                        <!-- <mat-error [hidden]="scenarioName.valid"></mat-error> -->
+                    </mat-form-field>
+                </div>
+                <div class="padding-left">
+                    <button mat-raised-button color="warn" (click)="generateFields()">Generate Fields</button>
+                </div>
+                <div class="padding-left">
+                    <button mat-raised-button color="warn" (click)="clearFields()">Start Over</button>
+                </div>
+                <div class="padding-left">
+                    <button mat-raised-button color="warn" *ngIf="isGeneratedFields" (click)="addField()">Add Operand</button>
+                </div>
+                <div class="padding-left">
+                    <button mat-raised-button color="warn" *ngIf="isGeneratedFields && !isRemoveHidden" (click)="removeField()">Remove
+                        Operand</button>
+                </div>
+            </div>
+            <!-- formula row -->
+            <div fxLayout="row" *ngIf="isGeneratedFields">
+                <div *ngFor='let operand of counter(fieldsCount); let i = index'>
+                    <mat-form-field class="padding-left" style="width:140px;" appearance="fill">
+                        <mat-label>Select column:</mat-label>
+                        <mat-select [(ngModel)]="selectedOperands[i]" required (selectionChange)="hideGeneratedFormula()">
+                            <mat-option *ngFor="let column of columns" [value]="column.property">{{column.name}}</mat-option>
+                        </mat-select>
+                        <!-- <mat-error *ngIf="operand.errors.required">required</mat-error> -->
+                    </mat-form-field>
+                    <!-- <div class="padding-left"> -->
+                    <mat-form-field class="padding-left" style="width:70px;" appearance="fill" *ngIf="i+1 != fieldsCount">
+                        <mat-label>Select operator:</mat-label>
+                        <mat-select [(ngModel)]="selectedOperators[i]" required (selectionChange)="hideGeneratedFormula()">
+                            <mat-option *ngFor="let operator of operators" [value]="operator">{{operator}}</mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                    <!-- </div> -->
+                </div>
+
+            </div>
+            <!-- generate button -->
+            <div fxLayout="row">
+                <button mat-raised-button color="primary" *ngIf="isGeneratedFields" (click)="generateFormula()">Generate
+                    Formula</button>
+            </div>
+            <div fxLayout="row" *ngIf="isFormulated">
+                <h4>Generated Formula is: {{formula}}</h4>
+            </div>
+            <div fxLayout="row" *ngIf="isFormulated">
+                <div fxLayout="column">
+                    <h2>Apply The Formula</h2>
+                    <div fxLayout="row">
+                        <mat-form-field style="width:250px;" appearance="fill">
+                            <mat-label>Select campaign</mat-label>
+                            <mat-select [formControl]="applyToCampaign" required (selectionChange)="campaignChanged($event.value)">
+                                <mat-option *ngFor="let campaign of campaignOptions" [value]="campaign">{{campaign}}</mat-option>
+                            </mat-select>
+                        </mat-form-field>
+
+                        <mat-form-field class="padding-left" *ngIf="!isNewColumn" style="width:250px;" appearance="fill">
+                            <mat-label>Select column to apply formula:</mat-label>
+                            <mat-select [formControl]="applyToColumn" required>
+                                <mat-option *ngFor="let option of applyToOptions" [value]="option">{{option}}</mat-option>
+                                <mat-hint style="color: red;" *ngIf="campaignError">Campaign in progress for formula</mat-hint>
+                            </mat-select>
+                        </mat-form-field>
+
+                        <mat-form-field class="padding-left" *ngIf="isNewColumn" appearance="fill">
+                            <mat-label>Legacy form field</mat-label>
+                            <input matInput placeholder="Placeholder">
+                            <mat-hint>New column will be added</mat-hint>
+                        </mat-form-field>
+
+                        <div class="padding-left">
+                            <button mat-raised-button color="warn" *ngIf="!isNewColumn" (click)="showNewColumn()">Add
+                                New Column</button>
+                            <button mat-raised-button color="warn" *ngIf="isNewColumn" (click)="showAllColumns()">Show
+                                Exiting columns</button>
+                        </div>
+                    </div>
+                    <div fxLayout="row">
+                        <mat-form-field appearance="fill">
+                            <mat-label>Formula Name</mat-label>
+                            <input matInput placeholder="Optional" [formControl]="formulaName">
+                        </mat-form-field>
+                        <mat-form-field class="padding-left" appearance="fill">
+                            <mat-label>Formula Shortcut</mat-label>
+                            <input matInput placeholder="Optional" [formControl]="formulaShortcut">
+                        </mat-form-field>
+                    </div>
+                    <div fxLayout="row">
+                        <div>
+                            <button mat-raised-button color="primary" (click)="testFormula()">Test
+                                Formula</button>
+                        </div>
+                        <div class="padding-left">
+                            <button mat-raised-button color="primary" (click)="saveFormula()">Save
+                                Formula</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- <div fxLayout="column">
+        </div> -->
+    </fury-page-layout-content>
+</fury-page-layout>

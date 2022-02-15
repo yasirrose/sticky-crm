@@ -1,0 +1,3 @@
+[submodule "offer-brain"]
+	path = offer-brain
+	url = https://github.com/yasirrose/offer-brain.git

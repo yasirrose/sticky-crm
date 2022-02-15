@@ -1,0 +1,36 @@
+<fury-page-layout mode="simple">
+  <fury-page-layout-content [@fadeInUp]>
+    <fury-list name="Customers" [columns]="columns" (filterChange)="onFilterChange($event)">
+      <mat-progress-bar mode="indeterminate" *ngIf="isLoading"></mat-progress-bar>
+      <table [dataSource]="dataSource" mat-table matSort>
+
+        <!-- Checkbox Column -->
+        <ng-container matColumnDef="checkbox">
+          <th *matHeaderCellDef class="actions-cell" mat-header-cell>
+            <mat-checkbox color="primary" (click)="$event.stopPropagation()"></mat-checkbox>
+          </th>
+          <td *matCellDef="let row" class="actions-cell" mat-cell>
+            <mat-checkbox color="primary" (click)="$event.stopPropagation()"></mat-checkbox>
+          </td>
+        </ng-container>
+
+        <!-- fullName Column -->
+        <ng-container *ngFor="let column of columns">
+          <ng-container *ngIf="column.isModelProperty" [matColumnDef]="column.property">
+            <th *matHeaderCellDef mat-header-cell mat-sort-header> {{ column.name }}</th>
+            <td *matCellDef="let row" mat-cell>
+              <ng-template [ngIf]="column.property == 'creator'">{{ row[column.property].name }}/{{
+                row[column.property].email }}</ng-template>
+              <ng-template [ngIf]="column.property != 'creator'">{{ row[column.property] }}</ng-template>
+            </td>
+          </ng-container>
+        </ng-container>
+
+        <tr *matHeaderRowDef="visibleColumns" mat-header-row></tr>
+        <tr (click)="updateCustomer(row)" *matRowDef="let row; columns: visibleColumns;" class="clickable route-animations-elements"
+          mat-row></tr>
+      </table>
+    </fury-list>
+
+  </fury-page-layout-content>
+</fury-page-layout>
