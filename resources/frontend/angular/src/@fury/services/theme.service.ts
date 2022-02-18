@@ -27,7 +27,7 @@ export class ThemeService {
   );
   private _configSubject = new BehaviorSubject<ThemeConfig>({
     navigation: 'side',
-    sidenavUserVisible: false,
+    sidenavUserVisible: true,
     toolbarVisible: true,
     toolbarPosition: 'fixed',
     footerVisible: true,

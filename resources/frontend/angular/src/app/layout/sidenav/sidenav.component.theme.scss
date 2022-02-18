@@ -22,10 +22,10 @@ fury-sidenav {
     display: flex;
     flex-direction: column;
     align-items: center;
-    place-content: center flex-start;
+    place-content: center;
     background: $sidenav-toolbar-background;
-    padding-top: $padding-xs;
-    padding-bottom: $padding-md;
+    // padding-top: $padding-xs;
+    // padding-bottom: $padding-md;
 
     .sidenav-user-name {
       margin: $padding-sm 0 0;

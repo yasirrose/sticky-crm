@@ -80,15 +80,15 @@
 
   .sidenav-user-icons {
 
-    [mat-icon-button] {
-      width: 32px;
-      height: 32px;
-      line-height: 32px;
+    // [mat-icon-button] {
+    //   width: 32px;
+    //   height: 32px;
+    //   line-height: 32px;
 
-      & + [mat-icon-button] {
-        margin-left: $padding-xxs;
-      }
-    }
+    //   & + [mat-icon-button] {
+    //     margin-left: $padding-xxs;
+    //   }
+    // }
 
     mat-icon {
       width: 18px;
