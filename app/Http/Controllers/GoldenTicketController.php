@@ -80,7 +80,7 @@ class GoldenTicketController extends Controller
                     $initials++;
                 } 
                 if(Str::contains($order->products[0]->name, ['(CR1)']) && $order->products[0]->offer->name == 'Golden Ticket Offer' && $order->order_status== 7){
-                    $rebills;
+                    $rebills++;
                 }
                 if(Str::contains($order->products[0]->name, ['(CR2)']) && $order->products[0]->offer->name == 'Golden Ticket Offer' && $order->order_status== 7){
                     $cycle_2++;
