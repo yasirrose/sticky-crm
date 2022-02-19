@@ -9,8 +9,10 @@ use Illuminate\Support\Str;
 use DB;
 use Carbon\Carbon;
 
+
 class STicketMonthlyController extends Controller
 {
+
     /**
      * Display a listing of the resource.
      *
@@ -18,8 +20,8 @@ class STicketMonthlyController extends Controller
      */
     public function index()
     {
-        // $data = DB::table('orders')->select(DB::raw('count(*)'))->take(10)->get();
-        
+        $data = STicketMonthly::orderBy('id', 'desc')->take(10)->get();
+        return response()->json(['status' => true, 'data' => $data]);
         // dd($data);
         // $data = Order::take(10)->get();
         // dd($data);
@@ -42,9 +44,9 @@ class STicketMonthlyController extends Controller
         // $end_of_this_week = Carbon::now()->endOfWeek()->format('Y-m-d');
 
          /* 
-             ?previous two month records insert query 
+            ?previous two month records insert query
          */
-        for ($i = 3; $i > 0; $i--) {
+        for ($i = 2; $i > 0; $i--) {
             $model = new STicketMonthly();
             $previous_month_date = Carbon::now()->subMonths($i)->format('Y-m-d');
             $previous_month = Carbon::parse($previous_month_date)->format('F');
@@ -69,17 +71,31 @@ class STicketMonthlyController extends Controller
         /* 
             ?implementation of the formulas
          */
-       
+        $initial_condition_1 = 0;
+        Order::where(['prepaid_match' => 'NO', 'is_test_cc' => 0, 'order_status' => 7])->whereDate('acquisition_date', '>=', '2021-07-01 00:00:00')->whereDate('acquisition_date', '<=', '2022-01-31 00:00:00')->chunk(1000, function ($orders) use ($initial_condition_1) {
+            // dd($orders);
+            foreach ($orders as $key => $order) {
+                $order->products = isset($order->products) && $order->products != [] && $order->products != '' ? unserialize($order->products) : null;
+                    // var_dump($order);
+                    // $order->totals_breakdown = unserialize($order->totals_breakdown);
+                    // dd('die');
+                if (isset($order->products) == true && $order->products != null) {
+                    if (Str::contains($order->products[0]->name, ['(I)']) && $order->products[0]->offer->name == 'Gizmo') {
+                        $initial_condition_1++;
+                    }
+                }
+            }
+        });
+
         foreach ($data as $t_key => $ticket) {
 
             $initials = 0;
-            $initial_condition_1 = 0;
-            $rebill_condition1 = 0;
-            $rebill_condition2 = 0;
-            $rebill_per_condition2 = 0;
+            $initial_condition_2 = 0;
             $rebills = 0;
+            $cycle_1_condition_1 = 0;
+            $cycle_1_condition_2 = 0;
             $cycle_1_per = 0;
-            $avg_day_per = 0;
+            $avg_day = 0;
             $filled_per = 0;
             $avg_ticket = 0;
             $revenue = 0;
@@ -94,104 +110,89 @@ class STicketMonthlyController extends Controller
             $cpa_avg = 0;
             $net = 0;
             $clv = 0;
-
-            // var_dump($ticket->month);
+            // dd($ticket->month);
+            /* 
+                !remove time limit that is added to remove the error in products in the array
+             */
             $start_of_month = $ticket->year . '-' . $ticket->month . '-01';
-            Order::where(['prepaid_match' => 'NO', 'is_test_cc' => 0, 'order_status' => 7])->whereDate('acquisition_date', '>=', '2021-07-01 00:00:00')->chunk(1000, function ($orders) {
-            // dd($orders);
-                foreach ($orders as $key => $order) {
-                    dd($initials);
-                    // dd($order);
-                    $order->products = unserialize($order->products);
-                    $order->totals_breakdown = unserialize($order->totals_breakdown);
-                    // dd('die');
-                    \Log::info($key);
-                    if (Str::contains($order->products[0]->name, ['(I)']) && $order->products[0]->offer->name == 'Gizmo') {
-                        $initial_condition_1++;
-                    }
-                }
-            });
+            $end_of_month = Carbon::parse($start_of_month)->endOfMonth()->format('Y-m-d');
+            // dd($end_of_month);
 
-            $orders = Order::where(['prepaid_match' => 'NO', 'is_test_cc' => 0])->whereDate('acquisition_date', '>=', $start_of_month)->count();
-
-            chunk(100, function ($orders) {
+            Order::where(['prepaid_match' => 'NO', 'is_test_cc' => 0])->whereDate('acquisition_date', '>=', $start_of_month)->whereDate('acquisition_date', '<=', $end_of_month)->chunk(100, function ($orders) {
                 foreach ($orders as $order) {
                     $order->products = unserialize($order->products);
-                    $order->totals_breakdown = unserialize($order->totals_breakdown);
-                    /*
-                        !Calculation of initials, rebills, cycle_2, cycle_3 plus in golden ticket with order-status == "Declined"
-                     */
-                    if ((Str::contains($order->products[0]->name, ['(C)']) || Str::contains($order->products[0]->name, ['(I)'])) && $order->products[0]->offer->name == 'Gizmo' && $order->order_status == 7) {
-                        $initials++;
-                    }
-                    if (Str::contains($order->products[0]->name, ['(R']) && $order->products[0]->offer->name == 'Gizmo' && $order->order_status == 7) {
-                        $rebill_condition1++;
-                    }
-                    if (Str::contains($order->products[0]->name, ['(C1)']) && $order->products[0]->offer->name == 'Gizmo' && $order->order_status == 7) {
-                        $rebill_condition2++;
-                    }
-                    if (Str::contains($order->products[0]->name, ['(I']) && $order->products[0]->offer->name == 'Gizmo' && $order->order_status == 7) {
-                        $rebill_per_condition2++;
-                    }
-                    if ($order->is_chargeback == 1 && $order->products[0]->offer->name == 'Gizmo' && $order->order_status == 7) {
-                        $CBs++;
-                    }
-                    // if(Str::contains($order->products[0]->name, ['(CR2)']) && $order->products[0]->offer->name == 'Golden Ticket Offer' && $order->order_status== 7){
-                    //     $cycle_2++;
-                    // }
-                    // if(Str::contains($order->products[0]->name, ['(CR+)']) && $order->products[0]->offer->name == 'Golden Ticket Offer' && $order->order_status== 7){
-                    //     $cycle_3_plus++;
-                    // }
-                    // if($order->is_chargeback == 1 && $order->products[0]->offer->name == 'Golden Ticket Offer' && $order->order_status== 7){
-                    //     $CBs++;
-                    /*
-                        !Calculation of Revenue
-                     */
-                    if ($order->order_total != null && isset($order->products[0]->offer) && $order->products[0]->offer->name == 'Gizmo') {
-                        if ($order->order_status == 7) {
-                            $revenue += $order->order_total;
+                    if (isset($order->products) && $order->products != null) {
+                        /*
+                            !Calculation of initials, rebills, cycle_2, cycle_3 plus in golden ticket with order-status == "Declined"
+                         */
+                        if (Str::contains($order->products[0]->name, ['(C)']) && $order->products[0]->offer->name == 'Gizmo' && $order->order_status == 7) {
+                            $initial_condition_2++;
                         }
-                        if ($order->order_status == 6) {
-                        /* 
-                            !calculation of refund with order-status == "void/refunded"
-                             */
-                            $refund += $order->order_total;
+                        if (Str::contains($order->products[0]->name, ['(R']) && $order->products[0]->offer->name == 'Gizmo' && $order->order_status == 7) {
+                            $rebills++;
+                        }
+                        if (isset($order->products[0]->offer) && $order->products[0]->offer->name == 'Gizmo' && $order->order_status == 7) {
+                            if (Str::contains($order->products[0]->name, ['(R'])) {
+                                $cycle_1_condition_1++;
+                            } else if (Str::contains($order->products[0]->name, ['(I'])) {
+                                $cycle_1_condition_2++;
+                            }
+                        }
+                        if ($order->is_chargeback == 1 && isset($order->products[0]->offer) && $order->products[0]->offer->name == 'Gizmo' && $order->order_status == 7) {
+                            $CBs++;
+                        }
+                        /*
+                            !Calculation of Revenue
+                         */
+                        if ($order->order_total != null && isset($order->products[0]->offer) && $order->products[0]->offer->name == 'Gizmo') {
+                            if ($order->order_status == 7) {
+                                $revenue += $order->order_total;
+                                if ($order->is_chargeback == 1) {
+                                    $CB_currency++;
+                                }
+                            }
+                            if ($order->order_status == 6) {
+                            /* 
+                                !calculation of refund with order-status == "void/refunded"
+                                 */
+                                $refund += $order->order_total;
+                            }
                         }
                     }
                 }
-
             });
+            $initials = $initial_condition_1 + $initial_condition_2;
             $net = $revenue + $refund + $CBs + $fulfillment + $processing + $cpa;
-            if ($rebill_condition2 != 0) {
-                $rebills = $rebill_condition1 + $rebill_condition2;
-                $rebill_per = $rebill_condition1 / $rebill_per_condition2;
+            $fulfillment = $initials * -18;
+            if ($rebills != 0) {
+                $avg_ticket = $revenue / $rebills;
             }
-            if ($volume != 0) {
-                $avg_ticket = $revenue / $volume;
-                $clv = $net / $volume;
+            if ($cycle_1_condition_2 != 0) {
+                $cycle_1_per = $cycle_1_condition_1 / $cycle_1_condition_2;
+                $clv = $net / $initials;
             }
             if ($revenue != 0) {
                 $refund_rate = $refund / $revenue;
                 $CB_per = $CBs / $revenue;
                 $processing = -0.2 * $revenue;
             }
-            // if()
 
-            $ticket->volume = $volume;
+            $ticket->initials = $initials;
             $ticket->rebills = $rebills;
-            $ticket->rebill_per = $rebill_per;
-            $ticket->avg_day = $avg_day;
-            $ticket->filled_per = $filled_per;
+            $ticket->cycle_1_per = $cycle_1_per;
+            $ticket->avg_day = $avg_day; //yet to calculate
             $ticket->avg_ticket = $avg_ticket;
             $ticket->revenue = $revenue;
             $ticket->refund = (($refund > 0) ? -$refund : $refund);
+            $ticket->filled_per = $filled_per; // yet to calculate
             $ticket->refund_rate = $refund_rate;
             $ticket->CBs = $CBs;
             $ticket->CB_per = $CB_per;
+            $ticket->CB_currency = $CB_currency;
             $ticket->fulfillment = $fulfillment;
             $ticket->processing = $processing;
             // $ticket->cpa = ??
-            // $ticket->cpa_avg = ??
+            // $ticket->cpa_avg = $cpa / $initials??
             $ticket->net = $net;
             $ticket->clv = $clv;
             $ticket->save();
