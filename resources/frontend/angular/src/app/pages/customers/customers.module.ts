@@ -22,6 +22,7 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { MatTableModule } from '@angular/material/table';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { ConfirmationDialogComponent } from './confirmation-dialog/confirmation-dialog.component';
 
 @NgModule({
   imports: [
@@ -51,7 +52,7 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
     MatPaginatorModule, // <-- Added Paginator Module
     MatProgressBarModule, // <-- Added Loader Module
   ],
-  declarations: [CustomersComponent],
+  declarations: [CustomersComponent, ConfirmationDialogComponent],
   exports: [CustomersComponent],
   
 })

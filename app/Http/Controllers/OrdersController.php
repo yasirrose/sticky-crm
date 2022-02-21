@@ -46,6 +46,11 @@ class OrdersController extends Controller
         $pag['total_pages'] = $total_pages;
         $pag['pageno'] = $pageno;
         $pag['rows_per_page'] = $no_of_records_per_page;
+        /* 
+            !for testing only one record  
+            $rows = Order::where(['order_id'=>10021])->get();
+            $pag = null;
+        */
         return response()->json(['status'=>true, 'data'=>$rows, 'pag' => $pag]);
     }
 
@@ -116,8 +121,9 @@ class OrdersController extends Controller
     }
 
     public function get_product_detail(Request $request){
-        $data = DB::table('orders')->select('products')->find($request->id);
-        return response()->json(['status'=>true, 'data'=>unserialize($data->products)]);
+        $data = DB::table('orders')->select('*')->find($request->id);
+        $data->products = unserialize($data->products);
+        return response()->json(['status'=>true, 'data'=>$data]);
     }
 
     public function refresh_database_dec(Request $request) {
@@ -682,8 +688,8 @@ class OrdersController extends Controller
 
         $api_data = json_decode(Http::asForm()->withBasicAuth($username, $password)->accept('application/json')->post($url, 
             [
-                'start_date' => '02/14/2022',
-                'end_date'=> '02/16/2022',
+                'start_date' => '02/15/2022',
+                'end_date'=> '02/15/2022',
                 'campaign_id'=> 'all',
                 'criteria'=> 'all',
                 'return_type' => 'order_view'

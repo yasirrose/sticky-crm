@@ -394,11 +394,11 @@ export class CreateFormulaComponent implements OnInit, AfterViewInit, OnDestroy 
       if (!this.selectedOperands[i]) {
         this.canGenerateFormula = false;
         // alert('Please select the empty fields');
-      }else{
+      } else {
         this.canGenerateFormula = true;
       }
     }
-    if(this.canGenerateFormula){
+    if (this.canGenerateFormula) {
       this.formula = '';
       // this.formula += '(';
       for (var i = 0; i < 5; i++) {
@@ -417,7 +417,7 @@ export class CreateFormulaComponent implements OnInit, AfterViewInit, OnDestroy 
       console.log(this.selectedOperands);
       console.log(this.selectedOperators);
     }
-    else{
+    else {
       this.isFormulated = false;
       this.notyf.error('There are empty fields');
     }
@@ -438,7 +438,7 @@ export class CreateFormulaComponent implements OnInit, AfterViewInit, OnDestroy 
     console.log(this.fieldsCount);
     if (this.fieldsCount >= 0) {
       if (this.fieldsCount == 2) {
-        this.isRemoveHidden = true; 
+        this.isRemoveHidden = true;
         // remove both two
       }
       else {
@@ -446,8 +446,8 @@ export class CreateFormulaComponent implements OnInit, AfterViewInit, OnDestroy 
         this.selectedOperands[this.fieldsCount - 1] = '';
         this.selectedOperators[this.fieldsCount - 2] = '';
         this.fieldsCount--;
-        if(this.fieldsCount == 2){
-          this.isRemoveHidden = true; 
+        if (this.fieldsCount == 2) {
+          this.isRemoveHidden = true;
         }
       }
     }
@@ -474,10 +474,10 @@ export class CreateFormulaComponent implements OnInit, AfterViewInit, OnDestroy 
   saveFormula() {
     var campaign_name = this.applyToCampaign.value;
     var column_name = this.applyToColumn.value;
-    var expression =  this.formula;
+    var expression = this.formula;
     var name = this.formulaName.value;
     var shortcut_name = this.formulaShortcut.value;
-    if(campaign_name && column_name && expression){
+    if (campaign_name && column_name && expression) {
       var data = {
         'operands': this.selectedOperands,
         'operators': this.selectedOperators,
@@ -488,15 +488,15 @@ export class CreateFormulaComponent implements OnInit, AfterViewInit, OnDestroy 
         'shortcut_name': shortcut_name
       };
       console.log(data);
-      
+
       this.formulaService.saveFormula(data);
     }
-    else{
+    else {
       this.notyf.error("Please Fill in the required data")
     }
-  } 
+  }
 
-  hideGeneratedFormula(){
+  hideGeneratedFormula() {
     this.isFormulated = false;
   }
 

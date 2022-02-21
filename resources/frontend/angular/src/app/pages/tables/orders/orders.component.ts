@@ -447,7 +447,7 @@ export class OrdersComponent implements OnInit, AfterViewInit, OnDestroy {
     const dialogRef = this.dialog.open(ProductDetailComponent,{
       data : {id : id}
     });
-
+    dialogRef.updateSize('1000px');
     dialogRef.afterClosed().subscribe(result => {
     });
   }

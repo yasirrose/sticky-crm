@@ -12,5 +12,4 @@ export class Customer {
         this.last_name = customer.last_name;
         this.addresses = customer.addresses;
     }
-  }
-  
+}
