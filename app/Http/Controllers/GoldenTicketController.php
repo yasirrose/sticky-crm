@@ -22,33 +22,32 @@ class GoldenTicketController extends Controller
         /* 
             !important 
             $golden_tickets = GoldenTicket::where(['year'=>Carbon::now()->format('Y')-1])->get();
-        */
+         */
         /*
             !filtration  
          */
-        if($request->month && $request->year){
-            if($request->month != "null" && $request->year != "null" ){
-                $golden_tickets = GoldenTicket::where(['month'=>$request->month, 'year'=>$request->year])->get();
+        if ($request->month && $request->year) {
+            if ($request->month != "null" && $request->year != "null") {
+                $golden_tickets = GoldenTicket::where(['month' => $request->month, 'year' => $request->year])->get();
+            } else if ($request->month != "null") {
+                $golden_tickets = GoldenTicket::where(['month' => $request->month])->get();
+            } else if ($request->year != "null") {
+                $golden_tickets = GoldenTicket::where(['year' => $request->year])->get();
             }
-            else if($request->month != "null" ){
-                $golden_tickets = GoldenTicket::where(['month'=>$request->month])->get();
-                }
-            else if($request->year != "null" ){
-                $golden_tickets = GoldenTicket::where(['year'=>$request->year])->get();
-            }
+        } else {
+            $golden_tickets = GoldenTicket::all();
         }
-        else{ $golden_tickets = GoldenTicket::all(); }
-        
+
         $formulas = Formula::all();
-        foreach($formulas as $key=>$formula){
+        foreach ($formulas as $key => $formula) {
             $formula->operands = unserialize($formula->operands);
             $formula->operators = unserialize($formula->operators);
-            if($formula->campaign_name == "Golden Ticket Main"){
+            if ($formula->campaign_name == "Golden Ticket Main") {
                 $columns[$key]['column_name'] = $formula->column_name;
                 $columns[$key]['expression'] = $formula->expression;
             }
         }
-        foreach($golden_tickets as $t_key=>$ticket){
+        foreach ($golden_tickets as $t_key => $ticket) {
             $initials = 0;
             $rebills = 0;
             $cycle_2 = 0;
@@ -68,60 +67,61 @@ class GoldenTicketController extends Controller
             $cpa_avg = 0;
             $net = 0;
             $clv = 0;
-
-            $orders = Order::where(['acquisition_month'=>$ticket->month, 'acquisition_year'=>$ticket->year, 'prepaid_match'=>'NO', 'is_test_cc'=>0])->get();
-            foreach($orders as $order){
-                $order->products = unserialize($order->products);
-                $order->totals_breakdown = unserialize($order->totals_breakdown);
-                /*
-                    !Calculation of initials, rebills, cycle_2, cycle_3 plus in golden ticket with order-status == "Declined"
-                 */
-                if(Str::contains($order->products[0]->name, ['(c)']) && $order->products[0]->offer->name == 'Golden Ticket Offer' && $order->order_status== 7){
-                    $initials++;
-                } 
-                if(Str::contains($order->products[0]->name, ['(CR1)']) && $order->products[0]->offer->name == 'Golden Ticket Offer' && $order->order_status== 7){
-                    $rebills++;
-                }
-                if(Str::contains($order->products[0]->name, ['(CR2)']) && $order->products[0]->offer->name == 'Golden Ticket Offer' && $order->order_status== 7){
-                    $cycle_2++;
-                }
-                if(Str::contains($order->products[0]->name, ['(CR+)']) && $order->products[0]->offer->name == 'Golden Ticket Offer' && $order->order_status== 7){
-                    $cycle_3_plus++;
-                }
-                if($order->is_chargeback == 1 && $order->products[0]->offer->name == 'Golden Ticket Offer' && $order->order_status== 7){
-                    $CBs++;
-                }
-                /*
-                    !Calculation of Revenue 
-                */
-                if($order->order_total != null ){
-                    $revenue += $order->order_total;
-                    /* 
-                        !calculation of refund with order-status == "void/refunded"
-                    */
-                    if($order->products[0]->offer->name == 'Golden Ticket Offer' && $order->order_status == 6){
-                        $refund += $order->order_total;
+            
+            Order::where(['acquisition_month' => $ticket->month, 'acquisition_year' => $ticket->year, 'prepaid_match' => 'NO', 'is_test_cc' => 0])->chunk(100, function ($orders) use ($initials, $rebills, $cycle_2, $cycle_3_plus, $cycle_1_per, $cycle_2_per, $cycle_3_plus_per, $revenue, $refund) {
+                foreach ($orders as $order) {
+                    $order->products = unserialize($order->products);
+                    $order->totals_breakdown = unserialize($order->totals_breakdown);
+                    /*
+                        !Calculation of initials, rebills, cycle_2, cycle_3 plus in golden ticket with order-status == "Declined"
+                     */
+                    if (isset($order->products[0]->offer) && Str::contains($order->products[0]->name, ['(c)']) && $order->products[0]->offer->name == 'Golden Ticket Offer' && $order->order_status == 7) {
+                        $initials++;
+                    }
+                    if (isset($order->products[0]->offer) && Str::contains($order->products[0]->name, ['(CR1)']) && $order->products[0]->offer->name == 'Golden Ticket Offer' && $order->order_status == 7) {
+                        $rebills++;
+                    }
+                    if (isset($order->products[0]->offer) && Str::contains($order->products[0]->name, ['(CR2)']) && $order->products[0]->offer->name == 'Golden Ticket Offer' && $order->order_status == 7) {
+                        $cycle_2++;
+                    }
+                    if (isset($order->products[0]->offer) && Str::contains($order->products[0]->name, ['(CR+)']) && $order->products[0]->offer->name == 'Golden Ticket Offer' && $order->order_status == 7) {
+                        $cycle_3_plus++;
+                    }
+                    if (isset($order->products[0]->offer) && $order->is_chargeback == 1 && $order->products[0]->offer->name == 'Golden Ticket Offer' && $order->order_status == 7) {
+                        $CBs++;
+                    }
+                    /*
+                        !Calculation of Revenue 
+                     */
+                    if ($order->order_total != null) {
+                        $revenue += $order->order_total;
+                        /* 
+                            !calculation of refund with order-status == "void/refunded"
+                         */
+                        if (isset($order->products[0]->offer) && $order->products[0]->offer->name == 'Golden Ticket Offer' && $order->order_status == 6) {
+                            $refund += $order->order_total;
+                        }
                     }
                 }
-            }
+            });
             $net = $revenue + $refund + $CBs + $fulfillment + $processing + $cpa;
 
-            if($initials != 0){
-                $cycle_1_per = $rebills/$initials;
-                $avg_ticket = $revenue/$initials;
-                $fulfillment =  -$initials;
-                $clv = $net/$initials;
+            if ($initials != 0) {
+                $cycle_1_per = $rebills / $initials;
+                $avg_ticket = $revenue / $initials;
+                $fulfillment = -$initials;
+                $clv = $net / $initials;
             }
-            if($rebills != 0){
-                $cycle_2_per = $cycle_2/$rebills;
+            if ($rebills != 0) {
+                $cycle_2_per = $cycle_2 / $rebills;
             }
-            if($cycle_2 !=0){
-                $cycle_3_plus_per = $cycle_3_plus/$cycle_2;
+            if ($cycle_2 != 0) {
+                $cycle_3_plus_per = $cycle_3_plus / $cycle_2;
             }
-            if($revenue != 0){
-                $refund_rate = $refund/$revenue;
-                $CB_per = $CBs/$revenue;
-                $processing = -0.2*$revenue;
+            if ($revenue != 0) {
+                $refund_rate = $refund / $revenue;
+                $CB_per = $CBs / $revenue;
+                $processing = -0.2 * $revenue;
             }
             // if()
 
@@ -148,7 +148,7 @@ class GoldenTicketController extends Controller
             $ticket->save();
         }
         // dd('die');
-        return response()->json(['status'=>true, 'data'=>$golden_tickets]);
+        return response()->json(['status' => true, 'data' => $golden_tickets]);
     }
 
     /**
@@ -158,17 +158,16 @@ class GoldenTicketController extends Controller
      */
     public function create(Request $request)
     {
-        if($request->month && $request->year){
-            $golden_ticket = GoldenTicket::where(['month'=>$request->month, 'year'=>$request->year])->first();
-            if($golden_ticket){
-                return response()->json(['status'=>false, 'message'=>"Current Month is already added"], 200);
-            }
-            else{
+        if ($request->month && $request->year) {
+            $golden_ticket = GoldenTicket::where(['month' => $request->month, 'year' => $request->year])->first();
+            if ($golden_ticket) {
+                return response()->json(['status' => false, 'message' => "Current Month is already added"], 200);
+            } else {
                 $model = new GoldenTicket();
                 $model->month = $request->month;
                 $model->year = $request->year;
                 $model->save();
-                return response()->json(['status'=>true, 'message'=>'Current Month added successfully'], 500);
+                return response()->json(['status' => true, 'message' => 'Current Month added successfully'], 500);
             }
         }
     }

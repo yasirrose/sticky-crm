@@ -32,3 +32,8 @@ mat-dialog-container{
 mat-tab-group{
     background: none !important;
 }
+.dialog-title {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }

@@ -11,6 +11,7 @@ use App\Http\Controllers\GoldenTicketController;
 use App\Http\Controllers\STicketDailyController;
 use App\Http\Controllers\STicketWeeklyController;
 use App\Http\Controllers\STicketMonthlyController;
+use App\Http\Controllers\ProductController;
 
 /*
 |--------------------------------------------------------------------------
@@ -34,10 +35,12 @@ Route::get('user-details', [DashboardController::class, 'user_data']);
 Route::resource('orders', OrdersController::class);
 Route::resource('customers', CustomerController::class);
 Route::resource('formulas', FormulasController::class);
+Route::resource('campaigns', CampaignsController::class);
 Route::resource('golden-ticket', GoldenTicketController::class);
 Route::resource('STicket-daily', STicketDailyController::class);
 Route::resource('STicket-weekly', STicketWeeklyController::class);
 Route::resource('STicket-monthly', STicketMonthlyController::class);
+Route::resource('products', ProductController::class);
 Route::get('golden-ticket/create/{month}/{year}', [GoldenTicketController::class, 'create']);
 Route::get('get_campaigns', [CampaignsController::class, 'get_campaigns']);
 Route::get('get_campaign_columns/{campaign_name}', [CampaignsController::class, 'get_campaign_columns']);
@@ -57,7 +60,11 @@ Route::get('get_product_detail', [OrdersController::class, 'get_product_detail']
 Route::get('getDropDownContent', [OrdersController::class, 'getDropDownContent']);
 Route::get('refresh_customers', [CustomerController::class, 'refresh_customers']);
 Route::get('filter-golden-ticket/{month}/{year}', [GoldenTicketController::class, 'index']);
-// Route::get('add-month-golden-ticket/{month}', [GoldenTicketController::class, 'add_month']);
+Route::get('pull_all_products', [ProductController::class, 'pull_all_products']);
+Route::get('get_states', [OrdersController::class, 'get_states']);
+Route::get('refresh-daily', [STicketDailyController::class, 'refresh_daily']);
+Route::get('refresh-weekly', [STicketWeeklyController::class, 'refresh_weekly']);
+Route::get('refresh-monthly', [STicketMonthlyController::class, 'refresh_monthly']);
 
 
 

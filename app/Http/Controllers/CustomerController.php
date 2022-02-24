@@ -112,7 +112,7 @@ class CustomerController extends Controller
         $username = "yasir_dev";
         $password = "yyutmzvRpy5TPU";
         $url = 'https://thinkbrain.sticky.io/api/v2/contacts';
-        $page = 4500;
+        $page = 16053;
 
         $api_data = Http::withBasicAuth($username, $password)->accept('application/json')->get($url, ['page' => $page]);
         $response['customers'] = $api_data['data'];

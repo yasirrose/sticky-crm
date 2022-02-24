@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+// import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, of } from 'rxjs';
 import { ApiService } from 'src/app/api.service';
@@ -11,6 +11,7 @@ export class SticketDailyService {
   orders: any;
   gateway: any;
   public formulasGetResponse = new BehaviorSubject([]);
+  public ticketsGetResponse = new BehaviorSubject([]);
 
   formulasGetResponse$ = this.formulasGetResponse.asObservable();
 

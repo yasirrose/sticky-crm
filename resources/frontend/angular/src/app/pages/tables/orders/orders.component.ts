@@ -11,12 +11,14 @@ import { fadeInRightAnimation } from '../../../../@fury/animations/fade-in-right
 import { fadeInUpAnimation } from '../../../../@fury/animations/fade-in-up.animation';
 
 //self imports
-import {FormGroup, FormControl} from '@angular/forms';
-import { OrdersService } from './orders.service'; 
+import { FormGroup, FormControl } from '@angular/forms';
+import { OrdersService } from './orders.service';
 import { Subscription } from 'rxjs';
-import {formatDate} from '@angular/common';
+import { formatDate } from '@angular/common';
 import { environment } from '../../../../environments/environment';
 import { ProductDetailComponent } from './product-detail/product-detail.component';
+import { ApiService } from 'src/app/api.service';
+import *  as  states from './states.json';
 
 @Component({
   selector: 'fury-orders',
@@ -30,18 +32,18 @@ export class OrdersComponent implements OnInit, AfterViewInit, OnDestroy {
   subject$: ReplaySubject<Order[]> = new ReplaySubject<Order[]>(1);
   data$: Observable<Order[]> = this.subject$.asObservable();
   orders: Order[];
- 
+
   //customer coding
   getSubscription: Subscription;
-  mapped;
+  getCampaignsSubscription: Subscription;
+  getProductsSubscription: Subscription;
   isLoading = false;
   totalRows = 0;
   pageSize = 25;
   currentPage = 0;
   all_fields = [];
   all_values = [];
-  filterData:any = [];
-  pageSizeOptions: number[] = [5, 10, 25, 100];
+  filterData: any = [];
   filters = {};
   endPoint = '';
 
@@ -65,16 +67,19 @@ export class OrdersComponent implements OnInit, AfterViewInit, OnDestroy {
   txnType = "all";
   currency = "allCurrencies";
   country = "allCountries";
-  state = "allSates";
+  state = "allStates";
   gateway = "all";
-  cc_type = "all";
+  ccType = "all";
   is_3d_protected = "all";
   gatewayCategory = "allGatewayCategories";
   gatewayType = "all";
-  cardType = "all";
   creditOrDebit = "all";
-  threeDSecure = "all";
-  
+
+  campaignOptions: [];
+  productOptions: [];
+  cardOptions: string[] = ['visa', 'master'];
+  pageSizeOptions: number[] = [5, 10, 25, 100];
+  stateOptions: any = (states as any).default;
 
   @Input()
   columns: ListColumn[] = [
@@ -82,14 +87,14 @@ export class OrdersComponent implements OnInit, AfterViewInit, OnDestroy {
     { name: 'Id', property: 'id', isModelProperty: true },
     { name: 'Order Id', property: 'order_id', visible: true, isModelProperty: true },
     { name: 'Created By', property: 'created_by_employee_name', visible: true, isModelProperty: true },
-    // { name: 'Bill First', property: 'billing_first_name', visible: true, isModelProperty: true },
-    // { name: 'Bill Last', property: 'billing_last_name', visible: true, isModelProperty: true },
-    // { name: 'Bill Address1', property: 'billing_street_address', visible: true, isModelProperty: true },
-    // { name: 'Acq Date', property: 'acquisition_date', visible: true, isModelProperty: true },
-    // { name: 'Acq Month', property: 'acquisition_month', visible: true, isModelProperty: true },
-    // { name: 'Pub ID', property: 'c1', visible: true, isModelProperty: true },
+    { name: 'Bill First', property: 'billing_first_name', visible: true, isModelProperty: true },
+    { name: 'Bill Last', property: 'billing_last_name', visible: true, isModelProperty: true },
+    { name: 'Bill Address1', property: 'billing_street_address', visible: true, isModelProperty: true },
+    { name: 'Acq Date', property: 'acquisition_date', visible: true, isModelProperty: true },
+    { name: 'Acq Month', property: 'acquisition_month', visible: true, isModelProperty: true },
+    { name: 'Pub ID', property: 'c1', visible: true, isModelProperty: true },
     // { name: 'Trx month', property: 'trx_month', visible: true, isModelProperty: true },
-    // { name: 'Network', property: 'affid', visible: true, isModelProperty: true },
+    { name: 'Network', property: 'affid', visible: true, isModelProperty: true },
     // { name: 'Bill Phone', property: 'billing_telephone', visible: true, isModelProperty: true },
     // { name: 'Bill Email', property: 'billing_email', visible: true, isModelProperty: true },
     // { name: 'Ship First', property: 'shipping_first_name', visible: true, isModelProperty: true },
@@ -109,8 +114,8 @@ export class OrdersComponent implements OnInit, AfterViewInit, OnDestroy {
     // { name: 'Payment', property: 'cc_type', visible: true, isModelProperty: true },
     // { name: 'Campaign ID', property: 'campaign_id', visible: true, isModelProperty: true },
     // { name: 'Customer Number', property: 'customer_id', visible: true, isModelProperty: true },
-    // { name: 'credit_card_number', property: 'credit_card_number', visible: true, isModelProperty: true },
-    // { name: 'cc_expires', property: 'cc_expires', visible: true, isModelProperty: true },
+    { name: 'credit_card_number', property: 'credit_card_number', visible: true, isModelProperty: true },
+    { name: 'cc_expires', property: 'cc_expires', visible: true, isModelProperty: true },
     // { name: 'prepaid_match', property: 'prepaid_match', visible: true, isModelProperty: true },
     // { name: 'gateway_id', property: 'gateway_id', visible: true, isModelProperty: true },
     // { name: 'preserve_gateway', property: 'preserve_gateway', visible: true, isModelProperty: true },
@@ -121,19 +126,19 @@ export class OrdersComponent implements OnInit, AfterViewInit, OnDestroy {
     { name: 'is_cascaded', property: 'is_cascaded', visible: true, isModelProperty: true },
     { name: 'decline_reason_details', property: 'decline_reason_details', visible: true, isModelProperty: true },    
     // { name: 'Shipped Date', property: 'shipping_date', visible: true, isModelProperty: true },
-    { name: 'is_fraud', property: 'is_fraud', visible: true, isModelProperty: true },
-    { name: 'is_chargeback', property: 'is_chargeback', visible: true, isModelProperty: true },
-    { name: 'chargeback_date', property: 'chargeback_date', visible: true, isModelProperty: true },
-    { name: 'is_rma', property: 'is_rma', visible: true, isModelProperty: true },
-    { name: 'rma_number', property: 'rma_number', visible: true, isModelProperty: true },
-    { name: 'rma_reason', property: 'rma_reason', visible: true, isModelProperty: true },
-    { name: 'is_recurring', property: 'is_recurring', visible: true, isModelProperty: true },
+    // { name: 'is_fraud', property: 'is_fraud', visible: true, isModelProperty: true },
+    // { name: 'is_chargeback', property: 'is_chargeback', visible: true, isModelProperty: true },
+    // { name: 'chargeback_date', property: 'chargeback_date', visible: true, isModelProperty: true },
+    // { name: 'is_rma', property: 'is_rma', visible: true, isModelProperty: true },
+    // { name: 'rma_number', property: 'rma_number', visible: true, isModelProperty: true },
+    // { name: 'rma_reason', property: 'rma_reason', visible: true, isModelProperty: true },
+    // { name: 'is_recurring', property: 'is_recurring', visible: true, isModelProperty: true },
     // { name: 'retry_date', property: 'retry_date', visible: true, isModelProperty: true },
     // { name: 'auth_id', property: 'auth_id', visible: true, isModelProperty: true },
     // { name: 'hold_date', property: 'hold_date', visible: true, isModelProperty: true },
-    { name: 'is_void', property: 'is_void', visible: true, isModelProperty: true },
-    { name: 'void_amount', property: 'void_amount', visible: true, isModelProperty: true },
-    { name: 'void_date', property: 'void_date', visible: true, isModelProperty: true },
+    // { name: 'is_void', property: 'is_void', visible: true, isModelProperty: true },
+    // { name: 'void_amount', property: 'void_amount', visible: true, isModelProperty: true },
+    // { name: 'void_date', property: 'void_date', visible: true, isModelProperty: true },
     { name: 'is_refund', property: 'is_refund', visible: true, isModelProperty: true },
     { name: 'refund_amount', property: 'refund_amount', visible: true, isModelProperty: true },
     { name: 'refund_date', property: 'refund_date', visible: true, isModelProperty: true },
@@ -149,8 +154,8 @@ export class OrdersComponent implements OnInit, AfterViewInit, OnDestroy {
     // { name: 'main_product_id', property: 'main_product_id', visible: true, isModelProperty: true },
     // { name: 'main_product_quantity', property: 'main_product_quantity', visible: true, isModelProperty: true },
     { name: 'order_confirmed', property: 'order_confirmed', visible: true, isModelProperty: true },
-    { name: 'order_confirmed_date', property: 'order_confirmed_date', visible: true, isModelProperty: true },
-    { name: 'is_blacklisted', property: 'is_blacklisted', visible: true, isModelProperty: true },
+    // { name: 'order_confirmed_date', property: 'order_confirmed_date', visible: true, isModelProperty: true },
+    // { name: 'is_blacklisted', property: 'is_blacklisted', visible: true, isModelProperty: true },
     // { name: 'ancestor_id', property: '  ancestor_id', visible: true, isModelProperty: true },
     // { name: 'decline_salvage_discount_percent', property: 'decline_salvage_discount_percent', visible: true, isModelProperty: true },
     // { name: 'is_test_cc', property: 'is_test_cc', visible: true, isModelProperty: true },
@@ -171,8 +176,8 @@ export class OrdersComponent implements OnInit, AfterViewInit, OnDestroy {
     // { name: 'child_id', property: 'child_id', visible: true, isModelProperty: true },
     // { name: 'click_id', property: 'click_id', visible: true, isModelProperty: true },
     // { name: 'coupon_discount_amount', property: 'coupon_discount_amount', visible: true, isModelProperty: true },
-    { name: 'coupon_id', property: 'coupon_id', visible: true, isModelProperty: true },
-    { name: 'created_by_user_name', property: 'created_by_user_name', visible: true, isModelProperty: true },
+    // { name: 'coupon_id', property: 'coupon_id', visible: true, isModelProperty: true },
+    // { name: 'created_by_user_name', property: 'created_by_user_name', visible: true, isModelProperty: true },
     // { name: 'credit_applied', property: 'credit_applied', visible: true, isModelProperty: true },
     // { name: 'customers_telephone', property: 'customers_telephone', visible: true, isModelProperty: true },
     // { name: 'email_address', property: 'email_address', visible: true, isModelProperty: true },
@@ -187,7 +192,13 @@ export class OrdersComponent implements OnInit, AfterViewInit, OnDestroy {
     { name: 'order_sales_tax', property: 'order_sales_tax', visible: true, isModelProperty: true },
     { name: 'order_status', property: 'order_status', visible: true, isModelProperty: true },
     { name: 'time_stamp', property: 'time_stamp', visible: true, isModelProperty: true },
-    
+    // { name: 'totals_breakdown', property: 'totals_breakdown', visible: true, isModelProperty: true },
+    // { name: 'transaction_id', property: 'transaction_id', visible: true, isModelProperty: true },
+    // { name: 'upsell_product_id', property: 'upsell_product_id', visible: true, isModelProperty: true },
+    // { name: 'upsell_product_quantity', property: 'upsell_product_quantity', visible: true, isModelProperty: true },
+    // { name: 'website_received', property: 'website_received', visible: true, isModelProperty: true },
+    // { name: 'website_sent', property: 'website_sent', visible: true, isModelProperty: true },
+
   ] as ListColumn[];
   // pageSize = 20000;
   dataSource: MatTableDataSource<Order> | null;
@@ -195,7 +206,7 @@ export class OrdersComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
   @ViewChild(MatSort, { static: true }) sort: MatSort;
 
-  constructor(private dialog: MatDialog, private ordersService: OrdersService) {
+  constructor(private dialog: MatDialog, private ordersService: OrdersService, private apiService: ApiService) {
     this.endPoint = environment.endpoint;
   }
 
@@ -204,6 +215,9 @@ export class OrdersComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnInit() {
+    this.getCampaignsSubscription = this.ordersService.getCampaignsResponse$.subscribe(data => this.manageCampaignsResponse(data))
+    this.getProductsSubscription = this.ordersService.getProductsResponse$.subscribe(data => this.manageProductsResponse(data))
+
     this.getData();
     this.getDropData();
     this.dataSource = new MatTableDataSource();
@@ -212,9 +226,9 @@ export class OrdersComponent implements OnInit, AfterViewInit, OnDestroy {
     ).subscribe((orders) => {
       this.orders = orders;
       this.dataSource.data = orders;
-    });  
+    });
   }
-  mapData(){
+  mapData() {
     return of(this.orders.map(order => new Order(order)));
   }
   ngAfterViewInit() {
@@ -230,16 +244,36 @@ export class OrdersComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   getData() {
+    this.ordersService.getCampaigns();
+    this.ordersService.getProducts();
     this.isLoading = true;
     this.filters = {
       "currentPage": this.currentPage,
       "pageSize": this.pageSize,
-      "start": formatDate(this.range.get('start').value,'yyyy/MM/dd','en'),
-      "end": formatDate(this.range.get('end').value,'yyyy/MM/dd','en'),
-      "campaign": this.campaign,
-      'all_fields' : this.all_fields,
-      'all_values' : this.all_values
-    } 
+      "start": formatDate(this.range.get('start').value, 'yyyy/MM/dd', 'en'),
+      "end": formatDate(this.range.get('end').value, 'yyyy/MM/dd', 'en'),
+      // "campaign_id": this.campaign,
+      // "campaign_category": this.campaignCategory,
+      // "product_name": this.product,
+      // "product_category": this.productCategory,
+      // "campaign_product": this.campaignProduct,
+      // "affiliate": this.affiliate,
+      // "call_center": this.callCenter,
+      // "currency": this.currency,
+      // "bill_type": this.billType,
+      // "billing_cycle": this.billingCycle,
+      // "recycle_no": this.recycleNo,
+      // "txn_type": this.txnType,
+      // "gateway": this.gateway,
+      // "gateway_category": this.gatewayCategory,
+      // "card_type": this.ccType,
+      // "credit_debit": this.creditOrDebit,
+      // "state": this.state,
+      // "country": this.country,
+      // "is_3d_protected": this.is_3d_protected,
+      'all_fields': this.all_fields,
+      'all_values': this.all_values
+    }
     this.ordersService.getOrders(this.filters)
       .then(orders => {
         console.log('paginate data is: ',orders.data.data);
@@ -257,7 +291,7 @@ export class OrdersComponent implements OnInit, AfterViewInit, OnDestroy {
         this.isLoading = false;
       });
   }
-  async getDropData(){
+  async getDropData() {
     const response = fetch(`${this.endPoint}/api/getDropDownContent`)
       .then(res => res.json()).then((data) => {
         this.filterData = data;
@@ -266,17 +300,17 @@ export class OrdersComponent implements OnInit, AfterViewInit, OnDestroy {
   }
   commonFilter(value, field) {
     if (this.all_fields.indexOf(field) === -1) {
-        this.all_fields.push(field);
-        this.all_values.push(value);
+      this.all_fields.push(field);
+      this.all_values.push(value);
     } else {
       let index = this.all_fields.indexOf(field);
       this.all_values[index] = value;
     }
-    this.getData();
+    // this.getData();
   }
 
-  manageGetResponse(orders){
-    if(orders.status){
+  manageGetResponse(orders) {
+    if (orders.status) {
       this.orders = orders.data.data;
       this.dataSource.data = orders.data.data;
       setTimeout(() => {
@@ -284,9 +318,22 @@ export class OrdersComponent implements OnInit, AfterViewInit, OnDestroy {
         this.paginator.length = orders.pag.count;
       });
       this.isLoading = false;
-    }else {
+    } else {
       this.isLoading = false;
     }
+  }
+
+  manageCampaignsResponse(data) {
+    if (data.status) {
+      this.campaignOptions = data.data;
+    }
+    console.log('campaign data', this.campaignOptions);
+  }
+  manageProductsResponse(data) {
+    if (data.status) {
+      this.productOptions = data.data;
+    }
+    console.log('campaign data', this.productOptions);
   }
 
   createCustomer() {
@@ -309,38 +356,38 @@ export class OrdersComponent implements OnInit, AfterViewInit, OnDestroy {
     value = value.toLowerCase();
     this.dataSource.filter = value;
   }
-  selectDate(param){
+  selectDate(param) {
     var startDate = new Date();
     var endDate = new Date();
-    if(param == 'today'){
+    if (param == 'today') {
       this.range.get('start').setValue(new Date());
       this.range.get('end').setValue(new Date());
-    } else if(param == 'yesterday'){
-      this.range.get('start').setValue(new Date(startDate.setDate(startDate.getDate()-1)));
+    } else if (param == 'yesterday') {
+      this.range.get('start').setValue(new Date(startDate.setDate(startDate.getDate() - 1)));
       this.range.get('end').setValue(new Date());
-    } else if(param == 'thisMonth'){
-      this.range.get('start').setValue(new Date(startDate.setMonth(startDate.getMonth()-1)));
+    } else if (param == 'thisMonth') {
+      this.range.get('start').setValue(new Date(startDate.setMonth(startDate.getMonth() - 1)));
       this.range.get('end').setValue(new Date());
-    } else if(param == 'pastWeek'){
-      this.range.get('start').setValue(new Date(startDate.setDate(startDate.getDate()-7)));
+    } else if (param == 'pastWeek') {
+      this.range.get('start').setValue(new Date(startDate.setDate(startDate.getDate() - 7)));
       this.range.get('end').setValue(new Date());
-    } else if(param == 'pastTwoWeek'){
-      this.range.get('start').setValue(new Date(startDate.setDate(startDate.getDate()-14)));
+    } else if (param == 'pastTwoWeek') {
+      this.range.get('start').setValue(new Date(startDate.setDate(startDate.getDate() - 14)));
       this.range.get('end').setValue(new Date());
-    } else if(param == 'lastMonth'){
-      this.range.get('start').setValue(new Date(startDate.setMonth(startDate.getMonth()-2)));
-      this.range.get('end').setValue(new Date(endDate.setMonth(endDate.getMonth()-1)));
-    } else if(param == 'lastThreeMonths'){
-      this.range.get('start').setValue(new Date(startDate.setMonth(startDate.getMonth()-4)));
-      this.range.get('end').setValue(new Date(endDate.setMonth(endDate.getMonth()-1)));
-    } else if(param == 'lastSixMonths'){
-      this.range.get('start').setValue(new Date(startDate.setMonth(startDate.getMonth()-7)));
-      this.range.get('end').setValue(new Date(endDate.setMonth(endDate.getMonth()-1)));
+    } else if (param == 'lastMonth') {
+      this.range.get('start').setValue(new Date(startDate.setMonth(startDate.getMonth() - 2)));
+      this.range.get('end').setValue(new Date(endDate.setMonth(endDate.getMonth() - 1)));
+    } else if (param == 'lastThreeMonths') {
+      this.range.get('start').setValue(new Date(startDate.setMonth(startDate.getMonth() - 4)));
+      this.range.get('end').setValue(new Date(endDate.setMonth(endDate.getMonth() - 1)));
+    } else if (param == 'lastSixMonths') {
+      this.range.get('start').setValue(new Date(startDate.setMonth(startDate.getMonth() - 7)));
+      this.range.get('end').setValue(new Date(endDate.setMonth(endDate.getMonth() - 1)));
     }
   }
   openDialog(id) {
-    const dialogRef = this.dialog.open(ProductDetailComponent,{
-      data : {id : id}
+    const dialogRef = this.dialog.open(ProductDetailComponent, {
+      data: { id: id }
     });
     dialogRef.updateSize('1000px');
     dialogRef.afterClosed().subscribe(result => {

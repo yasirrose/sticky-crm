@@ -1,6 +1,3 @@
-
-
-
 import { AfterViewInit, Component, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
@@ -23,7 +20,6 @@ import { Notyf } from 'notyf';
   templateUrl: './sticket-daily.component.html',
   styleUrls: ['./sticket-daily.component.scss'],
   animations: [fadeInRightAnimation, fadeInUpAnimation]
-
 })
 export class SticketDailyComponent implements OnInit {
 
@@ -41,7 +37,7 @@ export class SticketDailyComponent implements OnInit {
   // months: string[] = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
   // year: string = null;
   // years: number[] = [];
-  notyf = new Notyf();
+  notyf = new Notyf({ types: [ { type: 'info', background: '#6495ED', icon: '<i class="fa-solid fa-clock"></i>' }] });
 
   @Input()
   columns: ListColumn[] = [
@@ -130,6 +126,20 @@ export class SticketDailyComponent implements OnInit {
     value = value.trim();
     value = value.toLowerCase();
     this.dataSource.filter = value;
+  }
+
+  async refresh() {
+    this.notyf.open({ type: 'info', message: 'Records will be refreshed soon...' });
+    this.isLoading = true;
+    await this.campaignService.refreshDailySticket()
+      .then(tickets => {
+        this.tickets = tickets.data;
+        this.dataSource.data = tickets.data;
+        this.notyf.success('Records are updated successfully');
+        this.isLoading = false;
+      }, error => {
+        this.isLoading = false;
+      });
   }
 
   ngOnDestroy() {

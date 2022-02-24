@@ -1,104 +1,12 @@
-<!-- <fury-page-layout mode="simple">
-  <fury-page-layout-content [@fadeInUp]>
-    <fury-list name="Product Detail" [columns]="columns" (filterChange)="onFilterChange($event)">
-      <mat-progress-bar mode="indeterminate" *ngIf="isLoading"></mat-progress-bar>
-      <table [dataSource]="dataSource" mat-table matSort>
-
-        <ng-container matColumnDef="checkbox">
-          <th *matHeaderCellDef class="actions-cell" mat-header-cell>
-            <mat-checkbox color="primary" (click)="$event.stopPropagation()"></mat-checkbox>
-          </th>
-          <td *matCellDef="let row" class="actions-cell" mat-cell>
-            <mat-checkbox color="primary" (click)="$event.stopPropagation()"></mat-checkbox>
-          </td>
-        </ng-container>
-
-        <ng-container *ngFor="let column of columns">
-          <ng-container *ngIf="column.isModelProperty" [matColumnDef]="column.property">
-            <th *matHeaderCellDef mat-header-cell mat-sort-header> {{ column.name }}</th>
-            <td *matCellDef="let row" mat-cell>
-              <ng-template [ngIf]="column.property != 'creator'">{{ row[column.property] }}</ng-template>
-            </td>
-          </ng-container>
-        </ng-container>
-
-        <tr *matHeaderRowDef="visibleColumns" mat-header-row></tr>
-        <tr *matRowDef="let row; columns: visibleColumns;" class="clickable route-animations-elements" mat-row></tr>
-      </table>
-    </fury-list>
-  </fury-page-layout-content>
-</fury-page-layout> -->
-
-<!-- <div mat-dialog-title>Order Details</div>
-<mat-dialog-content>
-  <h4>Product Details</h4>
-  <div class="person">
-    <div fxLayout="column" fxLayoutGap="20px" fxLayout.gt-sm="row" fxLayoutGap.gt-sm="24px">
-      <div fxLayout="row" fxLayoutGap="24px">
-        <div class="product-column" fxLayout="column" fxLayoutGap="15px" [fxFlex]="40">
-          <div fxLayout="row" fxLayoutGap="24px">
-            <div class="detail-title"><span>Product id:</span></div>
-            <div class="detail-data"><span>{{product_data[0].product_id}}</span></div>
-          </div>
-          <div fxLayout="row" fxLayoutGap="24px">
-            <div class="detail-title"><span>Product Name:</span></div>
-            <div class="detail-data"><span>{{product_data[0].name}}</span></div>
-          </div>
-          <div fxLayout="row" fxLayoutGap="24px">
-            <div class="detail-title"><span>Product sku:</span></div>
-            <div class="detail-data"><span>{{product_data[0].sku}}</span></div>
-          </div>
-          <div fxLayout="row" fxLayoutGap="24px">
-            <div class="detail-title"><span>Product price:</span></div>
-            <div class="detail-data"><span>{{product_data[0].price}}</span></div>
-          </div>
-        </div>
-        <div class="product-column" fxLayout="column" fxLayoutGap="15px" [fxFlex]="40">
-          <div fxLayout="row" fxLayoutGap="24px">
-            <div class="detail-title"><span>On Hold:</span></div>
-            <div class="detail-data"><span>{{product_data[0].on_hold}}</span></div>
-          </div>
-          <div fxLayout="row" fxLayoutGap="24px">
-            <div class="detail-title"><span>Product product_qty:</span></div>
-            <div class="detail-data"><span>{{product_data[0].product_qty}}</span></div>
-          </div>
-          <div fxLayout="row" fxLayoutGap="24px">
-            <div class="detail-title"><span> recurring_date:</span></div>
-            <div class="detail-data"><span>{{product_data[0].recurring_date}}</span></div>
-          </div>
-          <div fxLayout="row" fxLayoutGap="24px">
-            <div class="detail-title"><span>refund_amount:</span></div>
-            <div class="detail-data"><span>{{product_data[0].refund_amount}}</span></div>
-          </div>
-        </div>
-        <div class="product-column" fxLayout="column" fxLayoutGap="15px" [fxFlex]="40">
-          <div fxLayout="row" fxLayoutGap="24px">
-            <div class="detail-title"><span>next_subscription_product:</span></div>
-            <div class="detail-data"><span>{{product_data[0].next_subscription_product}}</span></div>
-          </div>
-          <div fxLayout="row" fxLayoutGap="24px">
-            <div class="detail-title"><span>next_subscription_product_id:</span></div>
-            <div class="detail-data"><span>{{product_data[0].next_subscription_product_id}}</span></div>
-          </div>
-          <div fxLayout="row" fxLayoutGap="24px">
-            <div class="detail-title"><span>next_subscription_product_price:</span></div>
-            <div class="detail-data"><span>{{product_data[0].next_subscription_product_price}}</span></div>
-          </div>
-          <div fxLayout="row" fxLayoutGap="24px">
-            <div class="detail-title"><span>next_subscription_qty:</span></div>
-            <div class="detail-data"><span>{{product_data[0].next_subscription_qty}}</span></div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</mat-dialog-content> -->
-
-
 <div class="fury-preview-card" fxLayout="column" fxLayout.gt-sm="row">
   <div class="content" fxFlex>
     <div class="header">
-      <div class="title">Orders</div>
+      <!-- <div class="close_button">
+        <button mat-icon-button aria-label="close dialog"  fxLayoutAlign="end end"mat-dialog-close>
+          <mat-icon>close</mat-icon>
+        </button>
+      </div> -->
+      <div class="title">Order Details</div>
     </div>
 
     <mat-tab-group class="tabs fury-tabs">
@@ -209,6 +117,69 @@
           </div>
         </div>
       </mat-tab>
+      <mat-tab label="BILLING DETAILS">
+        <div class="person padding">
+          <div class="main-div" fxLayout="column" fxLayoutGap="20px" fxLayout.gt-sm="row" fxLayoutGap.gt-sm="24px">
+            <div fxLayout="row" fxLayoutGap="24px">
+              <div class="product-column" fxLayout="column" fxLayoutGap="15px" [fxFlex]="40">
+                <div fxLayout="row" fxLayoutGap="24px">
+                  <div class="detail-title"><span>Billing First Name:</span></div>
+                  <div class="detail-data"><span>{{product_data?.billing_first_name}}</span></div>
+                </div>
+                <div fxLayout="row" fxLayoutGap="24px">
+                  <div class="detail-title"><span>Billing Last Name:</span></div>
+                  <div class="detail-data"><span>{{product_data?.billing_last_name}}</span></div>
+                </div>
+                <div fxLayout="row" fxLayoutGap="24px">
+                  <div class="detail-title"><span>Billing City:</span></div>
+                  <div class="detail-data"><span>{{product_data?.billing_city}}</span></div>
+                </div>
+              </div>
+              <div class="product-column" fxLayout="column" fxLayoutGap="15px" [fxFlex]="40">
+                <div fxLayout="row" fxLayoutGap="24px">
+                  <div class="detail-title"><span>Billing State:</span></div>
+                  <div class="detail-data"><span>{{product_data?.billing_state}}</span></div>
+                </div>
+                <div fxLayout="row" fxLayoutGap="24px">
+                  <div class="detail-title"><span>Billing Country:</span></div>
+                  <div class="detail-data"><span>{{product_data?.billing_country}}</span></div>
+                </div>
+                <div fxLayout="row" fxLayoutGap="24px">
+                  <div class="detail-title"><span>Billing Address:</span></div>
+                  <div class="detail-data"><span>{{product_data?.billing_street_address}}</span></div>
+                </div>
+                <!-- <div fxLayout="row" fxLayoutGap="24px">
+                  <div class="detail-title"><span>is_shippable:</span></div>
+                  <div class="detail-data"><span>{{product_data?.is_shippable}}</span></div>
+                </div>
+              </div>
+              <div class="product-column" fxLayout="column" fxLayoutGap="15px" [fxFlex]="40">
+                <div fxLayout="row" fxLayoutGap="24px">
+                  <div class="detail-title"><span>shippable:</span></div>
+                  <div class="detail-data"><span>{{product_data?.shippable}}</span></div>
+                </div>
+                <div fxLayout="row" fxLayoutGap="24px">
+                  <div class="detail-title"><span> billing_amount:</span></div>
+                  <div class="detail-data"><span>{{product_data?.billing_amount}}</span></div>
+                </div>
+                <div fxLayout="row" fxLayoutGap="24px">
+                  <div class="detail-title"><span>billing_city:</span></div>
+                  <div class="detail-data"><span>{{product_data?.billing_city}}</span></div>
+                </div>
+
+                <div fxLayout="row" fxLayoutGap="24px">
+                  <div class="detail-title"><span>billing_date:</span></div>
+                  <div class="detail-data"><span>{{product_data?.billing_date}}</span></div>
+                </div>
+                <div fxLayout="row" fxLayoutGap="24px">
+                  <div class="detail-title"><span>billing_telephone:</span></div>
+                  <div class="detail-data"><span>{{product_data?.billing_telephone}}</span></div>
+                </div> -->
+              </div>
+            </div>
+          </div>
+        </div>
+      </mat-tab>
       <mat-tab label="SHIPPING DETAILS">
         <div class="person padding">
           <div class="main-div" fxLayout="column" fxLayoutGap="20px" fxLayout.gt-sm="row" fxLayoutGap.gt-sm="24px">
@@ -239,49 +210,203 @@
                   <div class="detail-data"><span>{{product_data?.shipping_state}}</span></div>
                 </div>
                 <div fxLayout="row" fxLayoutGap="24px">
-                  <div class="detail-title"><span>shipping_email:</span></div>
+                  <div class="detail-title"><span>Shipping Email:</span></div>
                   <div class="detail-data"><span>{{product_data?.shipping_email}}</span></div>
                 </div>
                 <div fxLayout="row" fxLayoutGap="24px">
-                  <div class="detail-title"><span>shipping_street_address:</span></div>
-                  <div class="detail-data"><span>{{product_data?.shipping_street_address}}</span></div>
-                </div>
-                <div fxLayout="row" fxLayoutGap="24px">
-                  <div class="detail-title"><span>is_shippable:</span></div>
+                  <div class="detail-title"><span>Is Shippable:</span></div>
                   <div class="detail-data"><span>{{product_data?.is_shippable}}</span></div>
                 </div>
               </div>
               <div class="product-column" fxLayout="column" fxLayoutGap="15px" [fxFlex]="40">
                 <div fxLayout="row" fxLayoutGap="24px">
-                  <div class="detail-title"><span>shippable:</span></div>
+                  <div class="detail-title"><span>Shippable:</span></div>
                   <div class="detail-data"><span>{{product_data?.shippable}}</span></div>
                 </div>
                 <div fxLayout="row" fxLayoutGap="24px">
-                  <div class="detail-title"><span> shipping_amount:</span></div>
+                  <div class="detail-title"><span>Shipping Amount:</span></div>
                   <div class="detail-data"><span>{{product_data?.shipping_amount}}</span></div>
                 </div>
                 <div fxLayout="row" fxLayoutGap="24px">
-                  <div class="detail-title"><span>shipping_city:</span></div>
+                  <div class="detail-title"><span>Shipping City:</span></div>
                   <div class="detail-data"><span>{{product_data?.shipping_city}}</span></div>
                 </div>
                 <div fxLayout="row" fxLayoutGap="24px">
-                  <div class="detail-title"><span>shipping_country:</span></div>
+                  <div class="detail-title"><span>Shipping Country:</span></div>
                   <div class="detail-data"><span>{{product_data?.shipping_country}}</span></div>
                 </div>
                 <div fxLayout="row" fxLayoutGap="24px">
-                  <div class="detail-title"><span>shipping_date:</span></div>
+                  <div class="detail-title"><span>Shipping Date:</span></div>
                   <div class="detail-data"><span>{{product_data?.shipping_date}}</span></div>
                 </div>
                 <div fxLayout="row" fxLayoutGap="24px">
-                  <div class="detail-title"><span>shipping_telephone:</span></div>
+                  <div class="detail-title"><span>Shipping Telephone:</span></div>
                   <div class="detail-data"><span>{{product_data?.shipping_telephone}}</span></div>
+                </div>
+                <div fxLayout="row" fxLayoutGap="24px">
+                  <div class="detail-title"><span>Shipping Address:</span></div>
+                  <div class="detail-data"><span>{{product_data?.shipping_street_address}}</span></div>
                 </div>
               </div>
             </div>
           </div>
         </div>
       </mat-tab>
-      <mat-tab label="NEXT ITEM">
+      <mat-tab label="Card Details">
+        <div class="person padding">
+          <div class="main-div" fxLayout="column" fxLayoutGap="20px" fxLayout.gt-sm="row" fxLayoutGap.gt-sm="24px">
+            <div fxLayout="row" fxLayoutGap="24px">
+              <div class="product-column" fxLayout="column" fxLayoutGap="15px" [fxFlex]="40">
+                <div fxLayout="row" fxLayoutGap="24px">
+                  <div class="detail-title"><span>Card Type:</span></div>
+                  <div class="detail-data"><span>{{product_data?.cc_type}}</span></div>
+                </div>
+                <div fxLayout="row" fxLayoutGap="24px">
+                  <div class="detail-title"><span>Credit Card Number:</span></div>
+                  <div class="detail-data"><span>{{product_data?.credit_card_number}}</span></div>
+                </div>
+                <div fxLayout="row" fxLayoutGap="24px">
+                  <div class="detail-title"><span>Card Expiration Date:</span></div>
+                  <div class="detail-data"><span>{{product_data?.cc_expires}}</span></div>
+                </div>
+                <div fxLayout="row" fxLayoutGap="24px">
+                  <div class="detail-title"><span>Card First 6:</span></div>
+                  <div class="detail-data"><span>{{product_data?.cc_first_6}}</span></div>
+                </div>
+              </div>
+              <div class="product-column" fxLayout="column" fxLayoutGap="15px" [fxFlex]="40">
+                <div fxLayout="row" fxLayoutGap="24px">
+                  <div class="detail-title"><span>Card Last 4:</span></div>
+                  <div class="detail-data"><span>{{product_data?.cc_last_4}}</span></div>
+                </div>
+                <div fxLayout="row" fxLayoutGap="24px">
+                  <div class="detail-title"><span>Card Number:</span></div>
+                  <div class="detail-data"><span>{{product_data?.cc_number}}</span></div>
+                </div>
+                <div fxLayout="row" fxLayoutGap="24px">
+                  <div class="detail-title"><span>Card Original First 6:</span></div>
+                  <div class="detail-data"><span>{{product_data?.cc_orig_first_6}}</span></div>
+                </div>
+                <div fxLayout="row" fxLayoutGap="24px">
+                  <div class="detail-title"><span>Card original Last 4:</span></div>
+                  <div class="detail-data"><span>{{product_data?.cc_orig_last_4}}</span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </mat-tab>
+      <mat-tab label="Others">
+        <div class="person padding">
+          <div class="main-div" fxLayout="column" fxLayoutGap="20px" fxLayout.gt-sm="row" fxLayoutGap.gt-sm="24px">
+            <div fxLayout="row" fxLayoutGap="24px">
+              <div class="product-column" fxLayout="column" fxLayoutGap="15px" [fxFlex]="40">
+                <div fxLayout="row" fxLayoutGap="24px">
+                  <div class="detail-title"><span>Retry Date:</span></div>
+                  <div class="detail-data"><span>{{product_data?.retry_date}}</span></div>
+                </div>
+                <div fxLayout="row" fxLayoutGap="24px">
+                  <div class="detail-title"><span>Auth Id:</span></div>
+                  <div class="detail-data"><span>{{product_data?.auth_id}}</span></div>
+                </div>
+                <div fxLayout="row" fxLayoutGap="24px">
+                  <div class="detail-title"><span>Hold Date:</span></div>
+                  <div class="detail-data"><span>{{product_data?.hold_date}}</span></div>
+                </div>
+                <div fxLayout="row" fxLayoutGap="24px">
+                  <div class="detail-title"><span>Afid:</span></div>
+                  <div class="detail-data"><span>{{product_data?.afid}}</span></div>
+                </div>
+                <div fxLayout="row" fxLayoutGap="24px">
+                  <div class="detail-title"><span>Sid:</span></div>
+                  <div class="detail-data"><span>{{product_data?.sid}}</span></div>
+                </div>
+                <div fxLayout="row" fxLayoutGap="24px">
+                  <div class="detail-title"><span>c1:</span></div>
+                  <div class="detail-data"><span>{{product_data?.c1}}</span></div>
+                </div>
+                <div fxLayout="row" fxLayoutGap="24px">
+                  <div class="detail-title"><span>c2:</span></div>
+                  <div class="detail-data"><span>{{product_data?.c2}}</span></div>
+                </div>
+                <div fxLayout="row" fxLayoutGap="24px">
+                  <div class="detail-title"><span>c3:</span></div>
+                  <div class="detail-data"><span>{{product_data?.c3}}</span></div>
+                </div>
+                <div fxLayout="row" fxLayoutGap="24px">
+                  <div class="detail-title"><span>Aid:</span></div>
+                  <div class="detail-data"><span>{{product_data?.aid}}</span></div>
+                </div>
+                <div fxLayout="row" fxLayoutGap="24px">
+                  <div class="detail-title"><span>Opt:</span></div>
+                  <div class="detail-data"><span>{{product_data?.opt}}</span></div>
+                </div>
+                <div fxLayout="row" fxLayoutGap="24px">
+                  <div class="detail-title"><span>Rebill Discount Percent:</span></div>
+                  <div class="detail-data"><span>{{product_data?.rebill_discount_percent}}</span></div>
+                </div>
+                <div fxLayout="row" fxLayoutGap="24px">
+                  <div class="detail-title"><span>Billing Cycle:</span></div>
+                  <div class="detail-data"><span>{{product_data?.billing_cycle}}</span></div>
+                </div>
+              </div>
+              <div class="product-column" fxLayout="column" fxLayoutGap="15px" [fxFlex]="40">
+                <div fxLayout="row" fxLayoutGap="24px">
+                  <div class="detail-title"><span>Website Received:</span></div>
+                  <div class="detail-data"><span>{{product_data?.website_received}}</span></div>
+                </div>
+                <div fxLayout="row" fxLayoutGap="24px">
+                  <div class="detail-title"><span>Website Sent:</span></div>
+                  <div class="detail-data"><span>{{product_data?.website_sent}}</span></div>
+                </div>
+                <div fxLayout="row" fxLayoutGap="24px">
+                  <div class="detail-title"><span>Preserve Gateway:</span></div>
+                  <div class="detail-data"><span>{{product_data?.preserve_gateway}}</span></div>
+                </div>
+                <div fxLayout="row" fxLayoutGap="24px">
+                  <div class="detail-title"><span>Ip Address:</span></div>
+                  <div class="detail-data"><span>{{product_data?.ip_address}}</span></div>
+                </div>
+                <div fxLayout="row" fxLayoutGap="24px">
+                  <div class="detail-title"><span>Parent Id:</span></div>
+                  <div class="detail-data"><span>{{product_data?.parent_id}}</span></div>
+                </div>
+                <div fxLayout="row" fxLayoutGap="24px">
+                  <div class="detail-title"><span>Ancestor Id:</span></div>
+                  <div class="detail-data"><span>{{product_data?.ancestor_id}}</span></div>
+                </div>
+                <div fxLayout="row" fxLayoutGap="24px">
+                  <div class="detail-title"><span>Order Sales tax:</span></div>
+                  <div class="detail-data"><span>{{product_data?.order_sales_tax}}</span></div>
+                </div>
+                <div fxLayout="row" fxLayoutGap="24px">
+                  <div class="detail-title"><span>Order Status:</span></div>
+                  <div class="detail-data"><span>{{product_data?.order_status}}</span></div>
+                </div>
+                <div fxLayout="row" fxLayoutGap="24px">
+                  <div class="detail-title"><span>Upsell Product Id:</span></div>
+                  <div class="detail-data"><span>{{product_data?.upsell_product_id}}</span></div>
+                </div>
+                <div fxLayout="row" fxLayoutGap="24px">
+                  <div class="detail-title"><span>Upsell Product Quantity :</span></div>
+                  <div class="detail-data"><span>{{product_data?.upsell_product_quantity}}</span></div>
+                </div>
+                <div fxLayout="row" fxLayoutGap="24px">
+                  <div class="detail-title"><span>Stop After Next Rebill :</span></div>
+                  <div class="detail-data"><span>{{product_data?.stop_after_next_rebill}}</span></div>
+                </div>
+                <div fxLayout="row" fxLayoutGap="24px">
+                  <div class="detail-title"><span>Sub Affiliate :</span></div>
+                  <div class="detail-data"><span>{{product_data?.sub_affiliate}}</span></div>
+                </div>
+                <!-- <div fxLayout="row" fxLayoutGap="24px">
+                  <div class="detail-title"><span>totals_breakdown :</span></div>
+                  <div class="detail-data"><span>{{product_data?.totals_breakdown}}</span></div>
+                </div> -->
+              </div>
+            </div>
+          </div>
+        </div>
       </mat-tab>
     </mat-tab-group>
   </div>
