@@ -15,8 +15,10 @@ use App\Http\Controllers\HomeController;
 |
 */
 
-
 Auth::routes();
+Route::any('/register', function() {
+    return view('auth.login');
+});
 Route::group(['middleware' => 'auth'], function () {
 Route::any('/{any}', [HomeController::class, 'index'])->where('any', '^(?!api).*$');
 });
