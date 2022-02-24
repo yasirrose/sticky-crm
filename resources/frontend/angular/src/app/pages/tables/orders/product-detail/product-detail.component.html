@@ -1,31 +1,71 @@
-<fury-page-layout mode="simple">
-    <fury-page-layout-content [@fadeInUp]>
-      <fury-list name="Product Detail" [columns]="columns" (filterChange)="onFilterChange($event)">
-        <mat-progress-bar mode="indeterminate" *ngIf="isLoading"></mat-progress-bar>
-        <table [dataSource]="dataSource" mat-table matSort>
-  
-          <ng-container matColumnDef="checkbox">
-            <th *matHeaderCellDef class="actions-cell" mat-header-cell>
-              <mat-checkbox color="primary" (click)="$event.stopPropagation()"></mat-checkbox>
-            </th>
-            <td *matCellDef="let row" class="actions-cell" mat-cell>
-              <mat-checkbox color="primary" (click)="$event.stopPropagation()"></mat-checkbox>
-            </td>
-          </ng-container>
-  
-          <ng-container *ngFor="let column of columns">
-            <ng-container *ngIf="column.isModelProperty" [matColumnDef]="column.property">
+<!-- <div class="fury-preview-card" fxLayout="column" fxLayout.gt-sm="row">
+  <div class="content" fxFlex>
+    <div class="header">
+      <div class="title">Orders</div>
+      <div class="tag">&lt;Order Detail&gt;</div>
+    </div>
+
+    <mat-tab-group class="tabs fury-tabs">
+      <mat-tab label="PRODUCT DETAIL">
+        <p class="tab-content">
+          Material buttons trigger an ink reaction on press. They may display text, imagery, or both. Flat buttons and
+          raised buttons are the most commonly used types.
+          <br><span class="semi-bold">Flat buttons:</span> Flat buttons are text-only buttons.
+        </p>
+          <div class="tab-content col-lg-12">
+            <div *ngFor="let column of columns" [matColumnDef]="column.property">
               <th *matHeaderCellDef mat-header-cell mat-sort-header> {{ column.name }}</th>
               <td *matCellDef="let row" mat-cell>
                 <ng-template [ngIf]="column.property != 'creator'">{{ row[column.property] }}</ng-template>
               </td>
-            </ng-container>
+            </div>
+          </div>
+      </mat-tab>
+      <mat-tab label="SOURCE CODE">
+        <p class="tab-content">
+          Material buttons trigger an ink reaction on press. They may display text, imagery, or both. Flat buttons and
+          raised buttons are the most commonly used types.
+          <br>
+          <br><span class="semi-bold">Flat buttons:</span>
+          <br>Flat buttons are text-only buttons.
+          <br>They may be used in dialogs, toolbars, or inline.
+          <br>They do not lift, but fill with color on press.
+          <br>
+          <br><span class="semi-bold">Raised buttons:</span>
+        </p>
+      </mat-tab>
+    </mat-tab-group>
+  </div>
+</div> -->
+
+<fury-page-layout mode="simple">
+  <fury-page-layout-content [@fadeInUp]>
+    <fury-list name="Product Detail" [columns]="columns" (filterChange)="onFilterChange($event)">
+      <mat-progress-bar mode="indeterminate" *ngIf="isLoading"></mat-progress-bar>
+      <table [dataSource]="dataSource" mat-table matSort>
+
+        <ng-container matColumnDef="checkbox">
+          <th *matHeaderCellDef class="actions-cell" mat-header-cell>
+            <mat-checkbox color="primary" (click)="$event.stopPropagation()"></mat-checkbox>
+          </th>
+          <td *matCellDef="let row" class="actions-cell" mat-cell>
+            <mat-checkbox color="primary" (click)="$event.stopPropagation()"></mat-checkbox>
+          </td>
+        </ng-container>
+
+        <ng-container *ngFor="let column of columns">
+          <ng-container *ngIf="column.isModelProperty" [matColumnDef]="column.property">
+            <th *matHeaderCellDef mat-header-cell mat-sort-header> {{ column.name }}</th>
+            <td *matCellDef="let row" mat-cell>
+              <ng-template [ngIf]="column.property != 'creator'">{{ row[column.property] }}</ng-template>
+            </td>
           </ng-container>
-          
-          <tr *matHeaderRowDef="visibleColumns" mat-header-row></tr>
-          <tr *matRowDef="let row; columns: visibleColumns;" class="clickable route-animations-elements"
-            mat-row></tr>
-        </table>
-      </fury-list>
-    </fury-page-layout-content>
-  </fury-page-layout>
+        </ng-container>
+        
+        <tr *matHeaderRowDef="visibleColumns" mat-header-row></tr>
+        <tr *matRowDef="let row; columns: visibleColumns;" class="clickable route-animations-elements"
+          mat-row></tr>
+      </table>
+    </fury-list>
+  </fury-page-layout-content>
+</fury-page-layout>

@@ -18,13 +18,16 @@ class OrdersController extends Controller
      */
     public function index(Request $request)
     {
+        DB::enableQueryLog();
         $start_date = date('Y-m-d', strtotime($request->start_date));
         $end_date = date('Y-m-d', strtotime($request->end_date));
         $pageno = isset($request->pageno) ? $request->pageno : 0;
         $no_of_records_per_page = isset($request->per_page) ? $request->per_page : 10;
         $offset = ($pageno) * $no_of_records_per_page;
-        $query = Order::orderBy('id','asc');
-        $total_rows = $query->count();
+        $query = DB::table('orders')
+        ->select('id','order_id','created_by_employee_name','order_total','decline_reason','is_cascaded','decline_reason_details','is_fraud','is_chargeback','chargeback_date','is_rma','rma_number','rma_reason','is_recurring','is_void','void_amount','void_date','is_refund','refund_amount','refund_date','order_confirmed','order_confirmed_date','acquisition_date','is_blacklisted','coupon_id','created_by_user_name','order_sales_tax','order_status','promo_code','recurring_date','response_code','return_reason');
+        
+        $total_rows = Order::where('id', '>' ,0)->count();
         if($start_date != null && $start_date != "1970-01-01" && $end_date != null && $end_date != "1970-01-01"){
             $query->whereBetween('acquisition_date', [$start_date.' 00:00:00', $end_date.' 23:59:59']);
         }
@@ -40,80 +43,35 @@ class OrdersController extends Controller
                 }
             }
         }
-        $rows = $query->offset($offset)->limit($no_of_records_per_page)->get();
-        $total_pages = ceil($total_rows / $no_of_records_per_page);
+        $rows = $query->SimplePaginate($no_of_records_per_page);
+        $total_pages = ceil($total_rows / $rows->perPage());
         $pag['count'] = $total_rows;
         $pag['total_pages'] = $total_pages;
         $pag['pageno'] = $pageno;
         $pag['rows_per_page'] = $no_of_records_per_page;
+        dd(DB::getQueryLog());
         return response()->json(['status'=>true, 'data'=>$rows, 'pag' => $pag]);
     }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
+    public function getDropDownContent(){
+        DB::enableQueryLog();
+        // $query = DB::table('orders')->where('id','>',0)->distinct();
+        // $data['gateways'] = $query->get('gateway_descriptor');
+        $data = DB::select("SELECT gateway_descriptor as aggregate from `orders` where `id` > 0")->distinct();
+        dd($data);
+        // $data['country'] = $query->get('billing_country');
+        // $data['state'] = $query->get('billing_state');
+        // $data['card_type'] = $query->get('cc_type');
+        // $data['campaigns'] = DB::table('campaigns')->select('id','name')->get();
+        dd(DB::getQueryLog());
+        return response()->json($data);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
-    {
-        //
-    }
+    public function create(){}
+    public function store(Request $request){}
+    public function show($id){}
+    public function edit($id){}
+    public function update(Request $request, $id){}
+    public function destroy($id){}
 
     public function get_product_detail(Request $request){
         $data = DB::table('orders')->select('products')->find($request->id);

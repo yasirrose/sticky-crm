@@ -14,7 +14,7 @@ class CreateOrdersTable extends Migration
     public function up()
     {
         Schema::create('orders', function (Blueprint $table) {
-            $table->id();
+            $table->id()->index();
             $table->text('order_id')->nullable()->default(null);
             // $table->timestamp('date_created_at')->nullable()->default(null);
             $table->text('created_by_employee_name')->nullable()->default(null);
@@ -59,7 +59,7 @@ class CreateOrdersTable extends Migration
             $table->text('prepaid_match')->nullable()->default(null);
             $table->text('gateway_id')->nullable()->default(null);
             $table->text('preserve_gateway')->nullable()->default(null);
-            $table->text('gateway_descriptor')->nullable()->default(null);
+            $table->text('gateway_descriptor')->nullable()->default(null)->index();
             $table->text('processor_id')->nullable()->default(null);
             $table->text('ip_address')->nullable()->default(null);
             $table->text('decline_reason')->nullable()->default(null);
@@ -149,6 +149,7 @@ class CreateOrdersTable extends Migration
             $table->text('website_received')->nullable()->default(null);
             $table->text('website_sent')->nullable()->default(null);
             $table->timestamps();
+            
         });
     }
 
