@@ -1,9 +1,10 @@
 import { Component, HostBinding, HostListener, Input, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { Observable } from 'rxjs';
+import { Subscription, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { SidenavItem } from './sidenav-item/sidenav-item.interface';
 import { SidenavService } from './sidenav.service';
+import { ToolbarService } from '../toolbar/toolbar.service';
 import { ThemeService } from '../../../@fury/services/theme.service';
 
 @Component({
@@ -13,11 +14,12 @@ import { ThemeService } from '../../../@fury/services/theme.service';
 })
 export class SidenavComponent implements OnInit, OnDestroy {
 
-  constructor(private router: Router,
-    private sidenavService: SidenavService,
-    private themeService: ThemeService) {
-  }
-  
+  userName: string;
+  userEmail: string;
+  userDetailsSubscription: Subscription;
+
+  constructor(private router: Router, private sidenavService: SidenavService, private themeService: ThemeService, private toolbarService: ToolbarService) { }
+
   sidenavUserVisible$ = this.themeService.config$.pipe(map(config => config.sidenavUserVisible));
 
   @Input()
@@ -33,9 +35,11 @@ export class SidenavComponent implements OnInit, OnDestroy {
 
 
   ngOnInit() {
+    this.getData();
     this.items$ = this.sidenavService.items$.pipe(
       map((items: SidenavItem[]) => this.sidenavService.sortRecursive(items, 'position'))
     );
+    this.userDetailsSubscription = this.sidenavService.userDetailsResponse$.subscribe(data => this.manageUserDetails(data));
   }
 
   toggleCollapsed() {
@@ -52,6 +56,23 @@ export class SidenavComponent implements OnInit, OnDestroy {
   @HostListener('touchleave')
   onMouseLeave() {
     this.sidenavService.setExpanded(false);
+  }
+
+  getData() {
+    this.sidenavService.getUserDetails();
+  }
+
+  manageUserDetails(data) {
+    console.log(data);
+    if (data.status) {
+      this.userName = data.name;
+      this.userEmail = data.email;
+    }
+  }
+
+
+  logout() {
+    this.toolbarService.logout();
   }
 
   ngOnDestroy() {

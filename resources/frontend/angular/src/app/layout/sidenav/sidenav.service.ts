@@ -5,17 +5,21 @@ import isArray from 'lodash-es/isArray';
 import isEqual from 'lodash-es/isEqual';
 import keys from 'lodash-es/keys';
 import sortBy from 'lodash-es/sortBy';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { SidenavItem } from './sidenav-item/sidenav-item.interface';
 import { filter, map, takeUntil } from 'rxjs/operators';
 import { componentDestroyed } from '../../../@fury/shared/component-destroyed';
 import { MediaObserver } from '@angular/flex-layout';
+import { ApiService } from 'src/app/api.service';
 
 @Injectable()
 export class SidenavService implements OnDestroy {
 
-  constructor(private router: Router,
-    private mediaObserver: MediaObserver) {
+  public userDetailsResponse = new BehaviorSubject([]);
+
+  userDetailsResponse$ = this.userDetailsResponse.asObservable();
+
+  constructor(private router: Router, private mediaObserver: MediaObserver, private apiService: ApiService) {
     this.router.events.pipe(
       filter<NavigationEnd>(event => event instanceof NavigationEnd),
       takeUntil(componentDestroyed(this))
@@ -216,5 +220,13 @@ export class SidenavService implements OnDestroy {
         this.setParentRecursive(subItem);
       });
     }
+  }
+
+  //custom function
+
+  public getUserDetails() {
+    this.apiService.getData('user-details').then(res => res.json()).then((data) => {
+      this.userDetailsResponse.next(data);
+    });
   }
 }

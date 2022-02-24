@@ -21,7 +21,7 @@ use App\Http\Controllers\STicketMonthlyController;
 | routes are loaded by the RouteServiceProvider within a group which
 | is assigned the "api" middleware group. Enjoy building your API!
 |
-*/
+ */
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
@@ -30,6 +30,7 @@ Route::group(['middleware' => ['web']], function () {
     Route::get('logout', '\App\Http\Controllers\Auth\LoginController@logout');
 });
 Route::resource('dashboard', DashboardController::class);
+Route::get('user-details', [DashboardController::class, 'user_data']);
 Route::resource('orders', OrdersController::class);
 Route::resource('customers', CustomerController::class);
 Route::resource('formulas', FormulasController::class);
@@ -49,6 +50,7 @@ Route::get('pull_orders_dec', [OrdersController::class, 'pull_orders_dec']);
 Route::get('pull_orders_jan', [OrdersController::class, 'pull_orders_jan']);
 Route::get('pull_daily_orders', [OrdersController::class, 'pull_daily_orders']);
 Route::get('pull_daily_order_find', [OrdersController::class, 'pull_daily_order_find']);
+Route::get('pull_yesterday_orders', [OrdersController::class, 'pull_yesterday_orders']);
 Route::get('daily_orders', [OrdersController::class, 'daily_orders']);
 Route::get('get_customer_detail', [CustomerController::class, 'get_customer_detail']);
 Route::get('get_product_detail', [OrdersController::class, 'get_product_detail']);

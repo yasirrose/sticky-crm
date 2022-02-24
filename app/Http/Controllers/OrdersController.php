@@ -640,8 +640,8 @@ class OrdersController extends Controller
 
         $api_data = json_decode(Http::asForm()->withBasicAuth($username, $password)->accept('application/json')->post($url, 
             [
-                'start_date' => '02/07/2022',
-                'end_date'=> '02/14/2022',
+                'start_date' => '02/14/2022',
+                'end_date'=> '02/16/2022',
                 'campaign_id'=> 'all',
                 'criteria'=> 'all',
                 'return_type' => 'order_view'
@@ -715,7 +715,9 @@ class OrdersController extends Controller
                         $result['employeeNotes'] = serialize($result['employeeNotes']);
                     }
                     $result['utm_info'] = serialize($result['utm_info']);
-                    $result['products'] = serialize($result['products']);
+                    if(array_key_exists('products', $result)){
+                        $result['products'] = serialize($result['products']);
+                    }
                     $result['systemNotes'] = serialize($result['systemNotes']);
                     $result['totals_breakdown'] = serialize($result['totals_breakdown']);
                     if(in_array($result['order_id'], $db_order_ids)){
@@ -741,6 +743,118 @@ class OrdersController extends Controller
         // $end = Carbon::today()->endOfDay(); 
         $start_date = Carbon::now()->startOfDay()->format('m/d/Y');
         $end_date = Carbon::now()->endOfDay()->format('m/d/Y');
+        // var_dump($end_date);die;
+
+        $db_order_ids = Order::pluck('order_id')->toArray();
+
+        $username = "yasir_dev";
+        $password = "yyutmzvRpy5TPU";
+        $url = 'https://thinkbrain.sticky.io/api/v1/order_find';
+        $model = new Order();
+
+        $api_data = json_decode(Http::asForm()->withBasicAuth($username, $password)->accept('application/json')->post($url, 
+            [
+                'start_date' => $start_date,
+                'end_date'=> $end_date,
+                'campaign_id'=> 'all',
+                'criteria'=> 'all',
+                'return_type' => 'order_view'
+            ])->getBody()->getContents());
+        
+        $order_ids = $api_data->order_id;
+        // dd($order_ids);
+        if(count($order_ids) < 500){
+            $api_orders = $api_data->data;
+            foreach($api_orders as $key=>$order){
+                $orders_arr[] = (array) $order;
+            }
+            foreach($orders_arr as $result){
+
+                $order = new Order();
+                // $month = Carbon::parse($result['acquisition_date'])->format('F');
+                // $year = Carbon::parse($result['acquisition_date'])->format('Y');
+                // $result['acquisition_month'] = $month;
+                // $result['acquisition_year'] = $year;
+                // $result['trx_month'] = $month;
+                // $result['billing_email'] = $result['email_address'];
+                // $result['billing_telephone'] = $result['customers_telephone'];
+                // $result['shipping_email'] = $result['email_address'];
+                // $result['shipping_telephone'] = $result['customers_telephone'];
+                // if(array_key_exists('employeeNotes', $result)){
+                //     $result['employeeNotes'] = serialize($result['employeeNotes']);
+                // }
+                // $result['utm_info'] = serialize($result['utm_info']);
+                // $result['products'] = serialize($result['products']);
+                // $result['systemNotes'] = serialize($result['systemNotes']);
+                // $result['totals_breakdown'] = serialize($result['totals_breakdown']);
+                if(in_array($result['order_id'], $db_order_ids)){
+                    $updated_orders++;
+                    // $order = Order::where(['order_id'=>$result['order_id']])->first();
+                    // $order->update($result);
+                }
+                else{
+                    $new_orders++;
+                    // $order->create($result);
+                }
+            }
+            return response()->json(['status'=>true, 'New Record API'=>$new_orders, 'Previous orders to be updated in orders table'=>$updated_orders]);   
+        }
+        else if(count($order_ids) < 50000){
+            
+            $chunked_array = array_chunk($order_ids, 500);
+            // dd($chunked_array);
+            foreach($chunked_array as $chucked_ids){
+                $order_view_api = 'https://thinkbrain.sticky.io/api/v1/order_view';
+                $data[] =  json_decode(Http::asForm()->withBasicAuth($username, $password)->accept('application/json')
+                            ->post($order_view_api,[ 'order_id' => $chucked_ids])->getBody()->getContents());
+
+                    // dd($data);
+                $data = (array) $data[0]->data;
+                foreach($data as $object){
+                    $results[] = (array) $object;
+                }
+                foreach($results as $result){
+
+                    $order = new Order();
+                    // $month = Carbon::parse($result['acquisition_date'])->format('F');
+                    // $year = Carbon::parse($result['acquisition_date'])->format('Y');
+                    // $result['acquisition_month'] = $month;
+                    // $result['acquisition_year'] = $year;
+                    // $result['trx_month'] = $month;
+                    // $result['billing_email'] = $result['email_address'];
+                    // $result['billing_telephone'] = $result['customers_telephone'];
+                    // $result['shipping_email'] = $result['email_address'];
+                    // $result['shipping_telephone'] = $result['customers_telephone'];
+                    // if(array_key_exists('employeeNotes', $result)){
+                    //     $result['employeeNotes'] = serialize($result['employeeNotes']);
+                    // }
+                    // $result['utm_info'] = serialize($result['utm_info']);
+                    // $result['products'] = serialize($result['products']);
+                    // $result['systemNotes'] = serialize($result['systemNotes']);
+                    // $result['totals_breakdown'] = serialize($result['totals_breakdown']);
+                    if(in_array($result['order_id'], $db_order_ids)){
+                        $updated_orders++;
+                        // $order = Order::where(['order_id'=>$result['order_id']])->first();
+                        // $order->update($result);
+                    }
+                    else{
+                        $new_orders++;
+                        // $order->create($result);
+                    }
+                }
+                $data = null;
+                $results = null;
+            }
+            return response()->json(['status'=>true, 'New Record in todays API'=>$new_orders, 'Previous orders to be updated in orders table'=>$updated_orders]);
+        }
+    }
+    public function pull_yesterday_orders(){
+        $new_orders = 0;
+        $updated_orders = 0;
+        $start = Carbon::yesterday();
+        // $end = Carbon::today()->endOfDay(); 
+        $start_date = $start->startOfDay()->format('m/d/Y');
+        $end_date = $start->endOfDay()->format('m/d/Y');
         // var_dump($end_date);die;
 
         $db_order_ids = Order::pluck('order_id')->toArray();

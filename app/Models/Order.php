@@ -147,9 +147,13 @@ class Order extends Model
         'website_received',
         'website_sent',
     ];
+    // protected $casts = [
+    //     'products' => 'unserialize'
+    // ];
 
-    public function get_order_ids($data) {
-        foreach($data as $order){
+    public function get_order_ids($data)
+    {
+        foreach ($data as $order) {
             $order_ids[] = $order['order_id'];
         }
         return $order_ids;
@@ -158,4 +162,8 @@ class Order extends Model
     {
         return Schema::getColumnListing($this->table);
     }
+    // public function getProductsAttribute($value)
+    // {
+    //     return unserialize($value);
+    // }
 }

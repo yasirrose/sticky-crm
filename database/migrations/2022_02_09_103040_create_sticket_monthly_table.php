@@ -16,6 +16,7 @@ class CreateSticketMonthlyTable extends Migration
         Schema::create('sticket_monthly', function (Blueprint $table) {
             $table->id();
             $table->string('month')->nullable()->default(null)->comment("Month");
+            $table->string('year')->nullable()->default(null)->comment("self-added");
             $table->integer('initials')->nullable()->default(0)->comment("Initials");
             $table->integer('rebills')->nullable()->default(0)->comment("Rebills");
             $table->decimal('cycle_1_per', 10, 2)->nullable()->default(null)->comment("Cycle 1 %");

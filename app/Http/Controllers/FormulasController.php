@@ -37,7 +37,7 @@ class FormulasController extends Controller
      */
     public function store(Request $request)
     {
-
+        // dd($request->all());
         // $user = Auth::user();
         // dd(auth('api')->user() );
         $formula = new Formula();
