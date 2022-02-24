@@ -22,7 +22,7 @@ class STicketWeeklyController extends Controller
         return response()->json(['status' => true, 'data' => $data]);
         /* 
             !implementation of the formulas in the whole database
-        */
+         */
         $db_dates = STicketWeekly::pluck('week')->toArray();
         $data = STicketWeekly::all();
         // dd($data);
@@ -232,5 +232,135 @@ class STicketWeeklyController extends Controller
     public function destroy($id)
     {
         //
+    }
+    public function refresh_weekly()
+    {
+        $db_dates = STicketWeekly::pluck('week')->toArray();
+        // $data = STicketWeekly::latest()->first();
+        $date_today = Carbon::now()->format('Y-m-d');
+        $start_of_this_week = Carbon::now()->startOfWeek()->format('Y-m-d');
+        $end_of_this_week = Carbon::now()->endOfWeek()->format('Y-m-d');
+
+        $latest = STicketWeekly::latest()->first();
+        // if (isset($latest)) {
+        //     if ($latest->week != $start_of_this_week) {
+        //         $model = new STicketWeekly();
+        //         $model->week = $start_of_this_week;
+        //         $model->save();
+        //     }
+        // }
+
+        /* 
+            ?implementation of the formulas
+         */
+
+        $volume = 0;
+        $rebill_condition1 = 0;
+        $rebill_condition2 = 0;
+        $rebill_per_condition2 = 0;
+        $rebills = 0;
+        $rebill_per = 0;
+        $avg_day = 0;
+        $filled_per = 0;
+        $avg_ticket = 0;
+        $revenue = 0;
+        $refund = 0;
+        $refund_rate = 0;
+        $CBs = 0;
+        $CB_per = 0;
+        $CB_currency = 0;
+        $fulfillment = 0;
+        $processing = 0;
+        $cpa = 0;
+        $cpa_avg = 0;
+        $net = 0;
+        $clv = 0;
+        $week_end_ticket = carbon::parse($latest->week)->endOfWeek()->format('Y-m-d');
+        // var_dump($ticket->week);
+        Order::where(['prepaid_match' => 'NO', 'is_test_cc' => 0])->whereDate('acquisition_date', '>=', $latest->week)->whereDate('acquisition_date', '<=', $week_end_ticket)->chunk(100, function ($orders) {
+            dd($orders);
+            foreach ($orders as $order) {
+                $order->products = unserialize($order->products);
+                $order->totals_breakdown = unserialize($order->totals_breakdown);
+                /*
+                    !Calculation of initials, rebills, cycle_2, cycle_3 plus in golden ticket with order-status == "Declined"
+                 */
+                if ((Str::contains($order->products[0]->name, ['(C)']) || Str::contains($order->products[0]->name, ['(I)'])) && $order->products[0]->offer->name == 'Gizmo' && $order->order_status == 7) {
+                    $volume++;
+                }
+                if (Str::contains($order->products[0]->name, ['(R']) && $order->products[0]->offer->name == 'Gizmo' && $order->order_status == 7) {
+                    $rebill_condition1++;
+                }
+                if (Str::contains($order->products[0]->name, ['(C1)']) && $order->products[0]->offer->name == 'Gizmo' && $order->order_status == 7) {
+                    $rebill_condition2++;
+                }
+                if (Str::contains($order->products[0]->name, ['(I']) && $order->products[0]->offer->name == 'Gizmo' && $order->order_status == 7) {
+                    $rebill_per_condition2++;
+                }
+                if ($order->is_chargeback == 1 && $order->products[0]->offer->name == 'Gizmo' && $order->order_status == 7) {
+                    $CBs++;
+                }
+                // if(Str::contains($order->products[0]->name, ['(CR2)']) && $order->products[0]->offer->name == 'Golden Ticket Offer' && $order->order_status== 7){
+                //     $cycle_2++;
+                // }
+                // if(Str::contains($order->products[0]->name, ['(CR+)']) && $order->products[0]->offer->name == 'Golden Ticket Offer' && $order->order_status== 7){
+                //     $cycle_3_plus++;
+                // }
+                // if($order->is_chargeback == 1 && $order->products[0]->offer->name == 'Golden Ticket Offer' && $order->order_status== 7){
+                //     $CBs++;
+                /*
+                    !Calculation of Revenue 
+                 */
+                if ($order->order_total != null && isset($order->products[0]->offer) && $order->products[0]->offer->name == 'Gizmo') {
+                    if ($order->order_status == 7) {
+                        $revenue += $order->order_total;
+                    }
+                    if ($order->order_status == 6) {
+                    /* 
+                        !calculation of refund with order-status == "void/refunded"
+                    */
+                        $refund += $order->order_total;
+                    }
+                }
+            }
+
+        });
+        $net = $revenue + $refund + $CBs + $fulfillment + $processing + $cpa;
+        if ($rebill_condition2 != 0) {
+            $rebills = $rebill_condition1 + $rebill_condition2;
+            $rebill_per = $rebill_condition1 / $rebill_per_condition2;
+        }
+        if ($volume != 0) {
+            $avg_ticket = $revenue / $volume;
+            $clv = $net / $volume;
+        }
+        if ($revenue != 0) {
+            $refund_rate = $refund / $revenue;
+            $CB_per = $CBs / $revenue;
+            $processing = -0.2 * $revenue;
+        }
+        // if()
+
+        $latest->volume = $volume;
+        $latest->rebills = $rebills;
+        $latest->rebill_per = $rebill_per;
+        $latest->avg_day = $avg_day;
+        $latest->filled_per = $filled_per;
+        $latest->avg_ticket = $avg_ticket;
+        $latest->revenue = $revenue;
+        $latest->refund = (($refund > 0) ? -$refund : $refund);
+        $latest->refund_rate = $refund_rate;
+        $latest->CBs = $CBs;
+        $latest->CB_per = $CB_per;
+        $latest->fulfillment = $fulfillment;
+        $latest->processing = $processing;
+        // $ticket->cpa = ??
+        // $ticket->cpa_avg = ??
+        $latest->net = $net;
+        $latest->clv = $clv;
+        $latest->save();
+
+        $data = STicketWeekly::orderBy('id', 'desc')->take(10)->get();
+        return response()->json(['status' => true, 'data' => $data]);
     }
 }

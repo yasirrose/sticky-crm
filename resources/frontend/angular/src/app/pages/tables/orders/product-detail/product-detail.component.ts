@@ -1,7 +1,7 @@
 import { Component, OnInit, Inject, Input } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { ProductDetailService } from './product-detail.service';
-import { Subscription,Observable, of, ReplaySubject } from 'rxjs';
+import { Subscription, Observable, of, ReplaySubject } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { ListColumn } from 'src/@fury/shared/list/list-column.model';
 import { MatTableDataSource } from '@angular/material/table';
@@ -14,8 +14,8 @@ import { ProductDetailModel } from './product-detail.model';
   providers: [ProductDetailService]
 })
 export class ProductDetailComponent implements OnInit {
-  details : [];
-  product_data : [];
+  details: [];
+  product_data: any;
   getSubscription: Subscription;
   message: string = ""
   isLoading = false;
@@ -54,31 +54,32 @@ export class ProductDetailComponent implements OnInit {
       this.ProductDetailService.getProductDetail(data.id)
         .then(data => {
           this.product_data = data.data;
-          this.mapData().subscribe(products => {
-            this.subject$.next(products);
-          });
+          // this.mapData().subscribe(products => {
+          //   this.subject$.next(products);
+          // });
           this.isLoading = false;
         })
     }
-    this.dialogRef.updateSize('300vw','300vw')
+    // this.dialogRef.updateSize('300vw','300vw')
   }
-  get visibleColumns() {
-    return this.columns.filter(column => column.visible).map(column => column.property);
-  }
-  
-  mapData(){
-    return of(this.product_data.map(product => new ProductDetailModel(product)));
-  }
+  // get visibleColumns() {
+  //   return this.columns.filter(column => column.visible).map(column => column.property);
+  // }
+
+  // mapData() {
+  //   return of(this.product_data.map(product => new ProductDetailModel(product)));
+  // }
   ngOnInit(): void {
     this.dataSource = new MatTableDataSource();
     this.data$.pipe(
       filter(data => !!data)
     ).subscribe((products) => {
+      console.log("products:", products);
       this.products = products;
       this.dataSource.data = products;
-    });  
+    });
   };
-  
+
   onFilterChange(value) {
     if (!this.dataSource) {
       return;

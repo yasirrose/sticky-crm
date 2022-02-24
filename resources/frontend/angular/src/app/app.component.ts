@@ -54,7 +54,7 @@ export class AppComponent {
         pathMatchExact: true
       },
       {
-        name: 'customers',
+        name: 'Customers',
         routeOrFunction: '/customers',
         icon: 'group',
         badgeColor: '#2196F3',
@@ -125,74 +125,6 @@ export class AppComponent {
           }
         ]
       },
-      {
-        name: 'USER INTERFACE',
-        type: 'subheading',
-        position: 35
-      },
-      {
-        name: 'Components',
-        routeOrFunction: '/components',
-        icon: 'layers',
-        position: 40
-      },
-      {
-        name: 'Forms',
-        icon: 'description',
-        position: 45,
-        subItems: [
-          {
-            name: 'Form Elements',
-            routeOrFunction: '/forms/form-elements',
-            position: 10
-          }
-        ]
-      },
-      {
-        name: 'Drag & Drop',
-        routeOrFunction: '/drag-and-drop',
-        icon: 'mouse',
-        position: 55
-      },
-      {
-        name: 'PAGES',
-        type: 'subheading',
-        position: 65
-      },
-      {
-        name: 'Authentication',
-        icon: 'lock',
-        position: 66,
-        subItems: [
-          {
-            name: 'Login Page',
-            routeOrFunction: '/login',
-            position: 5
-          },
-          {
-            name: 'Register Page',
-            routeOrFunction: '/register',
-            position: 10
-          },
-          {
-            name: 'Forgot Password',
-            routeOrFunction: '/forgot-password',
-            position: 15
-          }
-        ]
-      },
-      {
-        name: 'Blank',
-        routeOrFunction: '/blank',
-        icon: 'picture_in_picture',
-        position: 69
-      },
-      {
-        name: 'Material Icons',
-        routeOrFunction: '/icons',
-        icon: 'grade',
-        position: 75
-      }
     ]);
   }
 }

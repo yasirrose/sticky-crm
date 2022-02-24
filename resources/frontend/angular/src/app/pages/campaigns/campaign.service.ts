@@ -66,5 +66,25 @@ export class CampaignService {
     });
     return this.data;
   }
-  
+  async refreshDailySticket(): Promise<any> {
+    await this.apiService.getData(`refresh-daily`).then(res => res.json()).then((data) => {
+      this.data = data;
+      this.sticketDailyResponse.next(data);
+    });
+    return this.data;
+  }
+  async refreshWeeklySticket(): Promise<any> {
+    await this.apiService.getData(`refresh-weekly`).then(res => res.json()).then((data) => {
+      this.data = data;
+      this.sticketWeeklyResponse.next(data);
+    });
+    return this.data;
+  }
+  async refreshMonthlySticket(): Promise<any> {
+    await this.apiService.getData(`refresh-monthly`).then(res => res.json()).then((data) => {
+      this.data = data;
+      this.sticketMonthlyResponse.next(data);
+    });
+    return this.data;
+  }
 }

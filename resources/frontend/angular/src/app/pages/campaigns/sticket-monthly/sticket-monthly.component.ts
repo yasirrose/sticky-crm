@@ -40,7 +40,7 @@
     // months: string[] = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
     // year: string = null;
     // years: number[] = [];
-    notyf = new Notyf();
+    notyf = new Notyf({ types: [ { type: 'info', background: '#6495ED', icon: '<i class="fa-solid fa-clock"></i>' }] });
   
     @Input()
     columns: ListColumn[] = [
@@ -143,6 +143,21 @@
       value = value.toLowerCase();
       this.dataSource.filter = value;
     }
+
+  async refresh() {
+    this.notyf.open({ type: 'info', message: 'Records will be refreshed soon...' });
+
+    this.isLoading = true;
+    await this.campaignService.refreshMonthlySticket()
+      .then(tickets => {
+        this.tickets = tickets.data;
+        this.dataSource.data = tickets.data;
+        this.notyf.success('Records are updated successfully');
+        this.isLoading = false;
+      }, error => {
+        this.isLoading = false;
+      });
+  }
 
     ngOnDestroy() {
     }

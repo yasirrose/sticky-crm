@@ -19,7 +19,8 @@ class CampaignsController extends Controller
      */
     public function index()
     {
-        //
+        $data = Campaign::all();
+        return response()->json(['status' => true, 'data' => $data]);
     }
 
     /**

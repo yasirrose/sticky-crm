@@ -8,14 +8,15 @@ use Illuminate\Database\Eloquent\Model;
 class Customer extends Model
 {
     use HasFactory;
+    protected $table = 'customers';
+    public $timestamps = false;
+    public $incrementing = false;
+    protected $dates = ['deleted_at'];
     protected $casts = [
         'custom_fields' => 'array',
         'addresses' => 'array',
         'notes' => 'array'
     ];
-    protected $table = 'customers';
-    public $timestamps = false;
-    public $incrementing = false;
     protected $guarded = [];
     protected $fillable = [
         'id',

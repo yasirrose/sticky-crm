@@ -19,27 +19,41 @@ export class OrdersService {
   orders: any;
   gateway: any;
   public ordersGetResponse = new BehaviorSubject([]);
+  public getCampaignsResponse = new BehaviorSubject([]);
+  public getProductsResponse = new BehaviorSubject([]);
 
   ordersGetResponse$ = this.ordersGetResponse.asObservable();
+  getCampaignsResponse$ = this.getCampaignsResponse.asObservable();
+  getProductsResponse$ = this.getProductsResponse.asObservable();
 
   constructor(private apiService: ApiService) { }
 
   async getOrders(filters): Promise<any> {
-    await this.apiService.getData(`orders?page=${filters.currentPage + 1}&per_page=${filters.pageSize}
-    &compaign=${filters.campaign}&start_date=${filters.start}&end_date=${filters.end}&fields=${filters.all_fields}&values=${filters.all_values}`)
-    .then(res => res.json()).then((data) => {
-      this.orders = data;
-      this.ordersGetResponse.next(data);
-    });
+    await this.apiService.getData(`orders?pageno=${filters.currentPage}&per_page=${filters.pageSize}
+    &start_date=${filters.start}&end_date=${filters.end}&fields=${filters.all_fields}&values=${filters.all_values}`)
+      .then(res => res.json()).then((data) => {
+        this.orders = data;
+        this.ordersGetResponse.next(data);
+      });
     return this.orders;
   }
   async getDropContent(): Promise<any> {
     await this.apiService.getData(`getDropDownContent`)
-    .then(res => res.json()).then((data) => {
-      this.gateway = data;
-      this.ordersGetResponse.next(data);
-    });
+      .then(res => res.json()).then((data) => {
+        this.gateway = data;
+        this.ordersGetResponse.next(data);
+      });
     return this.gateway;
+  }
+  async getCampaigns(): Promise<any> {
+    await this.apiService.getData(`campaigns`).then(res => res.json()).then((data) => {
+      this.getCampaignsResponse.next(data);
+    });
+  }
+  async getProducts(): Promise<any> {
+    await this.apiService.getData(`products`).then(res => res.json()).then((data) => {
+      this.getProductsResponse.next(data);
+    });
   }
 
 

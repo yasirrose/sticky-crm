@@ -15,10 +15,10 @@
         <div fxLayoutGap="50px">
           <div fxLayout="column">
             <div [@fadeInUp]>
-              <h3>Date Range</h3>
+              <h3>Date Option</h3>
             </div>
             <div fxLayout="column" layout-wrap fxLayoutGap="10px">
-              <div>
+              <!-- <div>
                 <mat-form-field appearance="fill">
                   <mat-label>Select an option</mat-label>
                   <mat-select [(value)]="selected">
@@ -27,8 +27,7 @@
                     <mat-option value="option3">Option 3</mat-option>
                   </mat-select>
                 </mat-form-field>
-                <p>You selected: {{selected}}</p>
-              </div>
+              </div> -->
               <div fxLayout="row" layout-wrap fxLayoutGap="10px">
                 <div><button mat-raised-button color="warn" (click)="selectDate('today')">Today</button></div>
                 <div><button mat-raised-button color="warn" (click)="selectDate('thisMonth')">This Month</button></div>
@@ -58,24 +57,21 @@
                   <mat-error *ngIf="range.controls.end.hasError('matEndDateInvalid')">Invalid end date</mat-error>
                 </mat-form-field>
               </div>
-              <button mat-raised-button color="accent" (click)="getData()">Apply</button>
             </div>
           </div>
           <div fxFlex="100" fxFlex.xs="55">
             <div [@fadeInUp]>
               <h3>Other Options</h3>
             </div>
-            <div fxLayout="row" fxLayoutGap="50px">
-              <div fxLayout="column" fxLayoutGap="10px">
+            <div fxLayout="row" fxLayoutGap="30px">
+              <div fxLayout="column" fxLayoutGap="0px">
                 <!-- Campaigns -->
                 <div>
                   <mat-form-field appearance="fill">
                     <mat-label>Campaign</mat-label>
                     <mat-select [(value)]="campaign" (selectionChange)="commonFilter($event.value, 'campaign_id')">
                       <mat-option [value]="">All Campaigns</mat-option>
-                      <ng-container *ngFor="let campaign of filterData.campaigns">
-                        <mat-option [value]="campaign.id">{{ campaign.name }}</mat-option>
-                      </ng-container>
+                      <mat-option *ngFor="let campaign of campaignOptions" [value]="campaign['c_id']">{{campaign['name']}}</mat-option>
                     </mat-select>
                   </mat-form-field>
                 </div>
@@ -85,7 +81,7 @@
                   <mat-form-field appearance="fill">
                     <mat-label>Campaign Category</mat-label>
                     <mat-select [(value)]="campaignCategory">
-                      <mat-option value="allCategories">All Categories</mat-option>
+                      <mat-option [value]="campaignCategory">All Categories</mat-option>
                       <mat-option value="option2">Option 2</mat-option>
                       <mat-option value="option3">Option 3</mat-option>
                     </mat-select>
@@ -94,39 +90,21 @@
                 <!-- <p>You selected: {{campaignCategory}}</p> -->
                 <!-- product -->
                 <div>
-                  <!-- <div class="md-caption">Campaign</div> -->
                   <mat-form-field appearance="fill">
                     <mat-label>Product</mat-label>
                     <mat-select [(value)]="product" (selectionChange)="commonFilter($event.value, 'products')">
-                      <mat-option value="">All Products</mat-option>
-                      <ng-container *ngFor="let product of filterData.products">
-                        <mat-option *ngIf="product" [value]="product">{{ product }}</mat-option>
-                      </ng-container>
+                      <mat-option [value]="">All Products</mat-option>
+                      <mat-option *ngFor="let product of productOptions" [value]="product['name']">{{product['name']}}</mat-option>
                     </mat-select>
                   </mat-form-field>
                   <!-- <p>You selected: {{product}}</p> -->
                 </div>
-                <!-- state -->
-                <div>
-                  <!-- <div class="md-caption">Campaign</div> -->
-                  <mat-form-field appearance="fill">
-                    <mat-label>State</mat-label>
-                    <mat-select [(value)]="state" (selectionChange)="commonFilter($event.value, 'billing_state')">
-                      <mat-option [value]="">All States</mat-option>
-                      <ng-container *ngFor="let state of filterData.state">
-                        <mat-option [value]="state.billing_state">{{ state.billing_state }}</mat-option>
-                      </ng-container>
-                    </mat-select>
-                  </mat-form-field>
-                  <!-- <p>You selected: {{callCenter}}</p> -->
-                </div>
                 <!-- product Category -->
-                <!-- <div class="md-caption">Campaign</div> -->
                 <!-- <div>
                   <mat-form-field appearance="fill">
                     <mat-label>Product Category</mat-label>
                     <mat-select [(value)]="productCategory">
-                      <mat-option value="allCategories">All Categories</mat-option>
+                      <mat-option [value]="productCategory">All Categories</mat-option>
                       <mat-option value="option2">Option 2</mat-option>
                       <mat-option value="option3">Option 3</mat-option>
                     </mat-select>
@@ -134,12 +112,11 @@
                 </div> -->
                 <!-- <p>You selected: {{productCategory}}</p> -->
                 <!-- All Campaign Products -->
-                <!-- <div class="md-caption">Campaign</div> -->
                 <!-- <div>
                   <mat-form-field appearance="fill">
                     <mat-label>Campaign Product</mat-label>
                     <mat-select [(value)]="campaignProduct">
-                      <mat-option value="allCampaignProducts">All Campaign Products</mat-option>
+                      <mat-option [value]="campaignProduct">All Campaign Products</mat-option>
                       <mat-option value="option2">Option 2</mat-option>
                       <mat-option value="option3">Option 3</mat-option>
                     </mat-select>
@@ -147,24 +124,22 @@
                 </div> -->
                 <!-- <p>You selected: {{campaignProduct}}</p> -->
                 <!-- All Affiliates -->
-                <!-- <div class="md-caption">Campaign</div> -->
                 <!-- <div>
                   <mat-form-field appearance="fill">
                     <mat-label>Affiliate</mat-label>
                     <mat-select [(value)]="affiliate">
-                      <mat-option value="allAffiliates">All Affiliates</mat-option>
+                      <mat-option [value]="affiliate">All Affiliates</mat-option>
                       <mat-option value="option2">Option 2</mat-option>
                       <mat-option value="option3">Option 3</mat-option>
                     </mat-select>
                   </mat-form-field>
                 </div> -->
                 <!-- <p>You selected: {{campaignProduct}}</p> -->
-                <!-- <div class="md-caption">Campaign</div> -->
                 <!-- <div>
                   <mat-form-field appearance="fill">
                     <mat-label>Call Center</mat-label>
                     <mat-select [(value)]="callCenter">
-                      <mat-option value="allCallCenters">All Call Centers</mat-option>
+                      <mat-option [value]="callCenter">All Call Centers</mat-option>
                       <mat-option value="option2">Option 2</mat-option>
                       <mat-option value="option3">Option 3</mat-option>
                     </mat-select>
@@ -172,14 +147,13 @@
                 </div> -->
               </div>
               <!-- <p>You selected: {{callCenter}}</p> -->
-              <div fxLayout="column" fxLayoutGap="10px">
+              <div fxLayout="column" fxLayoutGap="0px">
                 <!-- Bill Type -->
-                <!-- <div class="md-caption">Campaign</div> -->
                 <!-- <div>
                   <mat-form-field appearance="fill">
                     <mat-label>Bill Type</mat-label>
                     <mat-select [(value)]="billType">
-                      <mat-option value="allBillings">All Billings</mat-option>
+                      <mat-option [value]="billType">All Billings</mat-option>
                       <mat-option value="option2">Option 2</mat-option>
                       <mat-option value="option3">Option 3</mat-option>
                     </mat-select>
@@ -188,24 +162,22 @@
                 <!-- <p>You selected: {{campaign}}</p> -->
                 <!-- Billing Cycle -->
                 <div>
-                  <!-- <div class="md-caption">Campaign</div> -->
                   <mat-form-field appearance="fill">
                     <mat-label>Billing Cycle</mat-label>
                     <mat-select [(value)]="billingCycle" (selectionChange)="commonFilter($event.value, 'billing_cycle')">
                       <mat-option [value]="">All</mat-option>
-                      <mat-option [value]="1">ON</mat-option>
-                      <mat-option [value]="0">OFF</mat-option>
+                      <mat-option value="1">ON</mat-option>
+                      <mat-option value="0">OFF</mat-option>
                     </mat-select>
                   </mat-form-field>
                   <!-- <p>You selected: {{campaignCategory}}</p> -->
                 </div>
                 <!-- Recycle # -->
-                <!-- <div class="md-caption">Campaign</div> -->
                 <!-- <div>
                   <mat-form-field appearance="fill">
                     <mat-label>Recycle#</mat-label>
                     <mat-select [(value)]="recycleNo">
-                      <mat-option value="all">All</mat-option>
+                      <mat-option [value]="recycleNo">All</mat-option>
                       <mat-option value="option2">Option 2</mat-option>
                       <mat-option value="option3">Option 3</mat-option>
                     </mat-select>
@@ -213,12 +185,11 @@
                 </div> -->
                 <!-- <p>You selected: {{product}}</p> -->
                 <!-- Txn Type -->
-                <!-- <div class="md-caption">Campaign</div> -->
                 <!-- <div>
                   <mat-form-field appearance="fill">
                     <mat-label>Txn Type</mat-label>
                     <mat-select [(value)]="txnType">
-                      <mat-option value="all">All</mat-option>
+                      <mat-option [value]="txnType">All</mat-option>
                       <mat-option value="option2">Option 2</mat-option>
                       <mat-option value="option3">Option 3</mat-option>
                     </mat-select>
@@ -226,56 +197,48 @@
                 </div> -->
                 <!-- <p>You selected: {{productCategory}}</p> -->
                 <!-- Currency -->
-                <!-- <div class="md-caption">Campaign</div> -->
                 <div>
                   <mat-form-field appearance="fill">
                     <mat-label>Currency</mat-label>
-                    <mat-select [(value)]="currency">
-                      <mat-option value="allCurrencies">All Currencies</mat-option>
-                      <mat-option value="option2">Option 2</mat-option>
-                      <mat-option value="option3">Option 3</mat-option>
+                    <mat-select [(value)]="currency" (selectionChange)="commonFilter($event.value, 'currency')">
+                      <mat-option [value]="">All Currencies</mat-option>
+                      <mat-option value="US">US</mat-option>
                     </mat-select>
                   </mat-form-field>
                 </div>
                 <!-- <p>You selected: {{campaignProduct}}</p> -->
                 <!-- Country -->
-                <div>
-                  <!-- <div class="md-caption">Campaign</div> -->
+                <!-- <div>
                   <mat-form-field appearance="fill">
                     <mat-label>Country</mat-label>
-                    <mat-select [(value)]="country" (selectionChange)="commonFilter($event.value, 'billing_country')">
-                      <mat-option value="">All Countries</mat-option>
-                      <ng-container *ngFor="let country of filterData.country">
-                        <mat-option [value]="country.billing_country">{{ country.billing_country }}</mat-option>
-                      </ng-container>
+                    <mat-select [(value)]="country">
+                      <mat-option [value]="country">All Countries</mat-option>
+                      <mat-option value="US">United States</mat-option>
                     </mat-select>
                   </mat-form-field>
-                  <!-- <p>You selected: {{campaignProduct}}</p> -->
-                </div>
-
+                </div> -->
               </div>
-              <div fxLayout="column" fxLayoutGap="10px">
+              <div fxLayout="column" fxLayoutGap="0px">
                 <!-- Gateway -->
-                <div>
+                <!-- <div>
                   <mat-form-field appearance="fill">
                     <mat-label>Gateway</mat-label>
-                    <mat-select [(value)]="gateway" (selectionChange)="commonFilter($event.value, 'gateway_descriptor')">
-                      <mat-option [value]="">All</mat-option>
+                    <mat-select [(value)]="gateway">
+                      <mat-option [value]="gateway">All</mat-option>
                       <ng-container *ngFor="let gateway of filterData.gateways">
                         <mat-option *ngIf="gateway.gateway_descriptor" [value]="gateway.gateway_descriptor">{{
                           gateway.gateway_descriptor }}</mat-option>
                       </ng-container>
                     </mat-select>
                   </mat-form-field>
-                </div>
+                </div> -->
                 <!-- <p>You selected: {{campaign}}</p> -->
                 <!-- Gateway Category -->
-
                 <!-- <div>
                   <mat-form-field appearance="fill">
                     <mat-label>Gateway Category</mat-label>
                     <mat-select [(value)]="gatewayCategory">
-                      <mat-option value="allGatewayCategories">All Gateway categories</mat-option>
+                      <mat-option [value]="gatewayCategory">All Gateway categories</mat-option>
                       <mat-option value="option2">Option 2</mat-option>
                       <mat-option value="option3">Option 3</mat-option>
                     </mat-select>
@@ -284,35 +247,33 @@
                 <!-- <p>You selected: {{gatewayCategory}}</p> -->
                 <!-- Gateway Type -->
                 <!-- <div>
-                    <mat-form-field appearance="fill">
-                      <mat-label>Gateway Type</mat-label>
-                      <mat-select [(value)]="gatewayType">
-                        <mat-option value="all">All</mat-option>
-                        <mat-option value="option2">Option 2</mat-option>
-                        <mat-option value="option3">Option 3</mat-option>
-                      </mat-select>
-                    </mat-form-field>
-                  </div> -->
+                  <mat-form-field appearance="fill">
+                    <mat-label>Gateway Type</mat-label>
+                    <mat-select [(value)]="gatewayType">
+                      <mat-option [value]="gatewayType">All</mat-option>
+                      <mat-option value="option2">Option 2</mat-option>
+                      <mat-option value="option3">Option 3</mat-option>
+                    </mat-select>
+                  </mat-form-field>
+                </div> -->
                 <!-- <p>You selected: {{gatewayType}}</p> -->
                 <!-- Card Type -->
                 <div>
                   <mat-form-field appearance="fill">
                     <mat-label>Card Type</mat-label>
-                    <mat-select [(value)]="cc_type" (selectionChange)="commonFilter($event.value, 'cc_type')">
+                    <mat-select [(value)]="ccType" (selectionChange)="commonFilter($event.value, 'cc_type')">
                       <mat-option [value]="">All</mat-option>
-                      <ng-container *ngFor="let card of filterData.card_type">
-                        <mat-option *ngIf="card.cc_type" [value]="card.cc_type">{{ card.cc_type }}</mat-option>
-                      </ng-container>
+                      <mat-option *ngFor="let cardType of cardOptions" [value]="cardType">{{ cardType }}</mat-option>
                     </mat-select>
                   </mat-form-field>
                 </div>
-                <!-- <p>You selected: {{cardType}}</p> -->
+                <!-- <p>You selected: {{ccType}}</p> -->
                 <!-- Credit/Debit -->
                 <!-- <div>
                   <mat-form-field appearance="fill">
                     <mat-label>Credit/Debit</mat-label>
                     <mat-select [(value)]="creditOrDebit">
-                      <mat-option value="all">All</mat-option>
+                      <mat-option [value]="creditOrDebit">All</mat-option>
                       <mat-option value="option2">Option 2</mat-option>
                       <mat-option value="option3">Option 3</mat-option>
                     </mat-select>
@@ -325,15 +286,31 @@
                     <mat-label>Is 3D Secure</mat-label>
                     <mat-select [(value)]="is_3d_protected" (selectionChange)="commonFilter($event.value, 'is_3d_protected')">
                       <mat-option [value]="">All</mat-option>
-                      <ng-container *ngFor="let secure of filterData.secure">
-                        <mat-option *ngIf="secure.is_3d_protected" [value]="secure.is_3d_protected">{{
-                          secure.is_3d_protected }}</mat-option>
-                      </ng-container>
+                      <mat-option value="1">Yes</mat-option>
+                      <mat-option value="0">No</mat-option>
+
                     </mat-select>
                   </mat-form-field>
                 </div>
                 <!-- <p>You selected: {{threeDSecure}}</p> -->
               </div>
+              <div fxLayout="column" fxLayoutGap="0px">
+                <!-- state -->
+                <div>
+                  <mat-form-field appearance="fill">
+                    <mat-label>State</mat-label>
+                    <mat-select [(value)]="state" (selectionChange)="commonFilter($event.value, 'shipping_state')">
+                      <mat-option [value]="">All States</mat-option>
+                      <mat-option *ngFor="let state of stateOptions" [value]="state.abbreviation">{{state.name}} -
+                        {{state.abbreviation}}</mat-option>
+                    </mat-select>
+                  </mat-form-field>
+                  <!-- <p>You selected: {{callCenter}}</p> -->
+                </div>
+              </div>
+            </div>
+            <div fxLayout="row" fxLayoutAlign="end end">
+              <button mat-raised-button color="accent" (click)="getData()">Apply</button>
             </div>
           </div>
         </div>
@@ -343,11 +320,11 @@
 
   <fury-page-layout-content [@fadeInUp]>
     <fury-list name="Orders" [columns]="columns" (filterChange)="onFilterChange($event)">
-      <div class="actions">
+      <!-- <div class="actions">
         <button class="create" (click)="createCustomer()" type="button" mat-mini-fab color="primary">
           <mat-icon>add</mat-icon>
         </button>
-      </div>
+      </div> -->
       <mat-progress-bar mode="indeterminate" *ngIf="isLoading"></mat-progress-bar>
       <table [dataSource]="dataSource" mat-table matSort>
 
@@ -379,14 +356,14 @@
 
             <mat-menu #actionsMenu="matMenu" yPosition="below" xPosition="before">
               <button (click)="openDialog(row.id)" mat-menu-item>
-                <span>View Product Detail</span>
+                <span>View Details</span>
               </button>
             </mat-menu>
           </td>
         </ng-container>
 
         <tr *matHeaderRowDef="visibleColumns" mat-header-row></tr>
-        <tr (click)="updateCustomer(row)" *matRowDef="let row; columns: visibleColumns;" class="clickable route-animations-elements"
+        <tr (click)="openDialog(row.id)" *matRowDef="let row; columns: visibleColumns;" class="clickable route-animations-elements"
           mat-row></tr>
       </table>
 

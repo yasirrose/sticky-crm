@@ -19,7 +19,7 @@ class CustomerController extends Controller
         $pageno = isset($request->pageno) ? $request->pageno : 0;
         $no_of_records_per_page = isset($request->per_page) ? $request->per_page : 10;
         $offset = ($pageno) * $no_of_records_per_page;
-        $query = Customer::orderBy('id','asc')->select('id','email','first_name','last_name','phone','addresses');
+        $query = Customer::orderBy('id', 'desc')->select('id', 'email', 'first_name', 'last_name', 'phone', 'addresses');
         $total_rows = $query->count();
         $data = $query->offset($offset)->limit($no_of_records_per_page)->get();
         $total_pages = ceil($total_rows / $no_of_records_per_page);
@@ -27,12 +27,13 @@ class CustomerController extends Controller
         $pag['total_pages'] = $total_pages;
         $pag['pageno'] = $pageno;
         $pag['rows_per_page'] = $no_of_records_per_page;
-        return response()->json(['status'=>true, 'data'=>$data, 'pag' => $pag]);
+        return response()->json(['status' => true, 'data' => $data, 'pag' => $pag]);
     }
-    public function get_customer_detail(Request $request){
+    public function get_customer_detail(Request $request)
+    {
         $customerData = Customer::findOrFail($request->id);
         $customerAddress = $customerData->addresses;
-        return response()->json(['status'=>true, 'data'=>$customerData, 'address_data' => $customerAddress]);
+        return response()->json(['status' => true, 'data' => $customerData, 'address_data' => $customerAddress]);
     }
     public function create()
     {
@@ -90,11 +91,19 @@ class CustomerController extends Controller
      * @param  \App\Models\customers  $customers
      * @return \Illuminate\Http\Response
      */
-    public function destroy()
+    public function destroy($id)
     {
-        //
+        // dd('die');
+        $customer = Customer::find($id);
+        if($customer){
+            $customer->delete();
+            return response()->json(['status' => true, 'message' => 'Customer Deleted Successfully']);
+        }else {
+            return response()->json(['status' => false, 'message'=>"Opps!! Customer Could not be deleted"]);
+        }
     }
-    public function refresh_customers(){
+    public function refresh_customers()
+    {
 
         $created = 0;
         $updated = 0;
@@ -103,51 +112,49 @@ class CustomerController extends Controller
         $username = "yasir_dev";
         $password = "yyutmzvRpy5TPU";
         $url = 'https://thinkbrain.sticky.io/api/v2/contacts';
-        $page = 4500;
+        $page = 16053;
 
-        $api_data = Http::withBasicAuth($username, $password)->accept('application/json')->get($url, [ 'page'=> $page ]);
+        $api_data = Http::withBasicAuth($username, $password)->accept('application/json')->get($url, ['page' => $page]);
         $response['customers'] = $api_data['data'];
         $last_page = $api_data['last_page'];
 
         // dd($last_page);
-        if($response['customers']){
-            foreach($response['customers'] as $result){
+        if ($response['customers']) {
+            foreach ($response['customers'] as $result) {
                 $customer = new Customer();
-                
+
                 $result['customer_id'] = $result['id'];
                 $result['custom_fields'] = json_encode($result['custom_fields']);
                 $result['addresses'] = json_encode($result['addresses']);
                 $result['notes'] = json_encode($result['notes']);
-        
-                if(in_array($result['email'], $db_customers)){
+
+                if (in_array($result['email'], $db_customers)) {
                     $updated++;
-                    $customer = Customer::where(['email'=>$result['email']])->first();
+                    $customer = Customer::where(['email' => $result['email']])->first();
                     $customer->update($result);
-                }
-                else{
+                } else {
                     $created++;
                     $customer->create($result);
                 }
             }
-            if($last_page > 1){
+            if ($last_page > 1) {
                 $page++;
-                for($page; $page<=$last_page; $page++){
-                    
-                    $response['customers'] = Http::withBasicAuth($username, $password)->accept('application/json')->get($url, [ 'page'=> $page ])['data'];
-                    
-                    foreach($response['customers'] as $result){
+                for ($page; $page <= $last_page; $page++) {
+
+                    $response['customers'] = Http::withBasicAuth($username, $password)->accept('application/json')->get($url, ['page' => $page])['data'];
+
+                    foreach ($response['customers'] as $result) {
                         $customer = new Customer();
                         $result['customer_id'] = $result['id'];
                         $result['custom_fields'] = json_encode($result['custom_fields']);
                         $result['addresses'] = json_encode($result['addresses']);
                         $result['notes'] = json_encode($result['notes']);
-                
-                        if(in_array($result['email'], $db_customers)){
+
+                        if (in_array($result['email'], $db_customers)) {
                             $updated++;
-                            $customer = Customer::where(['email'=>$result['email']])->first();
+                            $customer = Customer::where(['email' => $result['email']])->first();
                             $customer->update($result);
-                        }
-                        else{
+                        } else {
                             $created++;
                             $customer->create($result);
                         }
@@ -156,6 +163,6 @@ class CustomerController extends Controller
                 }
             }
         }
-        return response()->json(['status'=>true, 'new customers created'=>$created, 'Updated customers'=>$updated]);
+        return response()->json(['status' => true, 'new customers created' => $created, 'Updated customers' => $updated]);
     }
 }

@@ -3,6 +3,7 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class CreateCustomersTable extends Migration
 {
@@ -27,6 +28,7 @@ class CreateCustomersTable extends Migration
             $table->json('addresses')->nullable()->default(null);
             $table->json('notes')->nullable()->default(null);
             $table->integer('is_sms_communication_enabled')->nullable()->default(null);
+            $table->softDeletes();
             $table->timestamps();
         });
     }
