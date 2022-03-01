@@ -96,7 +96,7 @@ class OrdersController extends Controller
         /* 
             
         */
-        $rows = $query->SimplePaginate($no_of_records_per_page);
+        $rows = $query->orderBy('id', 'desc')->SimplePaginate($no_of_records_per_page);
         $total_pages = ceil($total_rows / $rows->perPage());
 
         // $rows = $query->offset($offset)->limit($no_of_records_per_page)->get();
@@ -721,8 +721,8 @@ class OrdersController extends Controller
         $api_data = json_decode(Http::asForm()->withBasicAuth($username, $password)->accept('application/json')->post(
             $url,
             [
-                'start_date' => '02/18/2022',
-                'end_date' => '02/24/2022',
+                'start_date' => '02/24/2022',
+                'end_date' => '02/28/2022',
                 'campaign_id' => 'all',
                 'criteria' => 'all',
                 'return_type' => 'order_view'

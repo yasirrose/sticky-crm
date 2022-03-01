@@ -33,11 +33,11 @@ class STicketDailyController extends Controller
                     $model->save();
                 }
             }
-        */
+         */
 
         /* 
             ?check entry inserted for today 
-        */
+         */
         $last = STicketDaily::latest()->first();
         if (isset($last)) {
             if ($last->date != $date_today) {
@@ -50,7 +50,7 @@ class STicketDailyController extends Controller
         $latest = STicketDaily::latest()->first();
         /* 
             ?formula implementation on the date today entry
-        */
+         */
         $initials = 0;
         $decline = 0;
         $decline_per = 0;
@@ -59,6 +59,7 @@ class STicketDailyController extends Controller
         $EOT_approved = 0;
         $EOT_per = 0;
 
+        $decline = Order::where(['prepaid_match' => 'NO', 'is_test_cc' => 0, 'order_status' => 7])->whereDate('acquisition_date', '=', $latest->date)->count();
         $orders = Order::where(['prepaid_match' => 'NO', 'is_test_cc' => 0])->whereDate('acquisition_date', '=', $latest->date)->get();
         // dd($orders);
         foreach ($orders as $order) {
@@ -89,7 +90,7 @@ class STicketDailyController extends Controller
         }
 
         if ($initials != 0) {
-            $decline_per = $decline / $initials + $decline;
+            $decline_per = $decline / ($initials + $decline);
             $EOT_per = $EOT_approved / $initials;
         }
 
@@ -171,13 +172,14 @@ class STicketDailyController extends Controller
     {
         //
     }
-    public function refresh_daily(){
+    public function refresh_daily()
+    {
 
         $db_dates = STicketDaily::pluck('date')->toArray();
         $date_today = Carbon::now()->format('Y-m-d');
         /* 
             ?check entry inserted for today 
-        */
+         */
         $last = STicketDaily::latest()->first();
         if (isset($last)) {
             if ($last->date != $date_today) {
@@ -190,7 +192,7 @@ class STicketDailyController extends Controller
         $latest = STicketDaily::latest()->first();
         /* 
             ?formula implementation on the date today entry
-        */
+         */
         $initials = 0;
         $decline = 0;
         $decline_per = 0;
@@ -199,6 +201,7 @@ class STicketDailyController extends Controller
         $EOT_approved = 0;
         $EOT_per = 0;
 
+        $decline = Order::where(['prepaid_match' => 'NO', 'is_test_cc' => 0, 'order_status' => 7])->whereDate('acquisition_date', '=', $latest->date)->count();
         $orders = Order::where(['prepaid_match' => 'NO', 'is_test_cc' => 0])->whereDate('acquisition_date', '=', $latest->date)->get();
         // dd($orders);
         foreach ($orders as $order) {
@@ -229,7 +232,7 @@ class STicketDailyController extends Controller
         }
 
         if ($initials != 0) {
-            $decline_per = $decline / $initials + $decline;
+            $decline_per = $decline / ($initials + $decline);
             $EOT_per = $EOT_approved / $initials;
         }
 
@@ -241,6 +244,88 @@ class STicketDailyController extends Controller
         $latest->EOT_approved = $EOT_approved;
         $latest->EOT_per = $EOT_per;
         $latest->save();
+
+        $data = STicketDaily::orderBy('id', 'desc')->take(10)->get();
+        return response()->json(['status' => true, 'data' => $data]);
+    }
+    public function refresh_all_daily_tickets()
+    {
+
+        $db_dates = STicketDaily::pluck('date')->toArray();
+        $date_today = Carbon::now()->format('Y-m-d');
+        /* 
+            ?check entry inserted for today 
+         */
+        $last = STicketDaily::latest()->first();
+        if (isset($last)) {
+            if ($last->date != $date_today) {
+                $today = new STicketDaily();
+                $today->date = Carbon::now();
+                $today->save();
+            }
+        }
+
+        $data = STicketDaily::orderBy('id', 'desc')->get();
+        // $data = STicketDaily::all();
+        /* 
+            ?formula implementation on the date today entry
+         */
+
+        foreach ($data as $day) {
+            
+            $initials = 0;
+            $decline = 0;
+            $decline_per = 0;
+            $scrub_per = 0;
+            $EOT_declines = 0;
+            $EOT_approved = 0;
+            $EOT_per = 0;
+
+            $decline = Order::where(['prepaid_match' => 'NO', 'is_test_cc' => 0, 'order_status' => 7])->whereDate('acquisition_date', '=', $day->date)->count();
+            $orders = Order::where(['prepaid_match' => 'NO', 'is_test_cc' => 0])->whereDate('acquisition_date', '=', $day->date)->get();
+            // dd($orders);
+            foreach ($orders as $order) {
+                $order->products = unserialize($order->products);
+                $order->totals_breakdown = unserialize($order->totals_breakdown);
+                /*
+                    !Calculation of initials, EOT_approved in campaigns with order-status == "Declined"
+                 */
+                if (isset($order->products[0]->offer) && Str::contains($order->products[0]->name, ['(c)']) && $order->products[0]->offer->name == 'Golden Ticket Offer' && $order->order_status == 7) {
+                    $initials++;
+                }
+                if (isset($order->products[0]->offer) && Str::contains($order->products[0]->name, ['(CR1)']) && $order->products[0]->offer->name == 'EssentialSweep' && $order->order_status == 7) {
+                    $EOT_approved++;
+                }
+                /* 
+                    !comments for remaining formulas in future that are missing
+                 */
+                // if(Str::contains($order->products[0]->name, ['(CR2)']) && $order->products[0]->offer->name == 'Golden Ticket Offer' && $order->order_status== 7){
+                //     $cycle_2++;
+                // }
+                // if(Str::contains($order->products[0]->name, ['(CR+)']) && $order->products[0]->offer->name == 'Golden Ticket Offer' && $order->order_status== 7){
+                //     $cycle_3_plus++;
+                // }
+                // if($order->is_chargeback == 1 && $order->products[0]->offer->name == 'Golden Ticket Offer' && $order->order_status== 7){
+                //     $CBs++;
+                // }
+
+            }
+
+            if ($initials != 0) {
+                $decline_per = $decline / ($initials + $decline);
+                $EOT_per = $EOT_approved / $initials;
+            }
+
+            $day->initials = $initials;
+            $day->decline = $decline;
+            $day->decline_per = $decline_per;
+            $day->scrub_per = $scrub_per;
+            $day->EOT_declines = $EOT_declines;
+            $day->EOT_approved = $EOT_approved;
+            $day->EOT_per = $EOT_per;
+            $day->save();
+        }
+
 
         $data = STicketDaily::orderBy('id', 'desc')->take(10)->get();
         return response()->json(['status' => true, 'data' => $data]);

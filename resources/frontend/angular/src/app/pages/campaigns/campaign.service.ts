@@ -73,6 +73,13 @@ export class CampaignService {
     });
     return this.data;
   }
+  async refreshAllDailySticket(): Promise<any> {
+    await this.apiService.getData(`refresh-all-daily`).then(res => res.json()).then((data) => {
+      this.data = data;
+      this.sticketDailyResponse.next(data);
+    });
+    return this.data;
+  }
   async refreshWeeklySticket(): Promise<any> {
     await this.apiService.getData(`refresh-weekly`).then(res => res.json()).then((data) => {
       this.data = data;

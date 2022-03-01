@@ -68,15 +68,22 @@ export class AppComponent {
         position: 7,
       },
       {
-        name: 'Orders',
-        routeOrFunction: '/tables/orders',
+        name: 'Prospects',
+        routeOrFunction: '/tables/prospects',
         icon: 'assignment',
         badgeColor: '#2196F3',
         position: 8,
       },
       {
-        name: 'Formula Section',
+        name: 'Orders',
+        routeOrFunction: '/tables/orders',
+        icon: 'assignment',
+        badgeColor: '#2196F3',
         position: 9,
+      },
+      {
+        name: 'Formula Section',
+        position: 10,
         type: 'subheading',
       },
       {
@@ -84,14 +91,14 @@ export class AppComponent {
         routeOrFunction: '/create/formula',
         icon: 'functions',
         badgeColor: '#2196F3',
-        position: 10,
+        position: 11,
       },
       {
         name: 'View Formulas',
         routeOrFunction: '/view/formulas',
         icon: 'assignment',
         badgeColor: '#2196F3',
-        position: 11,
+        position: 12,
       },
       {
         name: 'Campaigns Section',

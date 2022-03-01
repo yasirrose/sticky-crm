@@ -3,6 +3,7 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class CreateProspectsTable extends Migration
 {
@@ -29,11 +30,14 @@ class CreateProspectsTable extends Migration
             $table->string('phone')->nullable()->default(null);
             $table->string('email')->nullable()->default(null);
             $table->string('ip_address')->nullable()->default(null);
+            $table->string('month_created')->nullable()->default(null);
+            $table->string('year_created')->nullable()->default(null);
             $table->string('date_created')->nullable()->default(null);
             $table->string('risk_flag')->nullable()->default(null);
             $table->string('affiliate')->nullable()->default(null);
             $table->string('sub_affiliate')->nullable()->default(null);
             $table->json('notes')->nullable()->default(null);
+            $table->softDeletes();
             $table->timestamps();
         });
     }
