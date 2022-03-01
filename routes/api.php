@@ -12,6 +12,8 @@ use App\Http\Controllers\STicketDailyController;
 use App\Http\Controllers\STicketWeeklyController;
 use App\Http\Controllers\STicketMonthlyController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\ProspectController;
+use App\Http\Controllers\OrderProductController;
 
 /*
 |--------------------------------------------------------------------------
@@ -41,6 +43,7 @@ Route::resource('STicket-daily', STicketDailyController::class);
 Route::resource('STicket-weekly', STicketWeeklyController::class);
 Route::resource('STicket-monthly', STicketMonthlyController::class);
 Route::resource('products', ProductController::class);
+Route::resource('prospects', ProspectController::class);
 Route::get('golden-ticket/create/{month}/{year}', [GoldenTicketController::class, 'create']);
 Route::get('get_campaigns', [CampaignsController::class, 'get_campaigns']);
 Route::get('get_campaign_columns/{campaign_name}', [CampaignsController::class, 'get_campaign_columns']);
@@ -54,6 +57,7 @@ Route::get('pull_orders_jan', [OrdersController::class, 'pull_orders_jan']);
 Route::get('pull_daily_orders', [OrdersController::class, 'pull_daily_orders']);
 Route::get('pull_daily_order_find', [OrdersController::class, 'pull_daily_order_find']);
 Route::get('pull_yesterday_orders', [OrdersController::class, 'pull_yesterday_orders']);
+Route::get('pull_prospects', [ProspectController::class, 'pull_prospects']);
 Route::get('daily_orders', [OrdersController::class, 'daily_orders']);
 Route::get('get_customer_detail', [CustomerController::class, 'get_customer_detail']);
 Route::get('get_product_detail', [OrdersController::class, 'get_product_detail']);
@@ -63,8 +67,9 @@ Route::get('filter-golden-ticket/{month}/{year}', [GoldenTicketController::class
 Route::get('pull_all_products', [ProductController::class, 'pull_all_products']);
 Route::get('get_states', [OrdersController::class, 'get_states']);
 Route::get('refresh-daily', [STicketDailyController::class, 'refresh_daily']);
+Route::get('refresh-all-daily', [STicketDailyController::class, 'refresh_all_daily_tickets']);
 Route::get('refresh-weekly', [STicketWeeklyController::class, 'refresh_weekly']);
 Route::get('refresh-monthly', [STicketMonthlyController::class, 'refresh_monthly']);
-
+Route::get('populate_products_from_orders', [OrderProductController::class, 'populate_products_from_orders']);
 
 

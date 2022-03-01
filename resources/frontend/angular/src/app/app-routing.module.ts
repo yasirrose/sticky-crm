@@ -25,6 +25,10 @@ const routes: Routes = [
         loadChildren: () => import('./pages/tables/all-in-one-table/all-in-one-table.module').then(m => m.AllInOneTableModule),
       },
       {
+        path: 'tables/prospects',
+        loadChildren: () => import('./pages/tables/prospects/prospects.module').then(m => m.ProspectsModule),
+      },
+      {
         path: 'tables/orders',
         loadChildren: () => import('./pages/tables/orders/orders.module').then(m => m.OrdersModule),
       },
