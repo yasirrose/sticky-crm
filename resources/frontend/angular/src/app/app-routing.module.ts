@@ -21,16 +21,16 @@ const routes: Routes = [
         loadChildren: () => import('./pages/customers/customer-detail/customer-detail.module').then(m => m.CustomerDetailModule),
       },
       {
-        path: 'tables/all-in-one-table',
-        loadChildren: () => import('./pages/tables/all-in-one-table/all-in-one-table.module').then(m => m.AllInOneTableModule),
-      },
-      {
-        path: 'tables/prospects',
+        path: 'prospects',
         loadChildren: () => import('./pages/tables/prospects/prospects.module').then(m => m.ProspectsModule),
       },
       {
-        path: 'tables/orders',
+        path: 'orders',
         loadChildren: () => import('./pages/tables/orders/orders.module').then(m => m.OrdersModule),
+      },
+      {
+        path: 'mids',
+        loadChildren: () => import('./pages/tables/mids/mids.module').then(m => m.MidsModule),
       },
       {
         path: 'orders/product-detail',
@@ -38,7 +38,7 @@ const routes: Routes = [
       },
       {
         path: 'view/formulas',
-        loadChildren: () => import('./pages/view-formulas/view-formulas.module').then(m => m.ViewFormulasModule),
+        loadChildren: () => import('./pages/tables/view-formulas/view-formulas.module').then(m => m.ViewFormulasModule),
       },
       {
         path: 'create/formula',

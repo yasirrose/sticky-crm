@@ -12,7 +12,7 @@ class Campaign extends Model
     protected $table = 'campaigns';
     protected $fillable = [
         'id',
-        'c_id',
+        'campaign_id',
         'gateway_id',
         'is_active',
         'tax_provider_id',

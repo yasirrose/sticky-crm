@@ -14,6 +14,7 @@ use App\Http\Controllers\STicketMonthlyController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProspectController;
 use App\Http\Controllers\OrderProductController;
+use App\Http\Controllers\MidController;
 
 /*
 |--------------------------------------------------------------------------
@@ -44,6 +45,7 @@ Route::resource('STicket-weekly', STicketWeeklyController::class);
 Route::resource('STicket-monthly', STicketMonthlyController::class);
 Route::resource('products', ProductController::class);
 Route::resource('prospects', ProspectController::class);
+Route::resource('mids', MidController::class);
 Route::get('golden-ticket/create/{month}/{year}', [GoldenTicketController::class, 'create']);
 Route::get('get_campaigns', [CampaignsController::class, 'get_campaigns']);
 Route::get('get_campaign_columns/{campaign_name}', [CampaignsController::class, 'get_campaign_columns']);
@@ -71,5 +73,6 @@ Route::get('refresh-all-daily', [STicketDailyController::class, 'refresh_all_dai
 Route::get('refresh-weekly', [STicketWeeklyController::class, 'refresh_weekly']);
 Route::get('refresh-monthly', [STicketMonthlyController::class, 'refresh_monthly']);
 Route::get('populate_products_from_orders', [OrderProductController::class, 'populate_products_from_orders']);
+Route::get('pull_payment_router_view', [MidController::class, 'pull_payment_router_view']);
 
 

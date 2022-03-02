@@ -3,10 +3,10 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
-import { ListColumn } from '../../../@fury/shared/list/list-column.model';
+import { ListColumn } from 'src/@fury/shared/list/list-column.model';
 // import { Order } from './order.model';
-import { fadeInRightAnimation } from '../../../@fury/animations/fade-in-right.animation';
-import { fadeInUpAnimation } from '../../../@fury/animations/fade-in-up.animation';
+import { fadeInRightAnimation } from 'src/@fury/animations/fade-in-right.animation';
+import { fadeInUpAnimation } from 'src/@fury/animations/fade-in-up.animation';
 
 //self imports
 import { FormGroup, FormControl } from '@angular/forms';
