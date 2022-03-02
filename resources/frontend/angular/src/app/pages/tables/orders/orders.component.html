@@ -71,7 +71,7 @@
                     <mat-label>Campaign</mat-label>
                     <mat-select [(value)]="campaign" (selectionChange)="commonFilter($event.value, 'campaign_id')">
                       <mat-option [value]="">All Campaigns</mat-option>
-                      <mat-option *ngFor="let campaign of campaignOptions" [value]="campaign['c_id']">{{campaign['name']}}</mat-option>
+                      <mat-option *ngFor="let campaign of campaignOptions" [value]="campaign['campaign_id']">{{campaign['name']}}</mat-option>
                     </mat-select>
                   </mat-form-field>
                 </div>

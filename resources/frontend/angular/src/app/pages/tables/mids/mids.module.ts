@@ -1,12 +1,13 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { BreadcrumbsModule } from '../../../@fury/shared/breadcrumbs/breadcrumbs.module';
-import { ListModule } from '../../../@fury/shared/list/list.module';
-import { MaterialModule } from '../../../@fury/shared/material-components.module';
-import { ViewFormulasRoutingModule } from './view-formulas-routing.module';
-import { ViewFormulasComponent } from './view-formulas.component';
-import { FurySharedModule } from '../../../@fury/fury-shared.module';
+import { BreadcrumbsModule } from '../../../../@fury/shared/breadcrumbs/breadcrumbs.module';
+import { ListModule } from '../../../../@fury/shared/list/list.module';
+import { MaterialModule } from '../../../../@fury/shared/material-components.module';
+import { MidsRoutingModule } from './mids-routing.module';
+import { MidsComponent } from './mids.component';
+// import { CustomerCreateUpdateModule } from './customer-create-update/customer-create-update.module';
+import { FurySharedModule } from '../../../../@fury/fury-shared.module';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialogModule } from '@angular/material/dialog';
@@ -26,7 +27,7 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
 @NgModule({
   imports: [
     CommonModule,
-    ViewFormulasRoutingModule,
+    MidsRoutingModule,
     FormsModule,
     ReactiveFormsModule,
     MaterialModule,
@@ -51,8 +52,8 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
     MatPaginatorModule, // <-- Added Paginator Module
     MatProgressBarModule, // <-- Added Loader Module
   ],
-  declarations: [ViewFormulasComponent],
-  exports: [ViewFormulasComponent],
+  declarations: [MidsComponent],
+  exports: [MidsComponent],
   
 })
-export class ViewFormulasModule { }
+export class MidsModule { }
