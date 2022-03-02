@@ -60,13 +60,13 @@ export class AppComponent {
         badgeColor: '#2196F3',
         position: 7,
       },
-      {
-        name: 'All in one table',
-        routeOrFunction: '/tables/all-in-one-table',
-        icon: 'assignment',
-        badgeColor: '#2196F3',
-        position: 7,
-      },
+      // {
+      //   name: 'All in one table',
+      //   routeOrFunction: '/tables/all-in-one-table',
+      //   icon: 'assignment',
+      //   badgeColor: '#2196F3',
+      //   position: 7,
+      // },
       {
         name: 'Prospects',
         routeOrFunction: '/tables/prospects',

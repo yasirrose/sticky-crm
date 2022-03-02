@@ -21,8 +21,7 @@ export class ProspectsService {
   constructor(private apiService: ApiService) { }
 
   async getProspects(filters): Promise<any> {
-    await this.apiService.getData(`prospects?pageno=${filters.currentPage}&per_page=${filters.pageSize}
-    &start_date=${filters.start}&end_date=${filters.end}&fields=${filters.all_fields}&values=${filters.all_values}`)
+    await this.apiService.getData(`prospects?page=${filters.currentPage}&per_page=${filters.pageSize}&search=${filters.search}`)
       .then(res => res.json()).then((data) => {
         this.prospects = data;
         this.GetProspectsResponse.next(data);

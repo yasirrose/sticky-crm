@@ -18,69 +18,21 @@ class OrdersController extends Controller
      */
     public function index(Request $request)
     {
-        // DB::enableQueryLog();
-        // dd($request->all());
-        // $campaign_id = $request->campaign_id;
-        // $campaign_category = $request->campaign_category;
-        // $product_name = $request->product_name;
-        // $product_category = $request->product_category;
-        // $campaign_product = $request->campaign_product;
-        // $affiliate = $request->affiliate;
-        // $call_center = $request->call_center;
-        // $currency = $request->currency;
-        // $bill_type = $request->bill_type;
-        // $billing_cycle = $request->billing_cycle;
-        // $recycle_no = $request->recycle_no;
-        // $txn_type = $request->txn_type;
-        // $gateway = $request->gateway;
-        // $gateway_category = $request->gateway_category;
-        // $card_type = $request->card_type;
-        // $credit_debit = $request->credit_debit;
-        // $state = $request->state;
-        // $country = $request->country;
-        // $is_3d_protected = $request->is_3d_protected;
-        $all_fields = $request->all_fields;
-        $all_values = $request->all_values;
-
         $start_date = date('Y-m-d', strtotime($request->start_date));
         $end_date = date('Y-m-d', strtotime($request->end_date));
-        // $currency = $request->currency; no field in database
         $pageno = isset($request->pageno) ? $request->pageno : 0;
         $no_of_records_per_page = isset($request->per_page) ? $request->per_page : 10;
         $offset = ($pageno) * $no_of_records_per_page;
         
-            // query orders sir basit
-            $query = DB::table('orders')
-            ->select('id','order_id','created_by_employee_name','billing_first_name', 'billing_last_name', 'billing_street_address', 'order_total', 'acquisition_month', 'acquisition_year', 'c1', 'affid', 'trx_month', 'order_sales_tax_amount', 'decline_reason','is_cascaded','decline_reason_details','is_fraud','is_chargeback','chargeback_date','is_rma','rma_number','rma_reason','is_recurring','is_void','void_amount','void_date','is_refund','refund_amount','refund_date','order_confirmed','order_confirmed_date','acquisition_date','is_blacklisted','coupon_id','created_by_user_name','order_sales_tax','order_status','promo_code','recurring_date','response_code','return_reason');
-            
-            $total_rows = Order::where('id', '>' ,0)->count();
-            if ($start_date != null && $start_date != "1970-01-01" && $end_date != null && $end_date != "1970-01-01"){
-                $query->whereBetween('acquisition_date', [$start_date.' 00:00:00', $end_date.' 23:59:59']);
-            }
+        // query orders sir basit
+        $query = DB::table('orders')
+        ->select('id','order_id','created_by_employee_name','billing_first_name', 'billing_last_name', 'billing_street_address', 'order_total', 'acquisition_month', 'acquisition_year', 'c1', 'affid', 'trx_month', 'order_sales_tax_amount', 'decline_reason','is_cascaded','decline_reason_details','is_fraud','is_chargeback','chargeback_date','is_rma','rma_number','rma_reason','is_recurring','is_void','void_amount','void_date','is_refund','refund_amount','refund_date','order_confirmed','order_confirmed_date','acquisition_date','is_blacklisted','coupon_id','created_by_user_name','order_sales_tax','order_status','promo_code','recurring_date','response_code','return_reason');
+        
+        $total_rows = Order::where('id', '>' ,0)->count();
+        if ($start_date != null && $start_date != "1970-01-01" && $end_date != null && $end_date != "1970-01-01"){
+            $query->whereBetween('acquisition_date', [$start_date.' 00:00:00', $end_date.' 23:59:59']);
+        }
 
-        // $query = Order::orderBy('id', 'asc');
-        // $total_rows = $query->count();
-        // if ($start_date != null && $start_date != "1970-01-01" && $end_date != null && $end_date != "1970-01-01") {
-        //     $query->whereBetween('acquisition_date', [$start_date . ' 00:00:00', $end_date . ' 23:59:59']);
-        // }
-        // if (isset($campaign_id) && $campaign_id != "allCampaigns") {
-        //     $query->where(['campaign_id' => $campaign_id]);
-        // }
-        // if (isset($is_3d_protected) && $is_3d_protected != "all") {
-        //     $query->where(['is_3d_protected' => $is_3d_protected]);
-        // }
-        // if(isset($state) && $state != "allStates"){
-        //     $query->where(['billing_state'=>$state]);
-        // }
-        // if (isset($product_name) && $product_name != "allProducts") {
-        //     $query->where('products', 'like', '%' . $product_name . '%');
-        // }
-        // if (isset($billing_cycle) && $billing_cycle != "all") {
-        //     $query->where(['billing_cycle'=>$billing_cycle]);
-        // }
-        // if (isset($card_type) && $card_type != "all") {
-        //     $query->where(['cc_type'=>$card_type]);
-        // }
         if($request->fields != null){
             $field_array = explode(',', $request->fields);
             $value_array = explode(',', $request->values);
@@ -93,23 +45,28 @@ class OrdersController extends Controller
                 }
             }
         }
-        /* 
-            
-        */
+        if($request->search != ''){
+            $query->where('order_id', 'like', '%' . $request->search . '%')
+            ->orWhere('created_by_employee_name', 'like', '%'.$request->search.'%')
+            ->orWhere('billing_first_name', 'like', '%'.$request->search.'%')
+            ->orWhere('billing_last_name', 'like', '%'.$request->search.'%')
+            ->orWhere('billing_street_address', 'like', '%'.$request->search.'%')
+            ->orWhere('c1', 'like', '%'.$request->search.'%')
+            ->orWhere('affid', 'like', '%'.$request->search.'%')
+            ->orWhere('trx_month', 'like', '%'.$request->search.'%')
+            ->orWhere('order_sales_tax_amount', 'like', '%'.$request->search.'%')
+            ->orWhere('decline_reason', 'like', '%'.$request->search.'%')
+            ->orWhere('is_cascaded', 'like', '%'.$request->search.'%')
+            ->orWhere('created_by_user_name', 'like', '%'.$request->search.'%');
+        }
+      
         $rows = $query->orderBy('id', 'desc')->SimplePaginate($no_of_records_per_page);
         $total_pages = ceil($total_rows / $rows->perPage());
 
-        // $rows = $query->offset($offset)->limit($no_of_records_per_page)->get();
-        // $total_pages = ceil($total_rows / $no_of_records_per_page);
         $pag['count'] = $total_rows;
         $pag['total_pages'] = $total_pages;
         $pag['pageno'] = $pageno;
         $pag['rows_per_page'] = $no_of_records_per_page;
-        /* 
-            !for testing only one record  
-            $rows = Order::where(['order_id'=>10021])->get();
-            $pag = null;
-         */
         return response()->json(['status' => true, 'data' => $rows, 'pag' => $pag]);
     }
     public function getDropDownContent(){
@@ -117,12 +74,12 @@ class OrdersController extends Controller
         // $query = DB::table('orders')->where('id','>',0)->distinct();
         // $data['gateways'] = $query->get('gateway_descriptor');
         $data = DB::select("SELECT gateway_descriptor as aggregate from `orders` where `id` > 0")->distinct();
-        dd($data);
+        
         // $data['country'] = $query->get('billing_country');
         // $data['state'] = $query->get('billing_state');
         // $data['card_type'] = $query->get('cc_type');
         // $data['campaigns'] = DB::table('campaigns')->select('id','name')->get();
-        dd(DB::getQueryLog());
+        
         return response()->json($data);
     }
 

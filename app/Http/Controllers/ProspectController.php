@@ -11,72 +11,39 @@ use Carbon\CarbonPeriod;
 
 class ProspectController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function index(Request $request)
     {
-        $all_fields = $request->all_fields;
-        $all_values = $request->all_values;
-
-        $start_date = date('Y-m-d', strtotime($request->start_date));
-        $end_date = date('Y-m-d', strtotime($request->end_date));
-        // $currency = $request->currency; no field in database
-        $pageno = isset($request->pageno) ? $request->pageno : 0;
-        $no_of_records_per_page = isset($request->per_page) ? $request->per_page : 10;
-        $offset = ($pageno) * $no_of_records_per_page;
+        $pageno = isset($request->page) ? $request->page : 1;
+        $no_of_records_per_page = isset($request->per_page) ? $request->per_page : 25;
         
-            // query prospects sir basit
-        // $query = DB::table('prospects')
-        //     ->select('id', 'prospect_id', 'created_by_employee_name', 'billing_first_name', 'billing_last_name', 'billing_street_address', 'prospect_total', 'acquisition_month', 'acquisition_year', 'c1', 'affid', 'trx_month', 'prospect_sales_tax_amount', 'decline_reason', 'is_cascaded', 'decline_reason_details', 'is_fraud', 'is_chargeback', 'chargeback_date', 'is_rma', 'rma_number', 'rma_reason', 'is_recurring', 'is_void', 'void_amount', 'void_date', 'is_refund', 'refund_amount', 'refund_date', 'prospect_confirmed', 'prospect_confirmed_date', 'acquisition_date', 'is_blacklisted', 'coupon_id', 'created_by_user_name', 'prospect_sales_tax', 'prospect_status', 'promo_code', 'recurring_date', 'response_code', 'return_reason');
-
         $query = DB::table('prospects')->whereNull('deleted_at')->orderBy('id', 'desc');
-        // $query = Prospect::SimplePaginate($no_of_records_per_page);
         $total_rows = Prospect::where('id', '>', 0)->count();
-        // if ($start_date != null && $start_date != "1970-01-01" && $end_date != null && $end_date != "1970-01-01") {
-        //     $query->whereBetween('acquisition_date', [$start_date . ' 00:00:00', $end_date . ' 23:59:59']);
-        // }
 
-        if ($request->fields != null) {
-            $field_array = explode(',', $request->fields);
-            $value_array = explode(',', $request->values);
-            for ($i = 0; $i < count($value_array); $i++) {
-                if ($value_array[$i] != '' && $field_array[$i] != 'products') {
-                    $query->where($field_array[$i], $value_array[$i]);
-                }
-                // if ($field_array[$i] == 'products') {
-                //     $query->where('products', 'like', '%' . $value_array[$i] . '%');
-                // }
-            }
+        if($request->search != ''){
+            $query->where('first_name', 'like', '%' . $request->search . '%')
+            ->orWhere('last_name', 'like', '%'.$request->search.'%')
+            ->orWhere('address', 'like', '%'.$request->search.'%')
+            ->orWhere('city', 'like', '%'.$request->search.'%')
+            ->orWhere('state', 'like', '%'.$request->search.'%')
+            ->orWhere('zip', 'like', '%'.$request->search.'%')
+            ->orWhere('country', 'like', '%'.$request->search.'%')
+            ->orWhere('phone', 'like', '%'.$request->search.'%')
+            ->orWhere('email', 'like', '%'.$request->search.'%')
+            ->orWhere('affiliate', 'like', '%'.$request->search.'%')
+            ->orWhere('sub_affiliate', 'like', '%'.$request->search.'%');
         }
-            /* 
-                
-         */
+
         $rows = $query->SimplePaginate($no_of_records_per_page);
         $total_pages = ceil($total_rows / $rows->perPage());
     
-            // $rows = $query->offset($offset)->limit($no_of_records_per_page)->get();
-            // $total_pages = ceil($total_rows / $no_of_records_per_page);
         $pag['count'] = $total_rows;
         $pag['total_pages'] = $total_pages;
         $pag['pageno'] = $pageno;
         $pag['rows_per_page'] = $no_of_records_per_page;
-            /* 
-                !for testing only one record  
-                $rows = Prospect::where(['prospect_id'=>10021])->get();
-                $pag = null;
-         */
         return response()->json(['status' => true, 'data' => $rows, 'pag' => $pag]);
 
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function create()
     {
         //

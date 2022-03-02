@@ -43,6 +43,7 @@ export class OrdersComponent implements OnInit, AfterViewInit, OnDestroy {
   currentPage = 0;
   all_fields = [];
   all_values = [];
+  search = '';
   filterData: any = [];
   filters = {};
   endPoint = '';
@@ -218,8 +219,10 @@ export class OrdersComponent implements OnInit, AfterViewInit, OnDestroy {
     this.getCampaignsSubscription = this.ordersService.getCampaignsResponse$.subscribe(data => this.manageCampaignsResponse(data))
     this.getProductsSubscription = this.ordersService.getProductsResponse$.subscribe(data => this.manageProductsResponse(data))
 
+    this.ordersService.getCampaigns();
+    this.ordersService.getProducts();
     this.getData();
-    this.getDropData();
+    // this.getDropData();
     this.dataSource = new MatTableDataSource();
     this.data$.pipe(
       filter(data => !!data)
@@ -244,35 +247,15 @@ export class OrdersComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   getData() {
-    this.ordersService.getCampaigns();
-    this.ordersService.getProducts();
     this.isLoading = true;
     this.filters = {
       "currentPage": this.currentPage,
       "pageSize": this.pageSize,
       "start": formatDate(this.range.get('start').value, 'yyyy/MM/dd', 'en'),
       "end": formatDate(this.range.get('end').value, 'yyyy/MM/dd', 'en'),
-      // "campaign_id": this.campaign,
-      // "campaign_category": this.campaignCategory,
-      // "product_name": this.product,
-      // "product_category": this.productCategory,
-      // "campaign_product": this.campaignProduct,
-      // "affiliate": this.affiliate,
-      // "call_center": this.callCenter,
-      // "currency": this.currency,
-      // "bill_type": this.billType,
-      // "billing_cycle": this.billingCycle,
-      // "recycle_no": this.recycleNo,
-      // "txn_type": this.txnType,
-      // "gateway": this.gateway,
-      // "gateway_category": this.gatewayCategory,
-      // "card_type": this.ccType,
-      // "credit_debit": this.creditOrDebit,
-      // "state": this.state,
-      // "country": this.country,
-      // "is_3d_protected": this.is_3d_protected,
       'all_fields': this.all_fields,
-      'all_values': this.all_values
+      'all_values': this.all_values,
+      'search' : this.search
     }
     this.ordersService.getOrders(this.filters)
       .then(orders => {
@@ -349,12 +332,17 @@ export class OrdersComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   onFilterChange(value) {
-    if (!this.dataSource) {
-      return;
+    value = value.toLowerCase()
+    this.search = value;
+    if(value == ''){
+      this.getData();
     }
-    value = value.trim();
-    value = value.toLowerCase();
-    this.dataSource.filter = value;
+    // if (!this.dataSource) {
+    //   return;
+    // }
+    // value = value.trim();
+    // value = value.toLowerCase();
+    // this.dataSource.filter = value;
   }
   selectDate(param) {
     var startDate = new Date();

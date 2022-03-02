@@ -78,6 +78,8 @@ export class ProspectsComponent implements OnInit {
 
   campaignOptions: [];
   productOptions: [];
+  search= '';
+  timer : any;
   cardOptions: string[] = ['visa', 'master'];
   pageSizeOptions: number[] = [5, 10, 25, 100];
   // stateOptions: any = (states as any).default;
@@ -127,7 +129,7 @@ export class ProspectsComponent implements OnInit {
     // this.getProductsSubscription = this.prospectsService.getProductsResponse$.subscribe(data => this.manageProductsResponse(data))
 
     this.getData();
-    this.getDropData();
+    // this.getDropData();
     this.dataSource = new MatTableDataSource();
     this.data$.pipe(
       filter(data => !!data)
@@ -159,7 +161,8 @@ export class ProspectsComponent implements OnInit {
       "start": formatDate(this.range.get('start').value, 'yyyy/MM/dd', 'en'),
       "end": formatDate(this.range.get('end').value, 'yyyy/MM/dd', 'en'),
       'all_fields': this.all_fields,
-      'all_values': this.all_values
+      'all_values': this.all_values,
+      'search': this.search
     }
     this.prospectsService.getProspects(this.filters)
       .then(prospects => {
@@ -237,12 +240,16 @@ export class ProspectsComponent implements OnInit {
   }
 
   onFilterChange(value) {
-    if (!this.dataSource) {
-      return;
-    }
-    value = value.trim();
+    // if (!this.dataSource) {
+    //   return;
+    // }
+    // value = value.trim();
+    // value = value.toLowerCase();
+    // this.dataSource.filter = value
     value = value.toLowerCase();
-    this.dataSource.filter = value;
+    this.search = value;
+    clearTimeout(this.timer); 
+    this.timer = setTimeout(() => { this.getData() }, 500)
   }
 
   selectDate(param) {
