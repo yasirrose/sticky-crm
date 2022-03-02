@@ -38,13 +38,15 @@ export class CustomersComponent implements OnInit, AfterViewInit, OnDestroy {
   isLoading = false;
   totalRows = 0;
   pageSize = 25;
-  currentPage = 0;
+  currentPage = 1;
   pageSizeOptions: number[] = [5, 10, 25, 100];
   filters = {};
   address = [];
+  search = '';
   notyf = new Notyf();
   name: string;
   id: number;
+  timer: any;
 
   @Input()
   // @Input() public customerId;
@@ -92,12 +94,12 @@ export class CustomersComponent implements OnInit, AfterViewInit, OnDestroy {
     this.filters = {
       "currentPage": this.currentPage,
       "pageSize": this.pageSize,
+      "search": this.search,
     }
     await this.customersService.getCustomers(this.filters)
       .then(customers => {
-        this.customers = customers.data;
-        this.dataSource.data = customers.data;
-        console.log('Customers data is: ', customers.data);
+        this.customers = customers.data.data;
+        this.dataSource.data = customers.data.data;
         setTimeout(() => {
           this.paginator.pageIndex = this.currentPage;
           this.paginator.length = customers.pag.count;
@@ -109,18 +111,22 @@ export class CustomersComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   onFilterChange(value) {
-    if (!this.dataSource) {
-      return;
-    }
-    value = value.trim();
+    // if (!this.dataSource) {
+    //   return;
+    // }
+    // value = value.trim();
+    // value = value.toLowerCase();
+    // this.dataSource.filter = value;
     value = value.toLowerCase();
-    this.dataSource.filter = value;
+    this.search = value;
+    clearTimeout(this.timer); 
+    this.timer = setTimeout(() => { this.getData() }, 500)
   }
 
   manageGetResponse(customers) {
     if (customers.status) {
-      this.customers = customers.data;
-      this.dataSource.data = customers.data;
+      this.customers = customers.data.data;
+      this.dataSource.data = customers.data.data;
       setTimeout(() => {
         this.paginator.pageIndex = this.currentPage;
         this.paginator.length = customers.pag.count;
@@ -136,9 +142,6 @@ export class CustomersComponent implements OnInit, AfterViewInit, OnDestroy {
       this.notyf.success(data.message);
       this.getData();
     }
-    // else if(!data.status) {
-    //   this.notyf.error(data.message);
-    // }
   }
 
   openDialog(id) {
@@ -147,7 +150,6 @@ export class CustomersComponent implements OnInit, AfterViewInit, OnDestroy {
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      // console.log(`Dialog result: ${result}`);
     });
   }
 
@@ -156,19 +158,12 @@ export class CustomersComponent implements OnInit, AfterViewInit, OnDestroy {
     const numRows = this.dataSource.data.length;
     return numSelected === numRows;
   }
-
-  /* 
-    ?Selects all rows if they are not all selected; otherwise clear selection. 
-  */
   masterToggle() {
     this.isAllSelected() ?
       this.selection.clear() :
       this.dataSource.data.forEach(row => this.selection.select(row));
   }
 
-  /* 
-    ?this method opens confirmation dialog to delete the customer
-  */
 
   handleDeleteAction(id) {
     const dialogData = new ConfirmationDialogModel('Confirm Delete', 'Are you sure you want to delete this customer?');

@@ -5,6 +5,6 @@
 
 export const environment = {
   production: false,
-  endpoint: 'http://sticky.io-test',
+  endpoint: 'http://sticky.io:82',
   // backend: 'http://localhost:4200' // Put your backend here
 };

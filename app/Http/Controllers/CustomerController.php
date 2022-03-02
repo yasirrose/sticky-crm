@@ -9,20 +9,23 @@ use Illuminate\Support\Facades\Http;
 
 class CustomerController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function index(Request $request)
     {
-        $pageno = isset($request->pageno) ? $request->pageno : 0;
-        $no_of_records_per_page = isset($request->per_page) ? $request->per_page : 10;
-        $offset = ($pageno) * $no_of_records_per_page;
-        $query = Customer::orderBy('id', 'desc')->select('id', 'email', 'first_name', 'last_name', 'phone', 'addresses');
-        $total_rows = $query->count();
-        $data = $query->offset($offset)->limit($no_of_records_per_page)->get();
-        $total_pages = ceil($total_rows / $no_of_records_per_page);
+        $pageno = isset($request->page) ? $request->page : 1;
+        $no_of_records_per_page = isset($request->per_page) ? $request->per_page : 25;
+        $query = Customer::select('id', 'email', 'first_name', 'last_name', 'phone', 'addresses');
+        $total_rows = Customer::whereNotNull('id')->count();
+        
+        if($request->search != ''){
+            $query->where('customer_id', 'like', '%' . $request->search . '%')
+            ->orWhere('email', 'like', '%'.$request->search.'%')
+            ->orWhere('first_name', 'like', '%'.$request->search.'%')
+            ->orWhere('last_name', 'like', '%'.$request->search.'%')
+            ->orWhere('phone', 'like', '%'.$request->search.'%');
+        }
+
+        $data = $query->orderBy('id', 'desc')->SimplePaginate($no_of_records_per_page);
+        $total_pages = ceil($total_rows / $data->perPage());
         $pag['count'] = $total_rows;
         $pag['total_pages'] = $total_pages;
         $pag['pageno'] = $pageno;
