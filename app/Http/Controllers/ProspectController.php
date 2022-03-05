@@ -16,21 +16,17 @@ class ProspectController extends Controller
         $pageno = isset($request->page) ? $request->page : 1;
         $no_of_records_per_page = isset($request->per_page) ? $request->per_page : 25;
         
-        $query = DB::table('prospects')->whereNull('deleted_at')->orderBy('id', 'desc');
-        $total_rows = Prospect::where('id', '>', 0)->count();
+        $query = DB::table('prospects')->select('id','first_name','last_name','address','city','state','zip','country','phone','email','affiliate','sub_affiliate')->orderBy('id', 'desc');
+        // $total_rows = Prospect::where('id', '>', 0)->count('id');
+        $total_rows = DB::table('prospects')->select('id')->count();
+        
+        // $total_rows = 250000;
 
         if($request->search != ''){
             $query->where('first_name', 'like', '%' . $request->search . '%')
             ->orWhere('last_name', 'like', '%'.$request->search.'%')
-            ->orWhere('address', 'like', '%'.$request->search.'%')
-            ->orWhere('city', 'like', '%'.$request->search.'%')
-            ->orWhere('state', 'like', '%'.$request->search.'%')
-            ->orWhere('zip', 'like', '%'.$request->search.'%')
-            ->orWhere('country', 'like', '%'.$request->search.'%')
-            ->orWhere('phone', 'like', '%'.$request->search.'%')
             ->orWhere('email', 'like', '%'.$request->search.'%')
-            ->orWhere('affiliate', 'like', '%'.$request->search.'%')
-            ->orWhere('sub_affiliate', 'like', '%'.$request->search.'%');
+            ->orWhere('address', 'like', '%'.$request->search.'%');
         }
 
         $rows = $query->SimplePaginate($no_of_records_per_page);

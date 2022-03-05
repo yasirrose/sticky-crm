@@ -2,6 +2,12 @@
   <fury-breadcrumbs current="Golden Ticket"></fury-breadcrumbs>
 </div>
 
+<fury-page-layout-content fxLayout fxLayoutAlign="space-between center">
+  <div *ngIf="isChecked">
+    <button class="ml-1" mat-raised-button color="warn" (click)="deleteRecord()">Delete Checked Record</button>
+  </div>
+</fury-page-layout-content>
+
 <fury-page-layout mode="simple">
   <fury-page-layout-content [@fadeInUp]>
     <fury-list name="Customers" [columns]="columns" (filterChange)="onFilterChange($event)">
@@ -10,11 +16,11 @@
 
         <!-- Checkbox Column -->
         <ng-container matColumnDef="checkbox">
-          <th *matHeaderCellDef class="actions-cell" mat-header-cell >
-            <mat-checkbox (change)="$event ? masterToggle() : null" [checked]="selection.hasValue() && isAllSelected()" [indeterminate]="selection.hasValue() && !isAllSelected()"></mat-checkbox>
+          <th *matHeaderCellDef class="actions-cell" mat-header-cell>
+            <mat-checkbox (change)="$event ? masterToggle($event) : null" [checked]="selection.hasValue() && isAllSelected()" [indeterminate]="selection.hasValue() && !isAllSelected()"></mat-checkbox>
           </th>
           <td *matCellDef="let row" class="actions-cell" mat-cell>
-            <mat-checkbox color="primary" (click)="$event.stopPropagation()" (change)="$event ? selection.toggle(row) : null" [checked]="selection.isSelected(row)"></mat-checkbox>
+            <mat-checkbox color="primary" (click)="$event.stopPropagation()" (change)="$event ? selectToggle($event, row.id) : null" [checked]="selection.isSelected(row)"></mat-checkbox>
           </td>
         </ng-container>
 
