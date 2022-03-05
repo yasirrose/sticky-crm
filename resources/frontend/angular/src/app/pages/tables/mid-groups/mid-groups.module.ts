@@ -15,19 +15,17 @@ import { MatRadioModule } from '@angular/material/radio';
 import { MatSelectModule } from '@angular/material/select';
 import { MatTableModule } from '@angular/material/table';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
-import { FurySharedModule } from '../../../../@fury/fury-shared.module';
-import { BreadcrumbsModule } from '../../../../@fury/shared/breadcrumbs/breadcrumbs.module';
-import { ListModule } from '../../../../@fury/shared/list/list.module';
-import { MaterialModule } from '../../../../@fury/shared/material-components.module';
-import { MidsRoutingModule } from './mids-routing.module';
-import { MidsComponent } from './mids.component';
-// import { MidGroupsComponent } from './mid-groups/mid-groups.component';
-
+import { FurySharedModule } from 'src/@fury/fury-shared.module';
+import { BreadcrumbsModule } from 'src/@fury/shared/breadcrumbs/breadcrumbs.module';
+import { ListModule } from 'src/@fury/shared/list/list.module';
+import { MaterialModule } from 'src/@fury/shared/material-components.module';
+import { MidGroupsRoutingModule } from './mid-groups-routing.module';
+import { MidGroupsComponent } from './mid-groups.component';
 
 @NgModule({
   imports: [
     CommonModule,
-    MidsRoutingModule,
+    MidGroupsRoutingModule,
     FormsModule,
     ReactiveFormsModule,
     MaterialModule,
@@ -52,8 +50,8 @@ import { MidsComponent } from './mids.component';
     MatPaginatorModule,
     MatProgressBarModule,
   ],
-  declarations: [MidsComponent],
-  exports: [MidsComponent],
+  declarations: [MidGroupsComponent],
+  exports: [MidGroupsComponent],
 
 })
-export class MidsModule { }
+export class MidGroupsModule { }

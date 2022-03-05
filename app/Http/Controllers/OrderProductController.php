@@ -85,7 +85,7 @@ class OrderProductController extends Controller
     }
     public function populate_products_from_orders()
     {
-        $db_order_products = OrderProduct::pluck('order_id')->toArray();
+        $db_order_products = OrderProduct::orderBy('id', 'desc')->pluck('order_id')->toArray();
         // dd($db_order_products);
 
         Order::chunk(1000, function ($orders) use ($db_order_products) {

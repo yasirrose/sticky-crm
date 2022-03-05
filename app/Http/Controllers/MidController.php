@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Mid;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
 
 class MidController extends Controller
 {
@@ -100,9 +101,9 @@ class MidController extends Controller
             //adding or updating page 1 campaigns
             foreach ($routers as $router) {
                 $gateways = $router->gateways;
-                // dd('die');
 
                 foreach($gateways as $gateway){
+                    // dd($gateway);
                     if(in_array($gateway->gateway_alias, $db_gateway_alias)){
                         $update = Mid::where(['gateway_alias'=>$gateway->gateway_alias])->first();
                         $gateway->router_id = $router->id;
@@ -132,6 +133,19 @@ class MidController extends Controller
                 }
             }
         }
-        return response()->json(['status' => true, 'New campaigns:'=> $new_gateways, 'Updated Campaigns:'=>$updated_gateways]);
+        return response()->json(['status' => true, 'New mids:'=> $new_gateways, 'Updated mids:'=>$updated_gateways]);
+    }
+    public function get_gateway_ids(){
+        $username = "yasir_dev";
+        $password = "yyutmzvRpy5TPU";
+        $url = 'https://thinkbrain.sticky.io/api/v1/gateway_view';
+        $gateways =  Mid::pluck('gateway_id')->toArray();
+        
+        
+        
+        foreach($gateways as $id){
+            $data = json_decode(Http::withBasicAuth($username, $password)->accept('application/json')->post($url,['gateway_id'=>$id])->getBody()->getContents());
+            dd($data);
+        }
     }
 }

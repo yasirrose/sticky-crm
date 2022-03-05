@@ -13,7 +13,8 @@
         "laravel/framework": "^8.75",
         "laravel/sanctum": "^2.14",
         "laravel/tinker": "^2.5",
-        "laravel/ui": "^3.4"
+        "laravel/ui": "^3.4",
+        "nesbot/carbon": "^2.57"
     },
     "require-dev": {
         "facade/ignition": "^2.5",
@@ -30,7 +31,11 @@
             "Database\\Seeders\\": "database/seeders/"
         },
         "classmap": [
-            "services"
+            "services",
+            "resources/views/includes/cron"
+        ],
+        "files": [
+            "resources/views/includes/cron/cron.php"
         ]
     },
     "autoload-dev": {

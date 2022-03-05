@@ -15,6 +15,8 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProspectController;
 use App\Http\Controllers\OrderProductController;
 use App\Http\Controllers\MidController;
+use App\Http\Controllers\MidGroupController;
+use App\Http\Controllers\ProfileController;
 
 /*
 |--------------------------------------------------------------------------
@@ -47,6 +49,8 @@ Route::resource('STicket-monthly', STicketMonthlyController::class);
 Route::resource('products', ProductController::class);
 Route::resource('prospects', ProspectController::class);
 Route::resource('mids', MidController::class);
+Route::resource('mid-groups', MidGroupController::class);
+Route::resource('profiles', ProfileController::class);
 Route::get('golden-ticket/create/{month}/{year}', [GoldenTicketController::class, 'create']);
 Route::get('get_campaigns', [CampaignsController::class, 'get_campaigns']);
 Route::get('get_campaign_columns/{campaign_name}', [CampaignsController::class, 'get_campaign_columns']);
@@ -55,6 +59,7 @@ Route::get('refresh_database_dec', [OrdersController::class, 'refresh_database_d
 Route::get('refresh_database_jan', [OrdersController::class, 'refresh_database_jan']);
 Route::get('test_dec', [OrdersController::class, 'test_dec']);
 Route::get('test_jan', [OrdersController::class, 'test_jan']);
+Route::get('pull_cron_orders', [OrdersController::class, 'pull_cron_orders']);
 Route::get('pull_orders_dec', [OrdersController::class, 'pull_orders_dec']);
 Route::get('pull_orders_jan', [OrdersController::class, 'pull_orders_jan']);
 Route::get('pull_daily_orders', [OrdersController::class, 'pull_daily_orders']);
@@ -75,5 +80,7 @@ Route::get('refresh-weekly', [STicketWeeklyController::class, 'refresh_weekly'])
 Route::get('refresh-monthly', [STicketMonthlyController::class, 'refresh_monthly']);
 Route::get('populate_products_from_orders', [OrderProductController::class, 'populate_products_from_orders']);
 Route::get('pull_payment_router_view', [MidController::class, 'pull_payment_router_view']);
+Route::get('pull_profiles', [ProfileController::class, 'pull_profiles']);
+Route::get('get_gateway_ids', [MidController::class, 'get_gateway_ids']);
 
 
