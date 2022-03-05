@@ -76,14 +76,41 @@ export class AppComponent {
       },
       {
         name: 'Mid-Reports',
-        routeOrFunction: '/mids',
         icon: 'data_usage',
-        badgeColor: '#2196F3',
-        position: 9,
+        position: 10,
+        subItems: [
+          {
+            name: 'Mids',
+            routeOrFunction: '/mids',
+            position: 11
+          },
+          {
+            name: 'Mid Groups',
+            routeOrFunction: '/mid-groups',
+            position: 12
+          }
+        ]
+      },
+      {
+        name: 'Affiliates Menu',
+        icon: 'equalizer',
+        position: 11,
+        subItems: [
+          {
+            name: 'Affiliates Network',
+            routeOrFunction: '/affiliates-network',
+            position: 11
+          },
+          {
+            name: 'Affiliates',
+            routeOrFunction: '/affiliates',
+            position: 12
+          }
+        ]
       },
       {
         name: 'Formula Section',
-        position: 10,
+        position: 12,
         type: 'subheading',
       },
       {
@@ -91,14 +118,14 @@ export class AppComponent {
         routeOrFunction: '/create/formula',
         icon: 'functions',
         badgeColor: '#2196F3',
-        position: 11,
+        position: 13,
       },
       {
         name: 'View Formulas',
         routeOrFunction: '/view/formulas',
         icon: 'assignment',
         badgeColor: '#2196F3',
-        position: 12,
+        position: 14,
       },
       {
         name: 'Campaigns Section',

@@ -18,7 +18,6 @@ import { formatDate } from '@angular/common';
 import { environment } from '../../../../environments/environment';
 import { ApiService } from 'src/app/api.service';
 
-
 @Component({
   selector: 'fury-mids',
   templateUrl: './mids.component.html',
@@ -45,28 +44,28 @@ export class MidsComponent implements OnInit, AfterViewInit, OnDestroy {
   filters = {};
   endPoint = '';
   pageSizeOptions: number[] = [5, 10, 25, 100];
-  fontStyleControl = new FormControl('mids');
-  fontStyle?: string;
+  // toggleOption = new FormControl('mids');
+  // fontStyle?: string;
 
   @Input()
   columns: ListColumn[] = [
 
     // { name: 'Actions', property: 'actions', visible: true },
-    { name: 'Id', property: 'id', visible: false, isModelProperty: true },
-    { name: 'router_id', property: 'router_id', visible: true, isModelProperty: true },
-    { name: 'gateway_alias', property: 'gateway_alias', visible: true, isModelProperty: true },
-    { name: 'router_date_in', property: 'router_date_in', visible: true, isModelProperty: true },
-    { name: 'router_desc', property: 'router_desc', visible: true, isModelProperty: true },
-    { name: 'mid_group_setting_id', property: 'mid_group_setting_id', visible: false, isModelProperty: true },
-    { name: 'mid_group_setting', property: 'mid_group_setting', visible: false, isModelProperty: true },
-    { name: 'is_three_d_routed', property: 'is_three_d_routed', visible: true, isModelProperty: true },
-    { name: 'is_strict_preserve', property: 'is_strict_preserve', isModelProperty: true },
-    { name: 'created_on', property: 'created_on', visible: true, isModelProperty: true },
-    { name: 'campaign_id', property: 'campaign_id', visible: true, isModelProperty: true },
-    { name: 'gateway_id', property: 'gateway_id', visible: true, isModelProperty: true },
-    { name: 'global_monthly_cap', property: 'global_monthly_cap', visible: true, isModelProperty: true },
-    { name: 'current_monthly_amount', property: 'current_monthly_amount', visible: true, isModelProperty: true },
-    { name: 'processing_percent', property: 'processing_percent', visible: true, isModelProperty: true },
+    { name: 'Id', property: 'id', visible: true, isModelProperty: true },
+    // { name: 'router_id', property: 'router_id', visible: true, isModelProperty: true },
+    { name: 'Gateway Id', property: 'gateway_id', visible: false, isModelProperty: true },
+    { name: 'Gateway Alias', property: 'gateway_alias', visible: true, isModelProperty: true },
+    { name: 'Router Date In', property: 'router_date_in', visible: false, isModelProperty: true },
+    { name: 'Router Desc', property: 'router_desc', visible: false, isModelProperty: true },
+    { name: 'Mid Group Setting Id', property: 'mid_group_setting_id', visible: false, isModelProperty: true },
+    { name: 'Mid Group Setting', property: 'mid_group_setting', visible: false, isModelProperty: true },
+    { name: 'Strict Preserve', property: 'is_strict_preserve', visible: false, isModelProperty: true },
+    { name: 'Campaign Id', property: 'campaign_id', visible: false, isModelProperty: true },
+    { name: 'Global Monthly Cap', property: 'global_monthly_cap', visible: true, isModelProperty: true },
+    { name: 'Current Monthly Amount', property: 'current_monthly_amount', visible: true, isModelProperty: true },
+    { name: 'Processing Percent', property: 'processing_percent', visible: true, isModelProperty: true },
+    { name: '3d Routed', property: 'is_three_d_routed', visible: false, isModelProperty: true },
+    { name: 'Created On', property: 'created_on', visible: true, isModelProperty: true },
 
   ] as ListColumn[];
   // pageSize = 20000;
@@ -74,6 +73,7 @@ export class MidsComponent implements OnInit, AfterViewInit, OnDestroy {
 
   @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
   @ViewChild(MatSort, { static: true }) sort: MatSort;
+  // @ViewChild(MidGroupsComponent, { static: true }) MidGroupComponent: MidGroupsComponent;
 
   constructor(private dialog: MatDialog, private midsService: MidsService, private apiService: ApiService) {
     this.endPoint = environment.endpoint;
@@ -96,13 +96,16 @@ export class MidsComponent implements OnInit, AfterViewInit, OnDestroy {
       this.dataSource.data = mids;
     });
   }
+
   mapData() {
     return of(this.mids.map(mid => new Mid(mid)));
   }
+
   ngAfterViewInit() {
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
   }
+
   pageChanged(event: PageEvent) {
     this.pageSize = event.pageSize;
     this.currentPage = event.pageIndex;
@@ -130,6 +133,7 @@ export class MidsComponent implements OnInit, AfterViewInit, OnDestroy {
         this.isLoading = false;
       });
   }
+
   async getDropData() {
     const response = fetch(`${this.endPoint}/api/getDropDownContent`)
       .then(res => res.json()).then((data) => {
@@ -151,6 +155,7 @@ export class MidsComponent implements OnInit, AfterViewInit, OnDestroy {
       this.isLoading = false;
     }
   }
+
   onFilterChange(value) {
     if (!this.dataSource) {
       return;

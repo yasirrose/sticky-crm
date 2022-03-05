@@ -33,6 +33,18 @@ const routes: Routes = [
         loadChildren: () => import('./pages/tables/mids/mids.module').then(m => m.MidsModule),
       },
       {
+        path: 'mid-groups',
+        loadChildren: () => import('./pages/tables/mid-groups/mid-groups.module').then(m => m.MidGroupsModule),
+      },
+      {
+        path: 'affiliates-network',
+        loadChildren: () => import('./pages/tables/affiliates-network/affiliates-network.module').then(m => m.AffiliatesNetworkModule),
+      },
+      {
+        path: 'affiliates',
+        loadChildren: () => import('./pages/tables/affiliates/affiliates.module').then(m => m.AffiliatesModule),
+      },
+      {
         path: 'orders/product-detail',
         loadChildren: () => import('./pages/tables/orders/product-detail/product-detail.module').then(m => m.ProductDetailModule),
       },
@@ -60,7 +72,7 @@ const routes: Routes = [
         path: 'campaigns/sticket-monthly',
         loadChildren: () => import('./pages/campaigns/sticket-monthly/sticket-monthly.module').then(m => m.SticketMonthlyModule),
       },
-      
+
     ]
   }
 ];

@@ -19,15 +19,14 @@ import { FurySharedModule } from '../../../../@fury/fury-shared.module';
 import { BreadcrumbsModule } from '../../../../@fury/shared/breadcrumbs/breadcrumbs.module';
 import { ListModule } from '../../../../@fury/shared/list/list.module';
 import { MaterialModule } from '../../../../@fury/shared/material-components.module';
-import { MidsRoutingModule } from './mids-routing.module';
-import { MidsComponent } from './mids.component';
-// import { MidGroupsComponent } from './mid-groups/mid-groups.component';
+import { AffiliatesNetworkRoutingModule } from './affiliates-network-routing.module';
+import { AffiliatesNetworkComponent } from './affiliates-network.component';
 
 
 @NgModule({
   imports: [
     CommonModule,
-    MidsRoutingModule,
+    AffiliatesNetworkRoutingModule,
     FormsModule,
     ReactiveFormsModule,
     MaterialModule,
@@ -52,8 +51,9 @@ import { MidsComponent } from './mids.component';
     MatPaginatorModule,
     MatProgressBarModule,
   ],
-  declarations: [MidsComponent],
-  exports: [MidsComponent],
+  declarations: [AffiliatesNetworkComponent],
+  exports: [AffiliatesNetworkComponent],
 
 })
-export class MidsModule { }
+
+export class AffiliatesNetworkModule { }
