@@ -46,7 +46,10 @@ export class CustomersComponent implements OnInit, AfterViewInit, OnDestroy {
   notyf = new Notyf();
   name: string;
   id: number;
+  idArray = [];
+  allIdArray = [];
   timer: any;
+  isChecked = false;
 
   @Input()
   // @Input() public customerId;
@@ -91,6 +94,7 @@ export class CustomersComponent implements OnInit, AfterViewInit, OnDestroy {
 
   async getData() {
     this.isLoading = true;
+    this.isChecked = false;
     this.filters = {
       "currentPage": this.currentPage,
       "pageSize": this.pageSize,
@@ -98,8 +102,12 @@ export class CustomersComponent implements OnInit, AfterViewInit, OnDestroy {
     }
     await this.customersService.getCustomers(this.filters)
       .then(customers => {
+        this.allIdArray = [];
         this.customers = customers.data.data;
         this.dataSource.data = customers.data.data;
+        for(var i = 0; i < customers.data.data.length; i++){
+          this.allIdArray.push(customers.data.data[i].id);
+        }
         setTimeout(() => {
           this.paginator.pageIndex = this.currentPage;
           this.paginator.length = customers.pag.count;
@@ -158,10 +166,38 @@ export class CustomersComponent implements OnInit, AfterViewInit, OnDestroy {
     const numRows = this.dataSource.data.length;
     return numSelected === numRows;
   }
-  masterToggle() {
+  masterToggle(event) {
     this.isAllSelected() ?
       this.selection.clear() :
-      this.dataSource.data.forEach(row => this.selection.select(row));
+      this.dataSource.data.forEach(
+        row => this.selection.select(row)
+        );
+    if(event.checked == false){
+      this.idArray = [];
+      this.idArray.length = 0;
+    } else {
+      this.idArray = this.allIdArray;
+    }
+    if(this.idArray.length != 0){
+      this.isChecked = true;
+    } else {
+      this.isChecked = false;
+    }
+  }
+  selectToggle(event, value) {
+    if(event.checked){
+      this.idArray.push(value);
+    } else {
+      this.idArray.splice(this.idArray.indexOf(value), 1);
+    }
+    if(this.idArray.length != 0){
+      this.isChecked = true;
+    } else {
+      this.isChecked = false;
+    }
+  }
+  deleteRecord(){
+    this.handleDeleteAction(this.idArray);
   }
 
 
@@ -175,6 +211,8 @@ export class CustomersComponent implements OnInit, AfterViewInit, OnDestroy {
     dialogRef.afterClosed().subscribe(dialogResult => {
       if (dialogResult) {
         this.customersService.deleteData(id);
+        this.dataSource.data = [];
+        this.idArray = [];
       }
     });
   }

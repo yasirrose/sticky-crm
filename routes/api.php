@@ -37,6 +37,7 @@ Route::resource('dashboard', DashboardController::class);
 Route::get('user-details', [DashboardController::class, 'user_data']);
 Route::resource('orders', OrdersController::class);
 Route::resource('customers', CustomerController::class);
+Route::get('destroy_customers', [CustomerController::class, 'destroy_customers']);
 Route::resource('formulas', FormulasController::class);
 Route::resource('campaigns', CampaignsController::class);
 Route::resource('golden-ticket', GoldenTicketController::class);
