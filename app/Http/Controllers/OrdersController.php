@@ -19,19 +19,20 @@ class OrdersController extends Controller
      */
     public function index(Request $request)
     {
+        DB::enableQueryLog();
+
         $start_date = date('Y-m-d', strtotime($request->start_date));
         $end_date = date('Y-m-d', strtotime($request->end_date));
         $pageno = isset($request->pageno) ? $request->pageno : 0;
         $no_of_records_per_page = isset($request->per_page) ? $request->per_page : 10;
-        $offset = ($pageno) * $no_of_records_per_page;
         
-        // query orders sir basit
         $query = DB::table('orders')
-            ->select('id', 'order_id', 'created_by_employee_name', 'billing_first_name', 'billing_last_name', 'billing_street_address', 'order_total', 'acquisition_month', 'acquisition_year', 'c1', 'affid', 'trx_month', 'order_sales_tax_amount', 'decline_reason', 'is_cascaded', 'decline_reason_details', 'is_fraud', 'is_chargeback', 'chargeback_date', 'is_rma', 'rma_number', 'rma_reason', 'is_recurring', 'is_void', 'void_amount', 'void_date', 'is_refund', 'refund_amount', 'refund_date', 'order_confirmed', 'order_confirmed_date', 'acquisition_date', 'is_blacklisted', 'coupon_id', 'created_by_user_name', 'order_sales_tax', 'order_status', 'promo_code', 'recurring_date', 'response_code', 'return_reason');
 
-        $total_rows = Order::where('id', '>', 0)->count();
-        if ($start_date != null && $start_date != "1970-01-01" && $end_date != null && $end_date != "1970-01-01") {
-            $query->whereBetween('acquisition_date', [$start_date . ' 00:00:00', $end_date . ' 23:59:59']);
+        ->select('id','order_id','created_by_employee_name','billing_first_name', 'billing_last_name', 'billing_street_address', 'order_total', 'acquisition_month', 'acquisition_year', 'c1', 'affid', 'trx_month', 'order_sales_tax_amount', 'decline_reason','is_cascaded','decline_reason_details','is_fraud','is_chargeback','chargeback_date','is_rma','rma_number','rma_reason','is_recurring','is_void','void_amount','void_date','is_refund','refund_amount','refund_date','order_confirmed','order_confirmed_date','acquisition_date','is_blacklisted','coupon_id','created_by_user_name','order_sales_tax','order_status','promo_code','recurring_date','response_code','return_reason');
+        
+        $total_rows = Order::where('id', '>' ,0)->count('id');
+        if ($start_date != null && $start_date != "1970-01-01" && $end_date != null && $end_date != "1970-01-01"){
+            $query->whereBetween('acquisition_date', [$start_date.' 00:00:00', $end_date.' 23:59:59']);
         }
 
         if ($request->fields != null) {

@@ -28,7 +28,7 @@ export class CustomersService {
     return this.customers;
   }
   async deleteData(id): Promise<any> {
-    await this.apiService.deleteData(`customers/${id}`)
+    await this.apiService.getData(`destroy_customers?id=${id}`)
       .then(res => res.json()).then((data) => {
         this.deleteResponse.next(data);
       });
