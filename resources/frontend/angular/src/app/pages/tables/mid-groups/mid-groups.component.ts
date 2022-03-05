@@ -47,11 +47,11 @@ export class MidGroupsComponent implements OnInit {
   columns: ListColumn[] = [
 
     // { name: 'Actions', property: 'actions', visible: true },
-    { name: 'Id', property: 'id', visible: true, isModelProperty: true },
+    // { name: 'Id', property: 'id', visible: true, isModelProperty: true },
     // { name: 'router_id', property: 'router_id', visible: true, isModelProperty: true },
     { name: 'Group Name', property: 'group_name', visible: true, isModelProperty: true },
     { name: 'Group Alias', property: 'group_alias', visible: true, isModelProperty: true },
-    { name: 'Assigned Mids', property: 'router_date_in', visible: false, isModelProperty: true },
+    { name: 'Assigned Mids', property: 'assigned_mids', visible: true, isModelProperty: true },
     { name: 'Status', property: 'status', visible: true, isModelProperty: true },
     { name: 'Updated_at', property: 'updated_at', visible: true, isModelProperty: true },
     // { name: 'MidGroup Group Setting', property: 'mid_group_setting', visible: false, isModelProperty: true },

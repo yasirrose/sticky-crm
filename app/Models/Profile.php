@@ -9,10 +9,10 @@ class Profile extends Model
 {
     use HasFactory;
     protected $table = 'profiles';
-    protected $cast = [
-        'global_fields' => 'array',
-        'account_fields' => 'array',
-        'fee_fields' => 'array',
+    protected $casts = [
+        'global_fields' => 'object',
+        'account_fields' => 'object',
+        'fee_fields' => 'object',
     ];
     protected $fillable = [
         'profile_id',

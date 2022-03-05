@@ -155,21 +155,21 @@ class ProfileController extends Controller
         $db_profile_ids = Profile::pluck('profile_id')->toArray();
 
         foreach ($profiles as $data) {
-            // dd($data['id']);
+            // dd($data->id);
             $model = new Profile();
             $data->profile_id = $data->id;
             $data->currency_id = $data->currency->id;
             $data->currency_title = $data->currency->title;
             $data->currency_code = $data->currency->code;
             $data->currency_symbol_left = $data->currency->symbol_left;
-            if(property_exists($data, 'global_fields')){
-                $data->global_fields = json_encode($data->global_fields);
+            if(property_exists($data->fields, 'global_fields')){
+                $data->global_fields = json_encode($data->fields->global_fields);
             }
-            if(property_exists($data, 'account_fields')){
-                $data->account_fields = json_encode($data->account_fields);
+            if(property_exists($data->fields, 'account_fields')){
+                $data->account_fields = json_encode($data->fields->account_fields);
             }
-            if(property_exists($data, 'fee_fields')){
-                $data->fee_fields = json_encode($data->fee_fields);
+            if(property_exists($data->fields, 'fee_fields')){
+                $data->fee_fields = json_encode($data->fields->fee_fields);
             }
             if (in_array($data->profile_id, $db_profile_ids)) {
                 $updated_profiles++;

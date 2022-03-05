@@ -3,7 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\MidGroup;
+use App\Models\Mid;
+use App\Models\Profile;
 use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
 
 class MidGroupController extends Controller
 {
@@ -14,8 +17,20 @@ class MidGroupController extends Controller
      */
     public function index()
     {
-        $data = MidGroup::all();
-        return response()->json(['status' =>true, 'data' =>$data]);
+        $data = Profile::where('global_fields->mid_group', '!=', '')->whereNotNull('global_fields->mid_group')->get();
+
+        foreach ($data as $key => $profile) {
+            $mid_groups[$key]['name'] = $profile->global_fields->mid_group;
+        }
+        $mid_groups = array_unique(array_column($mid_groups, 'name'));
+        $result = [];
+        foreach ($mid_groups as $key => $mid_group_name) {
+            $result[$key]['group_name'] = $mid_group_name;
+            $result[$key]['assigned_mids'] = Profile::where('global_fields->mid_group', '=', $mid_group_name)->count();
+            $result[$key]['mids_data'] = Profile::where('global_fields->mid_group', '=', $mid_group_name)->get();
+        }
+        $result = array_values($result);
+        return response()->json(['status' => true, 'data' => $result]);
     }
 
     /**

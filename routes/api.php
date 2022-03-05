@@ -80,5 +80,6 @@ Route::get('refresh-monthly', [STicketMonthlyController::class, 'refresh_monthly
 Route::get('populate_products_from_orders', [OrderProductController::class, 'populate_products_from_orders']);
 Route::get('pull_payment_router_view', [MidController::class, 'pull_payment_router_view']);
 Route::get('pull_profiles', [ProfileController::class, 'pull_profiles']);
+Route::get('get_gateway_ids', [MidController::class, 'get_gateway_ids']);
 
 
