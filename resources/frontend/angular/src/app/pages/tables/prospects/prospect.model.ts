@@ -1,6 +1,6 @@
 export class Prospect {
 
-  prospect_id: string;
+  id: string;
   // campaign_id: string;
   first_name: string;
   last_name: string;
@@ -23,7 +23,7 @@ export class Prospect {
   // note: string;
 
   constructor(prospect) {
-    this.prospect_id = prospect.prospect_id;
+    this.id = prospect.id;
     // this.campaign_id = prospect.campaign_id;
     this.first_name = prospect.first_name;
     this.last_name = prospect.last_name;

@@ -87,7 +87,7 @@ export class ProspectsComponent implements OnInit {
   @Input()
   columns: ListColumn[] = [
     { name: 'Actions', property: 'actions', visible: true },
-    { name: 'Id', property: 'prospect_id', isModelProperty: true },
+    { name: 'Id', property: 'id', isModelProperty: true },
     // { name: 'campaign_id', property: 'campaign_id', visible: true, isModelProperty: false },
     { name: 'First Name', property: 'first_name', visible: true, isModelProperty: true },
     { name: 'Last Name', property: 'last_name', visible: true, isModelProperty: true },
