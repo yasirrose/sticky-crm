@@ -13,9 +13,9 @@ class CustomerController extends Controller
     {
         $pageno = isset($request->page) ? $request->page : 1;
         $no_of_records_per_page = isset($request->per_page) ? $request->per_page : 25;
-        $query = DB::table('customers')->select('id', 'email', 'first_name', 'last_name', 'phone', 'addresses');
-        // $total_rows = DB::table('customers')->count('id');
-        $total_rows = 200000;
+        $query = Customer::select('id', 'email', 'first_name', 'last_name', 'phone', 'addresses');
+        // $total_rows = Customer::where('email','!=','')->count('email');
+        $total_rows = 243635;
         
         if($request->search != ''){
             $query->Where('email', 'like', '%'.$request->search.'%')

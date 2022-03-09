@@ -29,6 +29,7 @@ class MidGroupController extends Controller
             $result[$key]['assigned_mids'] = Profile::where('global_fields->mid_group', '=', $mid_group_name)->count();
             $result[$key]['mids_data'] = Profile::where('global_fields->mid_group', '=', $mid_group_name)->get();
         }
+        // dd(json_decode($result[0]['mids_data']));
         $result = array_values($result);
         return response()->json(['status' => true, 'data' => $result]);
     }

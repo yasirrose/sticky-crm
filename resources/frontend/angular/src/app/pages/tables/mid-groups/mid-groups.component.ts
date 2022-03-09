@@ -3,14 +3,12 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
-import { Observable, of, ReplaySubject } from 'rxjs';
+import { Observable, of, ReplaySubject, observable } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { ListColumn } from 'src/@fury/shared/list/list-column.model';
 import { MidGroup } from './mid-groups.model';
 import { fadeInRightAnimation } from 'src/@fury/animations/fade-in-right.animation';
 import { fadeInUpAnimation } from 'src/@fury/animations/fade-in-up.animation';
-
-//self imports
 import { FormGroup, FormControl } from '@angular/forms';
 import { MidGroupsService } from './mid-groups.service';
 import { Subscription } from 'rxjs';
@@ -18,6 +16,19 @@ import { formatDate } from '@angular/common';
 import { environment } from 'src/environments/environment';
 import { ApiService } from 'src/app/api.service';
 import { MidsDetailComponent } from './mids-detail/mids-detail.component';
+import { Pipe, PipeTransform } from '@angular/core';
+
+@Pipe({ name: 'tooltipList' })
+export class TooltipListPipe implements PipeTransform {
+
+  transform(lines: string[]): string {
+    let list: string = '';
+    lines.forEach(line => {
+      list += '• ' + line + '\n';
+    });
+    return list;
+  }
+}
 
 @Component({
   selector: 'fury-mid-groups',
@@ -25,7 +36,7 @@ import { MidsDetailComponent } from './mids-detail/mids-detail.component';
   styleUrls: ['./mid-groups.component.scss'],
   animations: [fadeInRightAnimation, fadeInUpAnimation]
 })
-export class MidGroupsComponent implements OnInit {
+export class MidGroupsComponent implements OnInit, PipeTransform  {
 
   subject$: ReplaySubject<MidGroup[]> = new ReplaySubject<MidGroup[]>(1);
   data$: Observable<MidGroup[]> = this.subject$.asObservable();
@@ -40,7 +51,8 @@ export class MidGroupsComponent implements OnInit {
   all_values = [];
   filterData: any = [];
   pageSizeOptions: number[] = [5, 10, 25, 100];
-  toolTipMids: [];
+  // toolTipMids: [];
+  toolTipMids = [];
 
   @Input()
   columns: ListColumn[] = [
@@ -67,6 +79,14 @@ export class MidGroupsComponent implements OnInit {
 
   get visibleColumns() {
     return this.columns.filter(column => column.visible).map(column => column.property);
+  }
+
+  transform(lines: string[]): string {
+    let list: string = '';
+    lines.forEach(line => {
+      list += '• ' + line + '\n';
+    });
+    return list;
   }
 
   ngOnInit() {
@@ -111,28 +131,34 @@ export class MidGroupsComponent implements OnInit {
         this.mapData().subscribe(midGroups => {
           this.subject$.next(midGroups);
         });
-        // for (let i = 0; i < this.midGroups.length; i++) {
-        //   this.midGroups[i].mids_data.forEach(function (mid) {
-        //     this.toolTipMids[0] = mid.alias;
-        //   });
-        //   console.log('this.toolTipMids :', this.toolTipMids);
-        // }
         this.isLoading = false;
       }, error => {
         this.isLoading = false;
       });
+    for (let i = 0; i < this.midGroups.length; i++) {
+      this.toolTipMids[i] = this.getAssignedMids(this.midGroups[i]);
+      console.log('this.toolTipMids :', this.toolTipMids);
+    }
   }
 
+  getAssignedMids(midGroup){
+    var mid_names = [];
+    midGroup.mids_data.forEach(function (mid) {
+      mid_names.push(mid.alias);
+      console.log('mid_names :', mid_names);
+    });
+    return mid_names;
+  }
   manageGetResponse(data) {
-    console.log('manage get data :', data);
-    this.midGroups = data.data;
-    console.log('mange get this.midGroups :', this.midGroups);
-    for (let i = 0; i < this.midGroups.length; i++) {
-      this.midGroups[i].mids_data.forEach(function (mid) {
-        this.toolTipMids[i] = mid.alias;
-      });
-    }
-    console.log('manage status true this.toolTipMids :', this.toolTipMids);
+    // console.log('manage get data :', data);
+    // this.midGroups = data.data;
+    // console.log('mange get this.midGroups :', this.midGroups);
+    // for (let i = 0; i < this.midGroups.length; i++) {
+    //   this.midGroups[i].mids_data.forEach(function (mid) {
+    //     this.toolTipMids[i] = mid.alias;
+    //   });
+    // }
+    // console.log('manage status true this.toolTipMids :', this.toolTipMids);
   }
 
   onFilterChange(value) {
@@ -142,11 +168,6 @@ export class MidGroupsComponent implements OnInit {
     value = value.trim();
     value = value.toLowerCase();
     this.dataSource.filter = value;
-  }
-
-  refresh() {
-
-    console.log('refreshed');
   }
 
   openDialog(mids) {
