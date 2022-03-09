@@ -3,10 +3,8 @@ import { RouterModule, Routes } from '@angular/router';
 import { MidsComponent } from './mids.component';
 
 const routes: Routes = [
-  {
-    path: '',
-    component: MidsComponent
-  }
+  { path: '', component: MidsComponent },
+  { path: 'view-mid', component: MidsComponent},
 ];
 
 @NgModule({

@@ -11,26 +11,18 @@ import { MAT_SNACK_BAR_DEFAULT_OPTIONS, MatSnackBarConfig } from '@angular/mater
 import { OrdersService } from './pages/tables/orders/orders.service';
 import { CustomersService } from './pages/customers/customers.service';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { MidGroupsRoutingModule } from './pages/tables/mid-groups/mid-groups-routing.module';
 
 @NgModule({
   imports: [
-    // Angular Core Module // Don't remove!
     BrowserModule,
     BrowserAnimationsModule,
     HttpClientModule,
-
-    // Fury Core Modules
     AppRoutingModule,
-
-    // Layout Module (Sidenav, Toolbar, Quickpanel, Content)
+    MidGroupsRoutingModule,
     LayoutModule,
-
-    // Displays Loading Bar when a Route Request or HTTP Request is pending
     PendingInterceptorModule,
-     NgbModule,
-
-    // Register a Service Worker (optional)
-    // ServiceWorkerModule.register('ngsw-worker.js', { enabled: environment.production })
+    NgbModule,
   ],
   declarations: [AppComponent],
   bootstrap: [AppComponent],

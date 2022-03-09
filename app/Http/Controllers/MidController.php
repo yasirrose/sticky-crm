@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Mid;
+use App\Models\Profile;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
@@ -17,7 +18,11 @@ class MidController extends Controller
     public function index()
     {
         $data = Mid::all();
-        return response()->json(['status' =>true, 'data' =>$data]);
+        $profiles = Profile::get();
+        foreach ($data as $mid) {
+            $mid->global_fields = Profile::where(['alias' => $mid->gateway_alias])->pluck('global_fields')->first();
+        }
+        return response()->json(['status' => true, 'data' => $data]);
     }
 
     /**
@@ -47,9 +52,10 @@ class MidController extends Controller
      * @param  \App\Models\Mid  $mid
      * @return \Illuminate\Http\Response
      */
-    public function show(Mid $mid)
+    public function show($alias)
     {
-        //
+        $data = Profile::where(['alias'=>$alias])->first();
+        return response()->json(['status' => true, 'data'=>$data]);
     }
 
     /**
@@ -85,16 +91,18 @@ class MidController extends Controller
     {
         //
     }
-    public function pull_payment_router_view(){
-
-        $new_gateways = 0; 
-        $updated_gateways= 0;
+    public function pull_payment_router_view()
+    {
+        // dd('die');
+        // return response()->json(['status' => false, '']);
+        $new_gateways = 0;
+        $updated_gateways = 0;
         $db_gateway_alias = Mid::all()->pluck('gateway_alias')->toArray();
         $username = "yasir_dev";
         $password = "yyutmzvRpy5TPU";
         $url = 'https://thinkbrain.sticky.io/api/v1/payment_router_view';
 
-        $api_data = json_decode(Http::asForm()->withBasicAuth($username, $password)->accept('application/json')->post($url, ['payment_router_id'=>1])->getBody()->getContents());
+        $api_data = json_decode(Http::asForm()->withBasicAuth($username, $password)->accept('application/json')->post($url, ['payment_router_id' => 1])->getBody()->getContents());
         $routers = $api_data->data;
         // dd($routers);
         if ($routers) {
@@ -102,10 +110,10 @@ class MidController extends Controller
             foreach ($routers as $router) {
                 $gateways = $router->gateways;
 
-                foreach($gateways as $gateway){
+                foreach ($gateways as $gateway) {
                     // dd($gateway);
-                    if(in_array($gateway->gateway_alias, $db_gateway_alias)){
-                        $update = Mid::where(['gateway_alias'=>$gateway->gateway_alias])->first();
+                    if (in_array($gateway->gateway_alias, $db_gateway_alias)) {
+                        $update = Mid::where(['gateway_alias' => $gateway->gateway_alias])->first();
                         $gateway->router_id = $router->id;
                         $gateway->router_name = $router->name;
                         $gateway->router_date_in = $router->date_in;
@@ -116,8 +124,7 @@ class MidController extends Controller
                         $gateway->is_strict_preserve = $router->is_strict_preserve;
                         $update->update((array)$gateway);
                         $updated_gateways++;
-                    }
-                    else{
+                    } else {
                         $mid = new Mid();
                         $gateway->router_id = $router->id;
                         $gateway->router_name = $router->name;
@@ -133,18 +140,19 @@ class MidController extends Controller
                 }
             }
         }
-        return response()->json(['status' => true, 'New mids:'=> $new_gateways, 'Updated mids:'=>$updated_gateways]);
+        return response()->json(['status' => true, 'data' => ['new_mids' => $new_gateways, 'updated_mids' => $updated_gateways]]);
     }
-    public function get_gateway_ids(){
+    public function get_gateway_ids()
+    {
         $username = "yasir_dev";
         $password = "yyutmzvRpy5TPU";
         $url = 'https://thinkbrain.sticky.io/api/v1/gateway_view';
-        $gateways =  Mid::pluck('gateway_id')->toArray();
-        
-        
-        
-        foreach($gateways as $id){
-            $data = json_decode(Http::withBasicAuth($username, $password)->accept('application/json')->post($url,['gateway_id'=>$id])->getBody()->getContents());
+        $gateways = Mid::pluck('gateway_id')->toArray();
+
+
+
+        foreach ($gateways as $id) {
+            $data = json_decode(Http::withBasicAuth($username, $password)->accept('application/json')->post($url, ['gateway_id' => $id])->getBody()->getContents());
             dd($data);
         }
     }

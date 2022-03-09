@@ -33,6 +33,10 @@ const routes: Routes = [
         loadChildren: () => import('./pages/tables/mids/mids.module').then(m => m.MidsModule),
       },
       {
+        path: `mid-view/:alias`,
+        loadChildren: () => import('./pages/mid-view/mid-view.module').then(m => m.MidViewModule),
+      },
+      {
         path: 'mid-groups',
         loadChildren: () => import('./pages/tables/mid-groups/mid-groups.module').then(m => m.MidGroupsModule),
       },

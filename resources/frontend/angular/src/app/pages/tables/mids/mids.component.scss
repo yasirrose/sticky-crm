@@ -9,13 +9,34 @@
 .m-top{
   padding-top: 20px;
 }
-
 .m-left{
   padding-left: 20px;
+}
+.m-bottom{
+  padding-left: 20px;
+}
+.mb{
+  margin-bottom: 10px;
+}
+.ml{
+  margin-left: 10px;
 }
 .no-bottom-padding{
   padding-bottom: 0px;
 }
+.highlight-danger{
+  background: #f08080;
+  color: white;
+}
+.highlight-warning{
+  background: yellow;
+}
+// .mat-row:nth-child(2n+1){
+//   background-color: #e4f0ec;
+// }
+// .mat-row:not(:nth-child(2n+1)){
+//   background-color:#ffffff;
+// }
 @media screen and (max-width: 992px) {
   
   
