@@ -14,7 +14,7 @@
           </td>
         </ng-container>
 
-        <!-- fullName Column -->
+        <!-- fullName Column --> 
         <ng-container *ngFor="let column of columns">
           <ng-container *ngIf="column.isModelProperty" [matColumnDef]="column.property">
             <th *matHeaderCellDef mat-header-cell mat-sort-header> {{ column.name }}</th>

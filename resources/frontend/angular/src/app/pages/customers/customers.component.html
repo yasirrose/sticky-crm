@@ -54,7 +54,7 @@
         </ng-container>
 
         <tr *matHeaderRowDef="visibleColumns" mat-header-row></tr>
-        <tr *matRowDef="let row; columns: visibleColumns;" class="clickable route-animations-elements"
+        <tr *matRowDef="let row; columns: visibleColumns;" (click)="openDialog(row.id)" class="clickable route-animations-elements"
           mat-row></tr>
       </table>
 
