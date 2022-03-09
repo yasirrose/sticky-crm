@@ -24,7 +24,7 @@ class OrdersController extends Controller
         $start_date = date('Y-m-d', strtotime($request->start_date));
         $end_date = date('Y-m-d', strtotime($request->end_date));
         $pageno = isset($request->pageno) ? $request->pageno : 0;
-        $no_of_records_per_page = isset($request->per_page) ? $request->per_page : 10;
+        $no_of_records_per_page = isset($request->per_page) ? $request->per_page : 25;
         
         $query = DB::table('orders')
 
@@ -702,8 +702,8 @@ class OrdersController extends Controller
         $api_data = json_decode(Http::asForm()->withBasicAuth($username, $password)->accept('application/json')->post(
             $url,
             [
-                'start_date' => '03/01/2022',
-                'end_date' => '03/02/2022',
+                'start_date' => '03/03/2022',
+                'end_date' => '03/07/2022',
                 'campaign_id' => 'all',
                 'criteria' => 'all'
             ]

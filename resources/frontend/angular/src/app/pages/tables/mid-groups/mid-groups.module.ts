@@ -21,6 +21,9 @@ import { ListModule } from 'src/@fury/shared/list/list.module';
 import { MaterialModule } from 'src/@fury/shared/material-components.module';
 import { MidGroupsRoutingModule } from './mid-groups-routing.module';
 import { MidGroupsComponent } from './mid-groups.component';
+import { MidsDetailComponent } from './mids-detail/mids-detail.component';
+import { RouterModule } from '@angular/router';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 @NgModule({
   imports: [
@@ -41,16 +44,15 @@ import { MidGroupsComponent } from './mid-groups.component';
     MatNativeDateModule,
     MatExpansionModule,
     NgbModule,
-
-    // Core
     ListModule,
     BreadcrumbsModule,
-
     MatTableModule,
     MatPaginatorModule,
     MatProgressBarModule,
+    RouterModule,
+    MatTooltipModule
   ],
-  declarations: [MidGroupsComponent],
+  declarations: [MidGroupsComponent, MidsDetailComponent],
   exports: [MidGroupsComponent],
 
 })

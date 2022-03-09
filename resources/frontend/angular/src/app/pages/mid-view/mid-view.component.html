@@ -1,0 +1,299 @@
+<fury-page-layout mode="simple">
+    <fury-page-layout-content class="no-bottom-padding" fxLayoutAlign="start start" fxFlexFill>
+        <div class="content" layout="column" class="full-width">
+            <div class="fury-preview-card" fxLayout="column" fxLayout.gt-sm="row">
+                <div class="content" fxFlex>
+                    <div class="header">
+                        <div class="title">Mid Details: {{alias}}</div>
+                    </div>
+
+                    <mat-tab-group class="tabs fury-tabs">
+
+                        <mat-tab label="General Details">
+                            <div class="person padding">
+                                <!-- <div fxLayout="row" fxLayoutGap="24px">
+                                    <h3>Account Name: {{mid.account_name}}</h3>
+                                </div> -->
+                                <div class="main-div" fxLayout="column" fxLayoutGap="20px" fxLayout.gt-sm="row"
+                                    fxLayoutGap.gt-sm="24px">
+                                    <div fxLayout="row" fxLayoutGap="24px">
+                                        <div class="product-column" fxLayout="column" fxLayoutGap="15px" [fxFlex]="40">
+                                            <div fxLayout="row" fxLayoutGap="24px">
+                                                <div class="detail-title"><span>Profile Id:</span></div>
+                                                <div class="detail-data"><span>{{mid?.profile_id}}</span></div>
+                                            </div>
+                                            <div fxLayout="row" fxLayoutGap="24px">
+                                                <div class="detail-title"><span>Account Id:</span></div>
+                                                <div class="detail-data"><span>{{mid?.account_id}}</span></div>
+                                            </div>
+                                            <div fxLayout="row" fxLayoutGap="24px">
+                                                <div class="detail-title"><span>Alias:</span></div>
+                                                <div class="detail-data"><span>{{mid?.alias}}</span></div>
+                                            </div>
+                                            <div fxLayout="row" fxLayoutGap="24px">
+                                                <div class="detail-title"><span>Account Name:</span></div>
+                                                <div class="detail-data"><span>{{mid?.account_name}}</span></div>
+                                            </div>
+                                        </div>
+                                        <div class="product-column" fxLayout="column" fxLayoutGap="15px" [fxFlex]="40">
+                                            <div fxLayout="row" fxLayoutGap="24px">
+                                                <div class="detail-title"><span>Currency Id:</span></div>
+                                                <div class="detail-data"><span>{{mid?.currency_id}}</span></div>
+                                            </div>
+                                            <div fxLayout="row" fxLayoutGap="24px">
+                                                <div class="detail-title"><span>Currency Title:</span></div>
+                                                <div class="detail-data"><span>{{mid?.currency_title}}</span></div>
+                                            </div>
+                                            <div fxLayout="row" fxLayoutGap="24px">
+                                                <div class="detail-title"><span>Currency Code:</span></div>
+                                                <div class="detail-data"><span>{{mid?.currency_code}}</span></div>
+                                            </div>
+                                            <div fxLayout="row" fxLayoutGap="24px">
+                                                <div class="detail-title"><span>Currency Symbol Left:</span></div>
+                                                <div class="detail-data"><span>{{mid?.currency_symbol_left}}</span></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </mat-tab>
+                        <mat-tab label="Global Fields">
+                            <div class="person padding">
+                                <!-- <div fxLayout="row" fxLayoutGap="24px">
+                                    <h3>Account Name: {{mid.account_name}}</h3>
+                                </div> -->
+                                <div class="main-div" fxLayout="column" fxLayoutGap="20px" fxLayout.gt-sm="row"
+                                    fxLayoutGap.gt-sm="24px">
+                                    <div fxLayout="row" fxLayoutGap="24px">
+                                        <div class="product-column" fxLayout="column" fxLayoutGap="15px" [fxFlex]="40">
+                                            <div fxLayout="row" fxLayoutGap="24px">
+                                                <div class="detail-title"><span>Global Monthly Cap:</span></div>
+                                                <div class="detail-data"><span>{{mid?.global_fields?.global_monthly_cap}}</span></div>
+                                            </div>
+                                            <div fxLayout="row" fxLayoutGap="24px">
+                                                <div class="detail-title"><span>Customer Service Number:</span></div>
+                                                <div class="detail-data"><span>{{mid?.global_fields?.customer_service_number}}</span></div>
+                                            </div>
+                                            <div fxLayout="row" fxLayoutGap="24px">
+                                                <div class="detail-title"><span>Descriptor:</span></div>
+                                                <div class="detail-data"><span>{{mid?.global_fields?.descriptor}}</span></div>
+                                            </div>
+                                            <div fxLayout="row" fxLayoutGap="24px">
+                                                <div class="detail-title"><span>Merchant Id:</span></div>
+                                                <div class="detail-data"><span>{{mid?.global_fields?.merchant_id}}</span></div>
+                                            </div>
+                                            <div fxLayout="row" fxLayoutGap="24px">
+                                                <div class="detail-title"><span>Customer Service Email:</span></div>
+                                                <div class="detail-data"><span>{{mid?.global_fields?.customer_service_email}}</span></div>
+                                            </div>
+                                            <div fxLayout="row" fxLayoutGap="24px">
+                                                <div class="detail-title"><span>Customer Service Email From:</span></div>
+                                                <div class="detail-data"><span>{{mid?.global_fields?.customer_service_email_from}}</span></div>
+                                            </div>
+                                            <div fxLayout="row" fxLayoutGap="24px">
+                                                <div class="detail-title"><span>Mid Group:</span></div>
+                                                <div class="detail-data"><span>{{mid?.global_fields?.mid_group}}</span></div>
+                                            </div>
+                                            <div fxLayout="row" fxLayoutGap="24px">
+                                                <div class="detail-title"><span>Vertical Id:</span></div>
+                                                <div class="detail-data"><span>{{mid?.global_fields?.vertical?.id}}</span></div>
+                                            </div>
+                                            <div fxLayout="row" fxLayoutGap="24px">
+                                                <div class="detail-title"><span>Vertical Option:</span></div>
+                                                <div class="detail-data"><span>{{mid?.global_fields?.vertical?.option}}</span></div>
+                                            </div>
+                                            <div fxLayout="row" fxLayoutGap="24px">
+                                                <div class="detail-title"><span>Currency Code:</span></div>
+                                                <div class="detail-data"><span>{{mid?.global_fields?.currency_code}}</span></div>
+                                            </div>
+                                            <div fxLayout="row" fxLayoutGap="24px">
+                                                <div class="detail-title"><span>Processor Id:</span></div>
+                                                <div class="detail-data"><span>{{mid?.global_fields?.processor?.id}}</span></div>
+                                            </div>
+                                            <div fxLayout="row" fxLayoutGap="24px">
+                                                <div class="detail-title"><span>Processor Option:</span></div>
+                                                <div class="detail-data"><span>{{mid?.global_fields?.processor?.option}}</span></div>
+                                            </div>
+                                        </div>
+                                        <div class="product-column" fxLayout="column" fxLayoutGap="15px" [fxFlex]="40">
+                                            <div fxLayout="row" fxLayoutGap="24px">
+                                                <div class="detail-title"><span>URL:</span></div>
+                                                <div class="detail-data"><span>{{mid?.global_fields?.url}}</span></div>
+                                            </div>
+                                            <div fxLayout="row" fxLayoutGap="24px">
+                                                <div class="detail-title"><span>Cancellation Url:</span></div>
+                                                <div class="detail-data"><span>{{mid?.global_fields?.cancellation_url}}</span></div>
+                                            </div>
+                                            <div fxLayout="row" fxLayoutGap="24px">
+                                                <div class="detail-title"><span>CVV Id:</span></div>
+                                                <div class="detail-data"><span>{{mid?.global_fields?.cvv?.id}}</span></div>
+                                            </div>
+                                            <div fxLayout="row" fxLayoutGap="24px">
+                                                <div class="detail-title"><span>CVV Option:</span></div>
+                                                <div class="detail-data"><span>{{mid?.global_fields?.cvv?.option}}</span></div>
+                                            </div>
+                                            <div fxLayout="row" fxLayoutGap="24px">
+                                                <div class="detail-title"><span>Transaction Fee:</span></div>
+                                                <div class="detail-data"><span>{{mid?.global_fields?.transaction_fee}}</span></div>
+                                            </div>
+                                            <div fxLayout="row" fxLayoutGap="24px">
+                                                <div class="detail-title"><span>Chargeback Fee:</span></div>
+                                                <div class="detail-data"><span>{{mid?.global_fields?.chargeback_fee}}</span></div>
+                                            </div>
+                                            <div fxLayout="row" fxLayoutGap="24px">
+                                                <div class="detail-title"><span>Reserve Percent:</span></div>
+                                                <div class="detail-data"><span>{{mid?.global_fields?.reserve_percent}}</span></div>
+                                            </div>
+                                            <div fxLayout="row" fxLayoutGap="24px">
+                                                <div class="detail-title"><span>Reserve Term Id:</span></div>
+                                                <div class="detail-data"><span>{{mid?.global_fields?.reserve_term?.id}}</span></div>
+                                            </div>
+                                            <div fxLayout="row" fxLayoutGap="24px">
+                                                <div class="detail-title"><span>Reserve Term Option:</span></div>
+                                                <div class="detail-data"><span>{{mid?.global_fields?.reserve_term?.option}}</span></div>
+                                            </div>
+                                            <div fxLayout="row" fxLayoutGap="24px">
+                                                <div class="detail-title"><span>Reserve Term Days:</span></div>
+                                                <div class="detail-data"><span>{{mid?.global_fields?.reserve_term_days}}</span></div>
+                                            </div>
+                                            <div fxLayout="row" fxLayoutGap="24px">
+                                                <div class="detail-title"><span>Reserve Cap:</span></div>
+                                                <div class="detail-data"><span>{{mid?.global_fields?.reserve_cap}}</span></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </mat-tab>
+                        <mat-tab label="Account Fields">
+                            <div class="person padding">
+                                <!-- <div fxLayout="row" fxLayoutGap="24px">
+                                    <h3>Account Name: {{mid.account_name}}</h3>
+                                </div> -->
+                                <div class="main-div" fxLayout="column" fxLayoutGap="20px" fxLayout.gt-sm="row"
+                                    fxLayoutGap.gt-sm="24px">
+                                    <div fxLayout="row" fxLayoutGap="24px">
+                                        <div class="product-column" fxLayout="column" fxLayoutGap="15px" [fxFlex]="40">
+                                            <div fxLayout="row" fxLayoutGap="24px">
+                                                <div class="detail-title"><span>Password:</span></div>
+                                                <div class="detail-data"><span>{{mid?.account_fields?.password}}</span></div>
+                                            </div>
+                                            <div fxLayout="row" fxLayoutGap="24px">
+                                                <div class="detail-title"><span>Enable Delayed Capture:</span></div>
+                                                <div class="detail-data"><span>{{mid?.account_fields?.enable_delayed_capture}}</span></div>
+                                            </div>
+                                            <div fxLayout="row" fxLayoutGap="24px">
+                                                <div class="detail-title"><span>Post Product Description:</span></div>
+                                                <div class="detail-data"><span>{{mid?.account_fields?.post_product_description}}</span></div>
+                                            </div>
+                                            <div fxLayout="row" fxLayoutGap="24px">
+                                                <div class="detail-title"><span>Use pre Auth Filter Id:</span></div>
+                                                <div class="detail-data"><span>{{mid?.account_fields?.use_pre_auth_filter}}</span></div>
+                                            </div>
+                                            <div fxLayout="row" fxLayoutGap="24px">
+                                                <div class="detail-title"><span>Post Phone:</span></div>
+                                                <div class="detail-data"><span>{{mid?.account_fields?.post_phone}}</span></div>
+                                            </div>
+                                            <div fxLayout="row" fxLayoutGap="24px">
+                                                <div class="detail-title"><span>Void Pre Auth:</span></div>
+                                                <div class="detail-data"><span>{{mid?.account_fields?.void_pre_auth}}</span></div>
+                                            </div>
+                                            <div fxLayout="row" fxLayoutGap="24px">
+                                                <div class="detail-title"><span>Username:</span></div>
+                                                <div class="detail-data"><span>{{mid?.account_fields?.username}}</span></div>
+                                            </div>
+                                            <div fxLayout="row" fxLayoutGap="24px">
+                                                <div class="detail-title"><span>Smtp Id:</span></div>
+                                                <div class="detail-data"><span>{{mid?.account_fields?.smtp_id}}</span></div>
+                                            </div>
+                                        </div>
+                                        <div class="product-column" fxLayout="column" fxLayoutGap="15px" [fxFlex]="40">
+                                            <div fxLayout="row" fxLayoutGap="24px">
+                                                <div class="detail-title"><span>Required Ssn:</span></div>
+                                                <div class="detail-data"><span>{{mid?.account_fields?.required_ssn}}</span></div>
+                                            </div>
+                                            <div fxLayout="row" fxLayoutGap="24px">
+                                                <div class="detail-title"><span>Test Mode:</span></div>
+                                                <div class="detail-data"><span>{{mid?.account_fields?.test_mode}}</span></div>
+                                            </div>
+                                            <div fxLayout="row" fxLayoutGap="24px">
+                                                <div class="detail-title"><span>Capture On_Shipment:</span></div>
+                                                <div class="detail-data"><span>{{mid?.account_fields?.capture_on_shipment}}</span></div>
+                                            </div>
+                                            <div fxLayout="row" fxLayoutGap="24px">
+                                                <div class="detail-title"><span>Delayed Capture Days:</span></div>
+                                                <div class="detail-data"><span>{{mid?.account_fields?.delayed_capture_days}}</span></div>
+                                            </div>
+                                            <div fxLayout="row" fxLayoutGap="24px">
+                                                <div class="detail-title"><span>Bcc:</span></div>
+                                                <div class="detail-data"><span>{{mid?.account_fields?.bcc}}</span></div>
+                                            </div>
+                                            <div fxLayout="row" fxLayoutGap="24px">
+                                                <div class="detail-title"><span>Post processor Id:</span></div>
+                                                <div class="detail-data"><span>{{mid?.account_fields?.post_processor_id}}</span></div>
+                                            </div>
+                                            <div fxLayout="row" fxLayoutGap="24px">
+                                                <div class="detail-title"><span>Cit Mit Parameters:</span></div>
+                                                <div class="detail-data"><span>{{mid?.account_fields?.cit_mit_parameters}}</span></div>
+                                            </div>
+                                            <div fxLayout="row" fxLayoutGap="24px">
+                                                <div class="detail-title"><span>Post Descriptor:</span></div>
+                                                <div class="detail-data"><span>{{mid?.account_fields?.post_descriptor}}</span></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </mat-tab>
+                        <mat-tab label="Fee Fields">
+                            <div class="person padding">
+                                <div class="main-div" fxLayout="column" fxLayoutGap="20px" fxLayout.gt-sm="row"
+                                    fxLayoutGap.gt-sm="24px">
+                                    <div fxLayout="row" fxLayoutGap="24px">
+                                        <div class="product-column" fxLayout="column" fxLayoutGap="15px" [fxFlex]="40">
+                                            <div fxLayout="row" fxLayoutGap="24px">
+                                                <div class="detail-title"><span>Monthly Fee:</span></div>
+                                                <div class="detail-data"><span>{{mid?.fee_fields?.monthly_fee}}</span></div>
+                                            </div>
+                                            <div fxLayout="row" fxLayoutGap="24px">
+                                                <div class="detail-title"><span>Batch Fee:</span></div>
+                                                <div class="detail-data"><span>{{mid?.fee_fields?.batch_fee}}</span></div>
+                                            </div>
+                                            <div fxLayout="row" fxLayoutGap="24px">
+                                                <div class="detail-title"><span>Visa:</span></div>
+                                                <div class="detail-data"><span>{{mid?.fee_fields?.visa}}</span></div>
+                                            </div>
+                                            <div fxLayout="row" fxLayoutGap="24px">
+                                                <div class="detail-title"><span>Mastercard:</span></div>
+                                                <div class="detail-data"><span>{{mid?.fee_fields?.mastercard}}</span></div>
+                                            </div>
+                                        </div>
+                                        <div class="product-column" fxLayout="column" fxLayoutGap="15px" [fxFlex]="40">
+                                            <div fxLayout="row" fxLayoutGap="24px">
+                                                <div class="detail-title"><span>Discover:</span></div>
+                                                <div class="detail-data"><span>{{mid?.fee_fields?.discover}}</span></div>
+                                            </div>
+                                            <div fxLayout="row" fxLayoutGap="24px">
+                                                <div class="detail-title"><span>American Express:</span></div>
+                                                <div class="detail-data"><span>{{mid?.fee_fields?.american_express}}</span></div>
+                                            </div>
+                                            <div fxLayout="row" fxLayoutGap="24px">
+                                                <div class="detail-title"><span>Other:</span></div>
+                                                <div class="detail-data"><span>{{mid?.fee_fields?.other}}</span></div>
+                                            </div>
+                                            <div fxLayout="row" fxLayoutGap="24px">
+                                                <div class="detail-title"><span>Refund Processing Fee:</span></div>
+                                                <div class="detail-data"><span>{{mid?.fee_fields?.refund_processing_fee}}</span></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </mat-tab>
+                    </mat-tab-group>
+                </div>
+            </div>
+        </div>
+    </fury-page-layout-content>
+</fury-page-layout>
+<router-outlet></router-outlet>

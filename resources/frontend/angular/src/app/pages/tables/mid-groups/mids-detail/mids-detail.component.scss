@@ -1,0 +1,50 @@
+mat-dialog-container{
+    width: 1000px;
+}
+.mat-column-id {
+    flex: 0 0 50%;
+}
+.mat-column-gateway_id {
+    flex: 0 10px 50%;
+}
+.mat-column-alias {
+    flex: 0 10px 50%;
+    width: 200px;
+}
+.mat-column-username {
+    flex: 0 20px 50%;
+    width: 100px;
+}
+.mat-column-account_name {
+    flex: 0 20px 50%;
+    width: 300px;
+}
+.clickable {
+    cursor: pointer;
+}
+mat-header-row{
+    background-color: rgba(0, 0, 0, 0.03);
+}
+.mat-row:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+}
+.product-column{
+    width: 600px;
+}
+// .mat-column-id {
+//     width: 32px;
+//     border-right: 1px solid currentColor;
+//     padding-right: 24px;
+//     text-align: center;
+//   }
+  .mat-column-account_name {
+    padding-left: 16px;
+    // font-size: 20px;
+  }
+  
+.fury-preview-card {
+    box-shadow: none !important;
+}
+.main-div{
+    box-shadow: none !important;
+}

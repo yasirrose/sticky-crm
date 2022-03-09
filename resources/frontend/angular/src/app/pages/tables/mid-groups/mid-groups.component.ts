@@ -17,6 +17,7 @@ import { Subscription } from 'rxjs';
 import { formatDate } from '@angular/common';
 import { environment } from 'src/environments/environment';
 import { ApiService } from 'src/app/api.service';
+import { MidsDetailComponent } from './mids-detail/mids-detail.component';
 
 @Component({
   selector: 'fury-mid-groups',
@@ -28,12 +29,9 @@ export class MidGroupsComponent implements OnInit {
 
   subject$: ReplaySubject<MidGroup[]> = new ReplaySubject<MidGroup[]>(1);
   data$: Observable<MidGroup[]> = this.subject$.asObservable();
-  midGroups: MidGroup[];
+  midGroups: any;
 
-  //customer coding
   getSubscription: Subscription;
-  getCampaignsSubscription: Subscription;
-  getProductsSubscription: Subscription;
   isLoading = false;
   totalRows = 0;
   pageSize = 25;
@@ -42,6 +40,7 @@ export class MidGroupsComponent implements OnInit {
   all_values = [];
   filterData: any = [];
   pageSizeOptions: number[] = [5, 10, 25, 100];
+  toolTipMids: [];
 
   @Input()
   columns: ListColumn[] = [
@@ -50,18 +49,11 @@ export class MidGroupsComponent implements OnInit {
     // { name: 'Id', property: 'id', visible: true, isModelProperty: true },
     // { name: 'router_id', property: 'router_id', visible: true, isModelProperty: true },
     { name: 'Group Name', property: 'group_name', visible: true, isModelProperty: true },
-    { name: 'Group Alias', property: 'group_alias', visible: true, isModelProperty: true },
-    { name: 'Assigned Mids', property: 'assigned_mids', visible: true, isModelProperty: true },
-    { name: 'Status', property: 'status', visible: true, isModelProperty: true },
+    { name: 'Assigned Mids', property: 'assigned_mids', visible: true, isModelProperty: false },
+    { name: 'Gross Revenue', property: 'gross_revenue', visible: true, isModelProperty: true },
+    { name: 'Bank %', property: 'bank_per', visible: true, isModelProperty: true },
+    { name: 'Target Bank Balance', property: 'target_bank_balance', visible: true, isModelProperty: true },
     { name: 'Updated_at', property: 'updated_at', visible: true, isModelProperty: true },
-    // { name: 'MidGroup Group Setting', property: 'mid_group_setting', visible: false, isModelProperty: true },
-    // { name: 'Strict Preserve', property: 'is_strict_preserve', visible: false, isModelProperty: true },
-    // { name: 'Campaign Id', property: 'campaign_id', visible: false, isModelProperty: true },
-    // { name: 'Global Monthly Cap', property: 'global_monthly_cap', visible: true, isModelProperty: true },
-    // { name: 'Current Monthly Amount', property: 'current_monthly_amount', visible: true, isModelProperty: true },
-    // { name: 'Processing Percent', property: 'processing_percent', visible: true, isModelProperty: true },
-    // { name: '3d Routed', property: 'is_three_d_routed', visible: false, isModelProperty: true },
-    // { name: 'Created On', property: 'created_on', visible: true, isModelProperty: true },
 
   ] as ListColumn[];
   // pageSize = 20000;
@@ -78,7 +70,8 @@ export class MidGroupsComponent implements OnInit {
   }
 
   ngOnInit() {
-    // this.getCampaignsSubscription = this.midGroupService.getCampaignsResponse$.subscribe(data => this.manageCampaignsResponse(data))
+    this.getSubscription = this.midGroupService.getResponse$
+      .subscribe(data => this.manageGetResponse(data));
     // this.getProductsSubscription = this.midGroupService.getProductsResponse$.subscribe(data => this.manageProductsResponse(data))
 
     this.getData();
@@ -108,39 +101,38 @@ export class MidGroupsComponent implements OnInit {
     this.getData();
   }
 
-  getData() {
-    // this.isLoading = true;
-    this.midGroupService.getMidGroups()
+  async getData() {
+    this.isLoading = true;
+    await this.midGroupService.getMidGroups()
       .then(midGroups => {
         console.log('paginate data is: ', midGroups.data);
-        this.midGroups = midGroups.data
+        this.midGroups = midGroups.data;
         this.dataSource.data = midGroups.data;
-        /* todo: un-comment the above two lines  to get the data*/
-        // setTimeout(() => {
-        //   this.paginator.pageIndex = this.currentPage;
-        //   this.paginator.length = midGroups.pag.count;
-        // });
         this.mapData().subscribe(midGroups => {
           this.subject$.next(midGroups);
         });
+        // for (let i = 0; i < this.midGroups.length; i++) {
+        //   this.midGroups[i].mids_data.forEach(function (mid) {
+        //     this.toolTipMids[0] = mid.alias;
+        //   });
+        //   console.log('this.toolTipMids :', this.toolTipMids);
+        // }
         this.isLoading = false;
       }, error => {
         this.isLoading = false;
       });
   }
 
-  manageGetResponse(midGroups) {
-    if (midGroups.status) {
-      // this.midGroups = midGroups.data;
-      // this.dataSource.data = midGroups.data;
-      // setTimeout(() => {
-      //   this.paginator.pageIndex = this.currentPage;
-      //   this.paginator.length = midGroups.pag.count;
-      // });
-      this.isLoading = false;
-    } else {
-      this.isLoading = false;
+  manageGetResponse(data) {
+    console.log('manage get data :', data);
+    this.midGroups = data.data;
+    console.log('mange get this.midGroups :', this.midGroups);
+    for (let i = 0; i < this.midGroups.length; i++) {
+      this.midGroups[i].mids_data.forEach(function (mid) {
+        this.toolTipMids[i] = mid.alias;
+      });
     }
+    console.log('manage status true this.toolTipMids :', this.toolTipMids);
   }
 
   onFilterChange(value) {
@@ -152,14 +144,20 @@ export class MidGroupsComponent implements OnInit {
     this.dataSource.filter = value;
   }
 
-  // openDialog(id) {
-  //   const dialogRef = this.dialog.open(ProductDetailComponent, {
-  //     data: { id: id }
-  //   });
-  //   dialogRef.updateSize('1000px');
-  //   dialogRef.afterClosed().subscribe(result => {
-  //   });
-  // }
+  refresh() {
+
+    console.log('refreshed');
+  }
+
+  openDialog(mids) {
+    const dialogRef = this.dialog.open(MidsDetailComponent, {
+      data: { mids: mids }
+    });
+    // dialogRef.updateSize('1000px');
+    dialogRef.afterClosed().subscribe(result => {
+    });
+  }
+
   ngOnDestroy() {
   }
 }

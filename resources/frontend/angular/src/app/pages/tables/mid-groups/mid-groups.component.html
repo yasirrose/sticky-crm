@@ -1,17 +1,12 @@
 <fury-page-layout mode="simple">
-    <fury-page-layout-header>
+    <!-- <fury-page-layout-header>
         <fury-breadcrumbs [@fadeInRight] [crumbs]="['Tables']" current="Mids"></fury-breadcrumbs>
-    </fury-page-layout-header>
-    <fury-page-layout-content [@fadeInRight]>
-
+    </fury-page-layout-header> -->
+    <fury-page-layout-content [@fadeInUp]>
+        <!-- <button class="mb" mat-raised-button color="accent" (click)="refresh()">Refresh</button> -->
         <fury-list name="Mid-Groups" [columns]="columns" (filterChange)="onFilterChange($event)">
-            <!-- <div class="actions">
-        <button class="create" (click)="createCustomer()" type="button" mat-mini-fab color="primary">
-            <mat-icon>add</mat-icon>
-        </button>
-    </div> -->
             <mat-progress-bar mode="indeterminate" *ngIf="isLoading"></mat-progress-bar>
-            <table [dataSource]="dataSource" mat-table matSort>
+            <table [dataSource]="dataSource" mat-table matSort (mouseenter)="refresh()" (mouseleave)="refresh()">
 
                 <!-- Checkbox Column -->
                 <ng-container matColumnDef="checkbox">
@@ -31,6 +26,15 @@
                         </td>
                     </ng-container>
                 </ng-container>
+                <!-- important comment -->
+                <ng-container matColumnDef="assigned_mids">
+                    <th *matHeaderCellDef mat-header-cell mat-sort-header>Assigned Mids</th>
+                    <td *matCellDef="let row" mat-cell #tooltip="matTooltip" matTooltip="Tooltip will show here" matTooltipPosition="below">
+                        {{ row.assigned_mids }}
+                    </td>
+                </ng-container>
+
+
 
                 <!-- <ng-container matColumnDef="actions">
             <th *matHeaderCellDef class="actions-cell" mat-header-cell mat-sort-header></th>
@@ -48,7 +52,7 @@
         </ng-container> -->
 
                 <tr *matHeaderRowDef="visibleColumns" mat-header-row></tr>
-                <tr (click)="openDialog(row.id)" *matRowDef="let row; columns: visibleColumns;" class="clickable route-animations-elements"
+                <tr (click)="openDialog(row.mids_data)" *matRowDef="let row; columns: visibleColumns;" class="clickable route-animations-elements"
                     mat-row></tr>
             </table>
 
@@ -58,3 +62,4 @@
         </fury-list>
     </fury-page-layout-content>
 </fury-page-layout>
+<router-outlet></router-outlet>

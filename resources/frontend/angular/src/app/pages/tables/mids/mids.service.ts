@@ -11,11 +11,11 @@ export class MidsService {
   mids: any;
   gateway: any;
   public ordersGetResponse = new BehaviorSubject([]);
-  public getCampaignsResponse = new BehaviorSubject([]);
+  public refreshResponse = new BehaviorSubject([]);
   public getProductsResponse = new BehaviorSubject([]);
 
   ordersGetResponse$ = this.ordersGetResponse.asObservable();
-  getCampaignsResponse$ = this.getCampaignsResponse.asObservable();
+  refreshResponse$ = this.refreshResponse.asObservable();
   getProductsResponse$ = this.getProductsResponse.asObservable();
 
   constructor(private apiService: ApiService) { }
@@ -28,9 +28,9 @@ export class MidsService {
       });
     return this.mids;
   }
-  async getCampaigns(): Promise<any> {
-    await this.apiService.getData(`campaigns`).then(res => res.json()).then((data) => {
-      this.getCampaignsResponse.next(data);
+  async refresh(): Promise<any> {
+    await this.apiService.getData(`pull_payment_router_view`).then(res => res.json()).then((data) => {
+      this.refreshResponse.next(data);
     });
   }
   async getProducts(): Promise<any> {

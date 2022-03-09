@@ -10,9 +10,9 @@ export class MidGroupsService {
 
   midGroups: any;
   gateway: any;
-  // public ordersGetResponse = new BehaviorSubject([]);
+  public getResponse = new BehaviorSubject([]);
 
-  // ordersGetResponse$ = this.ordersGetResponse.asObservable();
+  getResponse$ = this.getResponse.asObservable();
 
   constructor(private apiService: ApiService) { }
 
@@ -20,7 +20,7 @@ export class MidGroupsService {
     await this.apiService.getData(`mid-groups`)
       .then(res => res.json()).then((data) => {
         this.midGroups = data;
-        // this.ordersGetResponse.next(data);
+        this.getResponse.next(data);
       });
     return this.midGroups;
   }

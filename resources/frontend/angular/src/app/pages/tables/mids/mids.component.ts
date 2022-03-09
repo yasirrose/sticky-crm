@@ -11,12 +11,13 @@ import { fadeInRightAnimation } from '../../../../@fury/animations/fade-in-right
 import { fadeInUpAnimation } from '../../../../@fury/animations/fade-in-up.animation';
 
 //self imports
-import { FormGroup, FormControl } from '@angular/forms';
 import { MidsService } from './mids.service';
 import { Subscription } from 'rxjs';
 import { formatDate } from '@angular/common';
 import { environment } from '../../../../environments/environment';
 import { ApiService } from 'src/app/api.service';
+import { Notyf } from 'notyf';
+import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 
 @Component({
   selector: 'fury-mids',
@@ -30,9 +31,8 @@ export class MidsComponent implements OnInit, AfterViewInit, OnDestroy {
   data$: Observable<Mid[]> = this.subject$.asObservable();
   mids: Mid[];
 
-  //customer coding
   getSubscription: Subscription;
-  getCampaignsSubscription: Subscription;
+  refreshSubscription: Subscription;
   getProductsSubscription: Subscription;
   isLoading = false;
   totalRows = 0;
@@ -44,8 +44,7 @@ export class MidsComponent implements OnInit, AfterViewInit, OnDestroy {
   filters = {};
   endPoint = '';
   pageSizeOptions: number[] = [5, 10, 25, 100];
-  // toggleOption = new FormControl('mids');
-  // fontStyle?: string;
+  notyf = new Notyf({ types: [{ type: 'info', background: '#6495ED', icon: '<i class="fa-solid fa-clock"></i>' }] });
 
   @Input()
   columns: ListColumn[] = [
@@ -53,8 +52,9 @@ export class MidsComponent implements OnInit, AfterViewInit, OnDestroy {
     // { name: 'Actions', property: 'actions', visible: true },
     { name: 'Id', property: 'id', visible: true, isModelProperty: true },
     // { name: 'router_id', property: 'router_id', visible: true, isModelProperty: true },
-    { name: 'Gateway Id', property: 'gateway_id', visible: false, isModelProperty: true },
+    { name: 'Gateway Id', property: 'gateway_id', visible: true, isModelProperty: true },
     { name: 'Gateway Alias', property: 'gateway_alias', visible: true, isModelProperty: true },
+    { name: 'Group Name', property: 'mid_group_name', visible: true, isModelProperty: true },
     { name: 'Router Date In', property: 'router_date_in', visible: false, isModelProperty: true },
     { name: 'Router Desc', property: 'router_desc', visible: false, isModelProperty: true },
     { name: 'Mid Group Setting Id', property: 'mid_group_setting_id', visible: false, isModelProperty: true },
@@ -75,7 +75,7 @@ export class MidsComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild(MatSort, { static: true }) sort: MatSort;
   // @ViewChild(MidGroupsComponent, { static: true }) MidGroupComponent: MidGroupsComponent;
 
-  constructor(private dialog: MatDialog, private midsService: MidsService, private apiService: ApiService) {
+  constructor(private dialog: MatDialog, private midsService: MidsService, private apiService: ApiService, private router: Router) {
     this.endPoint = environment.endpoint;
   }
 
@@ -84,7 +84,7 @@ export class MidsComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnInit() {
-    // this.getCampaignsSubscription = this.midsService.getCampaignsResponse$.subscribe(data => this.manageCampaignsResponse(data))
+    this.refreshSubscription = this.midsService.refreshResponse$.subscribe(data => this.manageRefreshResponse(data))
     // this.getProductsSubscription = this.midsService.getProductsResponse$.subscribe(data => this.manageProductsResponse(data))
 
     this.getData();
@@ -120,11 +120,6 @@ export class MidsComponent implements OnInit, AfterViewInit, OnDestroy {
       .then(mids => {
         console.log('paginate data is: ', mids.data);
         this.mids = mids.data
-        // this.dataSource.data = mids.data;
-        // setTimeout(() => {
-        //   this.paginator.pageIndex = this.currentPage;
-        //   this.paginator.length = mids.pag.count;
-        // });
         this.mapData().subscribe(mids => {
           this.subject$.next(mids);
         });
@@ -146,13 +141,16 @@ export class MidsComponent implements OnInit, AfterViewInit, OnDestroy {
     if (mids.status) {
       this.mids = mids.data;
       this.dataSource.data = mids.data;
-      // setTimeout(() => {
-      //   this.paginator.pageIndex = this.currentPage;
-      //   this.paginator.length = mids.pag.count;
-      // });
       this.isLoading = false;
     } else {
       this.isLoading = false;
+    }
+  }
+
+  manageRefreshResponse(data) {
+    if (data.status) {
+      this.notyf.success(data.data.new_mids + ' New Mids Found and ' + data.data.updated_mids + ' Mids Updated');
+      this.getData();
     }
   }
 
@@ -165,14 +163,19 @@ export class MidsComponent implements OnInit, AfterViewInit, OnDestroy {
     this.dataSource.filter = value;
   }
 
-  // openDialog(id) {
-  //   const dialogRef = this.dialog.open(ProductDetailComponent, {
-  //     data: { id: id }
-  //   });
-  //   dialogRef.updateSize('1000px');
-  //   dialogRef.afterClosed().subscribe(result => {
-  //   });
-  // }
+  viewMidDetails(alias){
+    this.router.navigate(['mid-view', alias]);
+  }
+
+  refresh() {
+    this.isLoading = true;
+    this.midsService.refresh();
+  }
+
   ngOnDestroy() {
+    if (this.refreshSubscription) {
+      this.midsService.refreshResponse.next([]);
+      this.refreshSubscription.unsubscribe();
+    }
   }
 }

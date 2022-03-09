@@ -21,7 +21,7 @@ import { ListModule } from '../../../../@fury/shared/list/list.module';
 import { MaterialModule } from '../../../../@fury/shared/material-components.module';
 import { AffiliatesNetworkRoutingModule } from './affiliates-network-routing.module';
 import { AffiliatesNetworkComponent } from './affiliates-network.component';
-
+import { AgGridModule } from 'ag-grid-angular';
 
 @NgModule({
   imports: [
@@ -50,6 +50,7 @@ import { AffiliatesNetworkComponent } from './affiliates-network.component';
     MatTableModule,
     MatPaginatorModule,
     MatProgressBarModule,
+    AgGridModule.withComponents([])
   ],
   declarations: [AffiliatesNetworkComponent],
   exports: [AffiliatesNetworkComponent],
