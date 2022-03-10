@@ -9,7 +9,6 @@ import { ListColumn } from '../../../../@fury/shared/list/list-column.model';
 import { Order } from './order.model';
 import { fadeInRightAnimation } from '../../../../@fury/animations/fade-in-right.animation';
 import { fadeInUpAnimation } from '../../../../@fury/animations/fade-in-up.animation';
-
 //self imports
 import { FormGroup, FormControl } from '@angular/forms';
 import { OrdersService } from './orders.service';
@@ -47,6 +46,7 @@ export class OrdersComponent implements OnInit, AfterViewInit, OnDestroy {
   filterData: any = [];
   filters = {};
   endPoint = '';
+  skeletonloader = true;
 
   range = new FormGroup({
     start: new FormControl(),
@@ -66,7 +66,7 @@ export class OrdersComponent implements OnInit, AfterViewInit, OnDestroy {
   billingCycle = "all";
   recycleNo = "all";
   txnType = "all";
-  currency = "allCurrencies";
+  billing_country = "allCurrencies";
   country = "allCountries";
   state = "allStates";
   gateway = "all";
@@ -84,7 +84,6 @@ export class OrdersComponent implements OnInit, AfterViewInit, OnDestroy {
 
   @Input()
   columns: ListColumn[] = [
-    { name: 'Actions', property: 'actions', visible: true },
     { name: 'Id', property: 'id', isModelProperty: true },
     { name: 'Order Id', property: 'order_id', visible: true, isModelProperty: true },
     { name: 'Created By', property: 'created_by_employee_name', visible: true, isModelProperty: true },
@@ -199,6 +198,7 @@ export class OrdersComponent implements OnInit, AfterViewInit, OnDestroy {
     // { name: 'upsell_product_quantity', property: 'upsell_product_quantity', visible: true, isModelProperty: true },
     // { name: 'website_received', property: 'website_received', visible: true, isModelProperty: true },
     // { name: 'website_sent', property: 'website_sent', visible: true, isModelProperty: true },
+    { name: 'Actions', property: 'actions', visible: true },
 
   ] as ListColumn[];
   // pageSize = 20000;
@@ -269,8 +269,10 @@ export class OrdersComponent implements OnInit, AfterViewInit, OnDestroy {
         this.mapData().subscribe(orders => {
           this.subject$.next(orders);
         });
+        this.skeletonloader = false;
         this.isLoading = false;
       }, error => {
+        this.skeletonloader = false;
         this.isLoading = false;
       });
   }
@@ -332,17 +334,17 @@ export class OrdersComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   onFilterChange(value) {
-    value = value.toLowerCase()
-    this.search = value;
-    if(value == ''){
-      this.getData();
-    }
-    // if (!this.dataSource) {
-    //   return;
+    // value = value.toLowerCase()
+    // this.search = value;
+    // if(value == ''){
+    //   this.getData();
     // }
-    // value = value.trim();
-    // value = value.toLowerCase();
-    // this.dataSource.filter = value;
+    if (!this.dataSource) {
+      return;
+    }
+    value = value.trim();
+    value = value.toLowerCase();
+    this.dataSource.filter = value;
   }
   selectDate(param) {
     var startDate = new Date();

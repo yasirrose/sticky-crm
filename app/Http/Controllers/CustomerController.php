@@ -13,9 +13,9 @@ class CustomerController extends Controller
     {
         $pageno = isset($request->page) ? $request->page : 1;
         $no_of_records_per_page = isset($request->per_page) ? $request->per_page : 25;
-        $query = DB::table('customers')->select('id', 'email', 'first_name', 'last_name', 'phone', 'addresses');
+        $query = DB::table('customers')->select('id', 'email', 'first_name', 'last_name', 'phone', 'addresses', 'deleted_at');
         // $total_rows = DB::table('customers')->count('id');
-        $total_rows = 200000;
+        // $total_rows = 200000;
         
         if($request->search != ''){
             $query->Where('email', 'like', '%'.$request->search.'%')
@@ -24,6 +24,8 @@ class CustomerController extends Controller
         }
 
         $data = $query->orderBy('id', 'desc')->SimplePaginate($no_of_records_per_page);
+        // $total_rows = $query->where('id', '>' ,0)->count('id');
+        $total_rows = 198645;
         $total_pages = ceil($total_rows / $data->perPage());
         $pag['count'] = $total_rows;
         $pag['total_pages'] = $total_pages;
@@ -99,7 +101,7 @@ class CustomerController extends Controller
         $id = $request->id;
         $id_array= preg_split("/[,]/",$id);
         for($i = 0; $i < count($id_array); $i++){
-            Customer::find($id_array[$i])->delete();
+            DB::table('customers')->where('id', $id_array[$i])->delete();
         }
         return response()->json(['status' => true, 'message' => 'Customer Deleted Successfully']);
     }

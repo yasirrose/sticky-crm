@@ -20,7 +20,7 @@ class ProspectController extends Controller
         // $total_rows = Prospect::where('id', '>', 0)->count('id');
         // $total_rows = DB::table('prospects')->select('id')->count();
         
-        $total_rows = 200000;
+        // $total_rows = 200000;
 
         if($request->search != ''){
             $query->where('first_name', 'like', '%' . $request->search . '%')
@@ -30,6 +30,8 @@ class ProspectController extends Controller
         }
 
         $rows = $query->SimplePaginate($no_of_records_per_page);
+        // $total_rows = $query->where('id', '>' ,0)->count('id');
+        $total_rows = 260466;
         $total_pages = ceil($total_rows / $rows->perPage());
     
         $pag['count'] = $total_rows;
