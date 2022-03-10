@@ -86,7 +86,6 @@ export class ProspectsComponent implements OnInit {
 
   @Input()
   columns: ListColumn[] = [
-    { name: 'Actions', property: 'actions', visible: true },
     { name: 'Id', property: 'id', isModelProperty: true },
     // { name: 'campaign_id', property: 'campaign_id', visible: true, isModelProperty: false },
     { name: 'First Name', property: 'first_name', visible: true, isModelProperty: true },
@@ -106,6 +105,7 @@ export class ProspectsComponent implements OnInit {
     { name: 'Affiliate', property: 'affiliate', visible: true, isModelProperty: true },
     { name: 'Sub Affiliate', property: 'sub_affiliate', visible: true, isModelProperty: true },
     // { name: 'notes', property: 'notes', visible: true, isModelProperty: true },
+    { name: 'Actions', property: 'actions', visible: true },
   ] as ListColumn[];
   // pageSize = 20000;
   dataSource: MatTableDataSource<Prospect> | null;

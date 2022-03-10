@@ -19,23 +19,18 @@ class OrdersController extends Controller
      */
     public function index(Request $request)
     {
-        DB::enableQueryLog();
-
         $start_date = date('Y-m-d', strtotime($request->start_date));
         $end_date = date('Y-m-d', strtotime($request->end_date));
         $pageno = isset($request->pageno) ? $request->pageno : 0;
         $no_of_records_per_page = isset($request->per_page) ? $request->per_page : 25;
         
-        $query = DB::table('orders')
-
-        ->select('id','order_id','created_by_employee_name','billing_first_name', 'billing_last_name', 'billing_street_address', 'order_total', 'acquisition_month', 'acquisition_year', 'c1', 'affid', 'trx_month', 'order_sales_tax_amount', 'decline_reason','is_cascaded','decline_reason_details','is_fraud','is_chargeback','chargeback_date','is_rma','rma_number','rma_reason','is_recurring','is_void','void_amount','void_date','is_refund','refund_amount','refund_date','order_confirmed','order_confirmed_date','acquisition_date','is_blacklisted','coupon_id','created_by_user_name','order_sales_tax','order_status','promo_code','recurring_date','response_code','return_reason');
+        $query = DB::table('orders')->select('id','order_id','created_by_employee_name','billing_first_name', 'billing_last_name', 'billing_street_address', 'order_total', 'acquisition_month', 'acquisition_year', 'c1', 'affid', 'trx_month', 'order_sales_tax_amount', 'decline_reason','is_cascaded','decline_reason_details','is_fraud','is_chargeback','chargeback_date','is_rma','rma_number','rma_reason','is_recurring','is_void','void_amount','void_date','is_refund','refund_amount','refund_date','order_confirmed','order_confirmed_date','acquisition_date','is_blacklisted','coupon_id','created_by_user_name','order_sales_tax','order_status','promo_code','recurring_date','response_code','return_reason');
         
-        // $total_rows = Order::where('id', '>' ,0)->count('id');
-        $total_rows = 200000;
+        // $total_rows = 30000;
         if ($start_date != null && $start_date != "1970-01-01" && $end_date != null && $end_date != "1970-01-01"){
             $query->whereBetween('acquisition_date', [$start_date.' 00:00:00', $end_date.' 23:59:59']);
         }
-
+        
         if ($request->fields != null) {
             $field_array = explode(',', $request->fields);
             $value_array = explode(',', $request->values);
@@ -48,22 +43,24 @@ class OrdersController extends Controller
                 }
             }
         }
-        if ($request->search != '') {
-            $query->where('order_id', 'like', '%' . $request->search . '%')
-                ->orWhere('created_by_employee_name', 'like', '%' . $request->search . '%')
-                ->orWhere('billing_first_name', 'like', '%' . $request->search . '%')
-                ->orWhere('billing_last_name', 'like', '%' . $request->search . '%')
-                ->orWhere('billing_street_address', 'like', '%' . $request->search . '%')
-                ->orWhere('c1', 'like', '%' . $request->search . '%')
-                ->orWhere('affid', 'like', '%' . $request->search . '%')
-                ->orWhere('trx_month', 'like', '%' . $request->search . '%')
-                ->orWhere('order_sales_tax_amount', 'like', '%' . $request->search . '%')
-                ->orWhere('decline_reason', 'like', '%' . $request->search . '%')
-                ->orWhere('is_cascaded', 'like', '%' . $request->search . '%')
-                ->orWhere('created_by_user_name', 'like', '%' . $request->search . '%');
-        }
-
+        // if ($request->search != '') {
+        //     $query->where('order_id', 'like', '%' . $request->search . '%')
+        //         ->orWhere('created_by_employee_name', 'like', '%' . $request->search . '%')
+        //         ->orWhere('billing_first_name', 'like', '%' . $request->search . '%')
+        //         ->orWhere('billing_last_name', 'like', '%' . $request->search . '%')
+        //         ->orWhere('billing_street_address', 'like', '%' . $request->search . '%')
+        //         ->orWhere('c1', 'like', '%' . $request->search . '%')
+        //         ->orWhere('affid', 'like', '%' . $request->search . '%')
+        //         ->orWhere('trx_month', 'like', '%' . $request->search . '%')
+        //         ->orWhere('order_sales_tax_amount', 'like', '%' . $request->search . '%')
+        //         ->orWhere('decline_reason', 'like', '%' . $request->search . '%')
+        //         ->orWhere('is_cascaded', 'like', '%' . $request->search . '%')
+        //         ->orWhere('created_by_user_name', 'like', '%' . $request->search . '%');
+        //     }
+            
         $rows = $query->orderBy('id', 'desc')->SimplePaginate($no_of_records_per_page);
+        // $total_rows = $query->where('id', '>' ,0)->count('id');
+        $total_rows = 303502;
         $total_pages = ceil($total_rows / $rows->perPage());
 
         $pag['count'] = $total_rows;

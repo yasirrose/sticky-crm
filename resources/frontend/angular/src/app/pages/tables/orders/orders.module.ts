@@ -23,6 +23,7 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { MatTableModule } from '@angular/material/table';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 
 @NgModule({
   imports: [
@@ -51,6 +52,7 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
     MatTableModule, // <-- Added Table Module
     MatPaginatorModule, // <-- Added Paginator Module
     MatProgressBarModule, // <-- Added Loader Module
+    NgxSkeletonLoaderModule,
   ],
   declarations: [OrdersComponent],
   exports: [OrdersComponent],
