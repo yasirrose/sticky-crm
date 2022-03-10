@@ -9,8 +9,6 @@ import { ListColumn } from '../../../../@fury/shared/list/list-column.model';
 import { Mid } from './mid.model';
 import { fadeInRightAnimation } from '../../../../@fury/animations/fade-in-right.animation';
 import { fadeInUpAnimation } from '../../../../@fury/animations/fade-in-up.animation';
-
-//self imports
 import { MidsService } from './mids.service';
 import { Subscription } from 'rxjs';
 import { formatDate } from '@angular/common';
@@ -18,6 +16,8 @@ import { environment } from '../../../../environments/environment';
 import { ApiService } from 'src/app/api.service';
 import { Notyf } from 'notyf';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
+import { ConfirmationDialogComponent } from '../../confirmation-dialog/confirmation-dialog.component';
+import { ConfirmationDialogModel } from '../../confirmation-dialog/confirmation-dialog';
 
 @Component({
   selector: 'fury-mids',
@@ -49,7 +49,7 @@ export class MidsComponent implements OnInit, AfterViewInit, OnDestroy {
   @Input()
   columns: ListColumn[] = [
 
-    // { name: 'Actions', property: 'actions', visible: true },
+    { name: 'Actions', property: 'actions', visible: true },
     { name: 'Id', property: 'id', visible: true, isModelProperty: true },
     // { name: 'router_id', property: 'router_id', visible: true, isModelProperty: true },
     { name: 'Gateway Id', property: 'gateway_id', visible: true, isModelProperty: true },
@@ -170,6 +170,23 @@ export class MidsComponent implements OnInit, AfterViewInit, OnDestroy {
   refresh() {
     this.isLoading = true;
     this.midsService.refresh();
+  }
+
+  handleDeleteAction(alias) {
+    const dialogData = new ConfirmationDialogModel('Confirm Delete', 'In Progress...');
+    const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
+      maxWidth: '500px',
+      closeOnNavigation: true,
+      data: dialogData
+    })
+    dialogRef.afterClosed().subscribe(dialogResult => {
+      if (dialogResult) {
+        this.midsService.deleteData(alias);
+        // this.isLoading = true;
+        // this.dataSource.data = [];
+        // this.idArray = [];
+      }
+    });
   }
 
   ngOnDestroy() {

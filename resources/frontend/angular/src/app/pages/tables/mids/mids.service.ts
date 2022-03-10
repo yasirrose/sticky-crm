@@ -21,20 +21,21 @@ export class MidsService {
   constructor(private apiService: ApiService) { }
 
   async getMids(): Promise<any> {
-    await this.apiService.getData(`mids`)
-      .then(res => res.json()).then((data) => {
+    await this.apiService.getData(`mids`).then(res => res.json()).then((data) => {
         this.mids = data;
         this.ordersGetResponse.next(data);
       });
     return this.mids;
   }
+
   async refresh(): Promise<any> {
     await this.apiService.getData(`pull_payment_router_view`).then(res => res.json()).then((data) => {
       this.refreshResponse.next(data);
     });
   }
-  async getProducts(): Promise<any> {
-    await this.apiService.getData(`products`).then(res => res.json()).then((data) => {
+
+  async deleteData(alias): Promise<any> {
+    await this.apiService.deleteData(`mids/${alias}`).then(res => res.json()).then((data) => {
       this.getProductsResponse.next(data);
     });
   }

@@ -4,11 +4,8 @@ import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { ListColumn } from '../../../@fury/shared/list/list-column.model';
-// import { Order } from './order.model';
 import { fadeInRightAnimation } from '../../../@fury/animations/fade-in-right.animation';
 import { fadeInUpAnimation } from '../../../@fury/animations/fade-in-up.animation';
-
-//self imports
 import { FormGroup, FormControl } from '@angular/forms';
 import { CustomersService } from './customers.service';
 import { Subscription } from 'rxjs';
@@ -17,8 +14,8 @@ import { Customer } from './Customers.model';
 import { CustomerDetailComponent } from './customer-detail/customer-detail.component';
 import { SelectionModel } from '@angular/cdk/collections';
 import { Notyf } from 'notyf';
-import { ConfirmationDialogComponent } from './confirmation-dialog/confirmation-dialog.component';
-import { ConfirmationDialogModel } from './confirmation-dialog/confirmation-dialog';
+import { ConfirmationDialogComponent } from '../confirmation-dialog/confirmation-dialog.component';
+import { ConfirmationDialogModel } from '../confirmation-dialog/confirmation-dialog';
 
 @Component({
   selector: 'fury-customers',

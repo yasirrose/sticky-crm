@@ -20,7 +20,7 @@ import { BreadcrumbsModule } from 'src/@fury/shared/breadcrumbs/breadcrumbs.modu
 import { ListModule } from 'src/@fury/shared/list/list.module';
 import { MaterialModule } from 'src/@fury/shared/material-components.module';
 import { MidGroupsRoutingModule } from './mid-groups-routing.module';
-import { MidGroupsComponent } from './mid-groups.component';
+import { MidGroupsComponent, TooltipListPipe } from './mid-groups.component';
 import { MidsDetailComponent } from './mids-detail/mids-detail.component';
 import { RouterModule } from '@angular/router';
 import { MatTooltipModule } from '@angular/material/tooltip';
@@ -52,7 +52,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
     RouterModule,
     MatTooltipModule
   ],
-  declarations: [MidGroupsComponent, MidsDetailComponent],
+  declarations: [MidGroupsComponent, MidsDetailComponent, TooltipListPipe],
   exports: [MidGroupsComponent],
 
 })
