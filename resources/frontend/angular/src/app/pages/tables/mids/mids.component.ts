@@ -49,7 +49,6 @@ export class MidsComponent implements OnInit, AfterViewInit, OnDestroy {
   @Input()
   columns: ListColumn[] = [
 
-    { name: 'Actions', property: 'actions', visible: true },
     { name: 'Id', property: 'id', visible: true, isModelProperty: true },
     // { name: 'router_id', property: 'router_id', visible: true, isModelProperty: true },
     { name: 'Gateway Id', property: 'gateway_id', visible: true, isModelProperty: true },
@@ -66,6 +65,7 @@ export class MidsComponent implements OnInit, AfterViewInit, OnDestroy {
     { name: 'Processing Percent', property: 'processing_percent', visible: true, isModelProperty: true },
     { name: '3d Routed', property: 'is_three_d_routed', visible: false, isModelProperty: true },
     { name: 'Created On', property: 'created_on', visible: true, isModelProperty: true },
+    { name: 'Actions', property: 'actions', visible: true },
 
   ] as ListColumn[];
   // pageSize = 20000;

@@ -17,6 +17,7 @@ import { environment } from 'src/environments/environment';
 import { ApiService } from 'src/app/api.service';
 import { MidsDetailComponent } from './mids-detail/mids-detail.component';
 import { Pipe, PipeTransform } from '@angular/core';
+import { Notyf } from 'notyf';
 
 @Pipe({ name: 'tooltipList' })
 export class TooltipListPipe implements PipeTransform {
@@ -36,13 +37,14 @@ export class TooltipListPipe implements PipeTransform {
   styleUrls: ['./mid-groups.component.scss'],
   animations: [fadeInRightAnimation, fadeInUpAnimation]
 })
-export class MidGroupsComponent implements OnInit, PipeTransform  {
+export class MidGroupsComponent implements OnInit, PipeTransform, AfterViewInit, OnDestroy {
 
   subject$: ReplaySubject<MidGroup[]> = new ReplaySubject<MidGroup[]>(1);
   data$: Observable<MidGroup[]> = this.subject$.asObservable();
   midGroups: any;
 
   getSubscription: Subscription;
+  refreshSubscription: Subscription;
   isLoading = false;
   totalRows = 0;
   pageSize = 25;
@@ -53,6 +55,7 @@ export class MidGroupsComponent implements OnInit, PipeTransform  {
   pageSizeOptions: number[] = [5, 10, 25, 100];
   // toolTipMids: [];
   toolTipMids = [];
+  notyf = new Notyf({ types: [{ type: 'info', background: '#6495ED', icon: '<i class="fa-solid fa-clock"></i>' }] });
 
   @Input()
   columns: ListColumn[] = [
@@ -90,9 +93,8 @@ export class MidGroupsComponent implements OnInit, PipeTransform  {
   }
 
   ngOnInit() {
-    this.getSubscription = this.midGroupService.getResponse$
-      .subscribe(data => this.manageGetResponse(data));
-    // this.getProductsSubscription = this.midGroupService.getProductsResponse$.subscribe(data => this.manageProductsResponse(data))
+    this.getSubscription = this.midGroupService.getResponse$.subscribe(data => this.manageGetResponse(data));
+    this.refreshSubscription = this.midGroupService.refreshResponse$.subscribe(data => this.manageRefreshResponse(data));
 
     this.getData();
     this.dataSource = new MatTableDataSource();
@@ -109,17 +111,17 @@ export class MidGroupsComponent implements OnInit, PipeTransform  {
   }
 
   ngAfterViewInit() {
-    this.dataSource.paginator = this.paginator;
-    this.dataSource.sort = this.sort;
+    // this.dataSource.paginator = this.paginator;
+    // this.dataSource.sort = this.sort;
   }
 
-  pageChanged(event: PageEvent) {
-    this.pageSize = event.pageSize;
-    this.currentPage = event.pageIndex;
-    console.log(this.pageSize)
-    console.log(this.currentPage)
-    this.getData();
-  }
+  // pageChanged(event: PageEvent) {
+  //   this.pageSize = event.pageSize;
+  //   this.currentPage = event.pageIndex;
+  //   console.log(this.pageSize)
+  //   console.log(this.currentPage)
+  //   this.getData();
+  // }
 
   async getData() {
     this.isLoading = true;
@@ -141,7 +143,7 @@ export class MidGroupsComponent implements OnInit, PipeTransform  {
     }
   }
 
-  getAssignedMids(midGroup){
+  getAssignedMids(midGroup) {
     var mid_names = [];
     midGroup.mids_data.forEach(function (mid) {
       mid_names.push(mid.alias);
@@ -160,6 +162,13 @@ export class MidGroupsComponent implements OnInit, PipeTransform  {
     // }
     // console.log('manage status true this.toolTipMids :', this.toolTipMids);
   }
+  
+  manageRefreshResponse(data) {
+    if (data.status) {
+      this.notyf.success(data.data.new + ' New Mid Groups Found and ' + data.data.updated + ' Mids Updated');
+      this.getData();
+    }
+  }
 
   onFilterChange(value) {
     if (!this.dataSource) {
@@ -170,15 +179,33 @@ export class MidGroupsComponent implements OnInit, PipeTransform  {
     this.dataSource.filter = value;
   }
 
-  openDialog(mids) {
+  openDialog(data) {
+    console.log('openDialog(data) :', data);
+
     const dialogRef = this.dialog.open(MidsDetailComponent, {
-      data: { mids: mids }
+      data: {
+        group: data.group_name,
+        mids: data.mids_data
+      }
     });
     // dialogRef.updateSize('1000px');
     dialogRef.afterClosed().subscribe(result => {
     });
   }
 
+  refresh() {
+    this.isLoading = true;
+    this.midGroupService.refresh();
+  }
+
   ngOnDestroy() {
+    if (this.refreshSubscription) {
+      this.midGroupService.refreshResponse.next([]);
+      this.refreshSubscription.unsubscribe();
+    }
+    if (this.getSubscription) {
+      this.midGroupService.getResponse.next([]);
+      this.getSubscription.unsubscribe();
+    }
   }
 }

@@ -50,6 +50,9 @@
                         </button>
 
                         <mat-menu #actionsMenu="matMenu" yPosition="below" xPosition="before">
+                            <button (click)="viewMidDetails(row.gateway_alias)" mat-menu-item>
+                                <span>Show Details</span>
+                            </button>
                             <button (click)="handleDeleteAction(row.gateway_alias)" mat-menu-item>
                                 <span>Remove from Mid Group</span>
                             </button>
@@ -58,13 +61,13 @@
                 </ng-container>
 
                 <tr *matHeaderRowDef="visibleColumns" mat-header-row></tr>
-                <tr (click)="viewMidDetails(row.gateway_alias)" *matRowDef="let row; columns: visibleColumns;" class="clickable route-animations-elements"
+                <tr *matRowDef="let row; columns: visibleColumns;" class="clickable route-animations-elements"
                     mat-row></tr>
             </table>
 
-            <mat-paginator #paginator [length]="totalRows" [pageIndex]="currentPage" [pageSize]="pageSize"
+            <!-- <mat-paginator #paginator [length]="totalRows" [pageIndex]="currentPage" [pageSize]="pageSize"
                 [pageSizeOptions]="pageSizeOptions" (page)="pageChanged($event)" aria-label="Select page">
-            </mat-paginator>
+            </mat-paginator> -->
 
 
         </fury-list>

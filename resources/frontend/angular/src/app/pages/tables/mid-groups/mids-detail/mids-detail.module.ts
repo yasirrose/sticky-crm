@@ -41,14 +41,11 @@ import { RouterModule } from '@angular/router';
     MatNativeDateModule,
     MatExpansionModule,
     NgbModule,
-
-    // Core
     ListModule,
     BreadcrumbsModule,
-
-    MatTableModule, // <-- Added Table Module
-    MatPaginatorModule, // <-- Added Paginator Module
-    MatProgressBarModule, // <-- Added Loader Module
+    MatTableModule,
+    MatPaginatorModule,
+    MatProgressBarModule,
     RouterModule
   ],
   declarations: [MidsDetailComponent],

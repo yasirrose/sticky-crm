@@ -18,7 +18,9 @@ export class Mid {
     constructor(mid) {
         this.id = mid.id;
         this.router_id = mid.router_id;
-        this.mid_group_name = mid.global_fields.mid_group;
+        if(mid.global_fields){
+            this.mid_group_name = mid.global_fields.mid_group;
+        }
         this.router_date_in = mid.router_date_in;
         this.router_desc = mid.router_desc;
         this.mid_group_setting_id = mid.mid_group_setting_id;

@@ -1,6 +1,7 @@
 import { Component, OnInit, Inject, Input, AfterViewInit, OnDestroy, ViewChild } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-// import { ProductDetailService } from './product-detail.service';
+import { fadeInRightAnimation } from 'src/@fury/animations/fade-in-right.animation';
+import { fadeInUpAnimation } from 'src/@fury/animations/fade-in-up.animation';
 import { Subscription, Observable, of, ReplaySubject } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { ListColumn } from 'src/@fury/shared/list/list-column.model';
@@ -10,19 +11,22 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { Notyf } from 'notyf';
-import { Router, ActivatedRoute, ParamMap } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'fury-mids-detail',
   templateUrl: './mids-detail.component.html',
-  styleUrls: ['./mids-detail.component.scss']
+  styleUrls: ['./mids-detail.component.scss'],
+  animations: [fadeInRightAnimation, fadeInUpAnimation]
+
 })
 
-export class MidsDetailComponent implements OnInit {
+export class MidsDetailComponent implements OnInit, AfterViewInit, OnDestroy {
 
   subject$: ReplaySubject<Mid[]> = new ReplaySubject<Mid[]>(1);
   data$: Observable<Mid[]> = this.subject$.asObservable();
   mids: Mid[];
+  group: string;
 
   getSubscription: Subscription;
   refreshSubscription: Subscription;
@@ -41,10 +45,9 @@ export class MidsDetailComponent implements OnInit {
 
   @Input()
   columns: ListColumn[] = [
-
     // { name: 'Actions', property: 'actions', visible: true },
     { name: 'Id', property: 'id', visible: true, isModelProperty: true },
-    { name: 'account_name', property: 'account_name', visible: true, isModelProperty: true },
+    { name: 'account_name', property: 'account_name', visible: false, isModelProperty: true },
     { name: 'Gateway Alias', property: 'alias', visible: true, isModelProperty: true },
     { name: 'Username', property: 'username', visible: true, isModelProperty: true },
     { name: 'Customer Service Number', property: 'customer_service_number', visible: true, isModelProperty: true },
@@ -64,17 +67,15 @@ export class MidsDetailComponent implements OnInit {
     return this.columns.filter(column => column.visible).map(column => column.property);
   }
 
-  constructor(@Inject(MAT_DIALOG_DATA) private data: any, private dialogRef: MatDialogRef<MidsDetailComponent>, private router: Router, private route: ActivatedRoute,) {
+  constructor(@Inject(MAT_DIALOG_DATA) private data: any, private dialogRef: MatDialogRef<MidsDetailComponent>, private router: Router, private route: ActivatedRoute, ) {
     if (data) {
-      this.dataSource = new MatTableDataSource();
       this.mids = data.mids;
+      this.group = data.group;
+      this.dataSource = new MatTableDataSource(this.mids);
       console.log(' data.mids :', data.mids);
       this.mapData().subscribe(mids => {
         this.subject$.next(mids);
       });
-
-      this.mids = data.mids;
-      console.log(this.mids);
     }
   }
 
@@ -91,8 +92,8 @@ export class MidsDetailComponent implements OnInit {
   }
 
   ngAfterViewInit() {
-    this.dataSource.paginator = this.paginator;
-    this.dataSource.sort = this.sort;
+    // this.dataSource.paginator = this.paginator;
+    // this.dataSource.sort = this.sort;
   }
 
   pageChanged(event: PageEvent) {
@@ -103,24 +104,9 @@ export class MidsDetailComponent implements OnInit {
     // this.getData();
   }
 
-  onFilterChange(value) {
-    if (!this.dataSource) {
-      return;
-    }
-    value = value.trim();
-    value = value.toLowerCase();
-    this.dataSource.filter = value;
-  }
-
-  viewMidDetails(alias){
-    this.router.navigate(['mid-view', alias]).then(() => {
-      window.location.reload();
-    });
-  }
-
-  refresh() {
-    // this.isLoading = true;
-    // this.midsService.refresh();
+  viewMidDetails(alias) {
+    this.dialogRef.close();
+    this.router.navigate(['mid-view', alias]);
   }
 
   ngOnDestroy() {
