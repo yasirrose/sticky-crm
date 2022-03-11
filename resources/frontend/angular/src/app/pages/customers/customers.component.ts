@@ -16,6 +16,7 @@ import { SelectionModel } from '@angular/cdk/collections';
 import { Notyf } from 'notyf';
 import { ConfirmationDialogComponent } from '../confirmation-dialog/confirmation-dialog.component';
 import { ConfirmationDialogModel } from '../confirmation-dialog/confirmation-dialog';
+import { Location } from '@angular/common';
 
 @Component({
   selector: 'fury-customers',
@@ -65,13 +66,14 @@ export class CustomersComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
   @ViewChild(MatSort, { static: true }) sort: MatSort;
 
-  constructor(private dialog: MatDialog, private customersService: CustomersService) { }
+  constructor(private dialog: MatDialog, private customersService: CustomersService, private location: Location) { }
 
   get visibleColumns() {
     return this.columns.filter(column => column.visible).map(column => column.property);
   }
 
   ngOnInit(): void {
+    this.location.replaceState('/customer');
     this.getSubscription = this.customersService.customersGetResponse$.subscribe(data => this.manageGetResponse(data));
     this.deleteSubscription = this.customersService.deleteResponse$.subscribe(data => this.manageDeleteResponse(data));
     this.getData();

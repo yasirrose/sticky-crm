@@ -1112,7 +1112,7 @@ class OrdersController extends Controller
             return response()->json(['status' => true, 'New Record in todays API' => $new_orders, 'Previous orders to be updated in orders table' => $updated_orders]);
         }
     }
-    public static function testController(){
-        return 'Test';
-    }
+    // public static function testController(){
+    //     return 'Test';
+    // }
 }

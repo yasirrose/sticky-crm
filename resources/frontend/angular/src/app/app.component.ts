@@ -46,19 +46,21 @@ export class AppComponent {
         type: 'subheading',
         customClass: 'first-subheading'
       },
-      {
-        name: 'Dashboard',
-        routeOrFunction: '/',
-        icon: 'dashboard',
-        position: 6,
-        pathMatchExact: true
-      },
+      // {
+      //   name: 'Dashboard',
+      //   routeOrFunction: '/',
+      //   icon: 'dashboard',
+      //   position: 6,
+      //   pathMatchExact: true
+      // },
       {
         name: 'Customers',
-        routeOrFunction: '/customers',
+        // routeOrFunction: '/customer',
+        routeOrFunction: '/',
         icon: 'group',
         badgeColor: '#2196F3',
         position: 7,
+        pathMatchExact: true
       },
       {
         name: 'Prospects',

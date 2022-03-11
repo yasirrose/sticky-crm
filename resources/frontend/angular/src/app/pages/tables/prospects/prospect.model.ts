@@ -8,7 +8,6 @@ export class Prospect {
   address2: string;
   city: string;
   state: string;
-  state_id: string;
   zip: string;
   country: string;
   phone: string;
@@ -31,7 +30,7 @@ export class Prospect {
     this.address2 = prospect.address2;
     this.city = prospect.city;
     this.state = prospect.state;
-    this.state_id = prospect.state_id;
+    this.state = prospect.state;
     this.zip  = prospect.zip
     this.country = prospect.country;
     this.phone = prospect.phone;

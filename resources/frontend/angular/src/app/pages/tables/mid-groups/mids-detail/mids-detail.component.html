@@ -1,29 +1,35 @@
-<table [dataSource]="dataSource" mat-table matSort>
-    <!-- Checkbox Column -->
-    <ng-container matColumnDef="checkbox">
-        <th *matHeaderCellDef class="actions-cell" mat-header-cell>
-            <mat-checkbox color="primary" (click)="$event.stopPropagation()"></mat-checkbox>
-        </th>
-        <td *matCellDef="let row" class="actions-cell" mat-cell>
-            <mat-checkbox color="primary" (click)="$event.stopPropagation()"></mat-checkbox>
-        </td>
-    </ng-container>
+<div class="fury-preview-card" fxLayout="column" fxLayout.gt-sm="row">
+    <div class="content" fxFlex>
+        <div class="header">
+            <div class="title">Assigned Mids: {{group}}</div>
+        </div>
+        <table [dataSource]="dataSource" mat-table matSort>
+            <!-- Checkbox Column -->
+            <!-- <ng-container matColumnDef="checkbox">
+                <th *matHeaderCellDef class="actions-cell" mat-header-cell>
+                    <mat-checkbox color="primary" (click)="$event.stopPropagation()"></mat-checkbox>
+                </th>
+                <td *matCellDef="let row" class="actions-cell" mat-cell>
+                    <mat-checkbox color="primary" (click)="$event.stopPropagation()"></mat-checkbox>
+                </td>
+            </ng-container> -->
 
-    <ng-container *ngFor="let column of columns">
-        <ng-container *ngIf="column.isModelProperty" [matColumnDef]="column.property">
-            <th *matHeaderCellDef mat-header-cell mat-sort-header> {{ column.name }}</th>
-            <td *matCellDef="let row" mat-cell [ngClass]="row.current_monthly_amount == '0.00' ? 'highlight-danger' : ''">
-                {{ row[column.property] }}
-            </td>
-        </ng-container>
-    </ng-container>
+            <ng-container *ngFor="let column of columns">
+                <ng-container *ngIf="column.isModelProperty" [matColumnDef]="column.property">
+                    <th *matHeaderCellDef mat-header-cell mat-sort-header> {{ column.name }}</th>
+                    <td *matCellDef="let row" mat-cell [ngClass]="row.current_monthly_amount == '0.00' ? 'highlight-danger' : ''">
+                        {{ row[column.property] }}
+                    </td>
+                </ng-container>
+            </ng-container>
 
-    <tr *matHeaderRowDef="visibleColumns" mat-header-row></tr>
-    <tr (click)="viewMidDetails(row.alias)" *matRowDef="let row; columns: visibleColumns;" class="clickable route-animations-elements"
-        mat-row></tr>
-</table>
+            <tr *matHeaderRowDef="visibleColumns" mat-header-row></tr>
+            <tr (click)="viewMidDetails(row.alias)" *matRowDef="let row; columns: visibleColumns;" class="clickable route-animations-elements"
+                mat-row></tr>
+        </table>
 
-<mat-paginator #paginator [length]="totalRows" [pageIndex]="currentPage" [pageSize]="pageSize" [pageSizeOptions]="pageSizeOptions"
+        <!-- <mat-paginator #paginator [length]="totalRows" [pageIndex]="currentPage" [pageSize]="pageSize" [pageSizeOptions]="pageSizeOptions"
     (page)="pageChanged($event)" aria-label="Select page">
-</mat-paginator>
-<router-outlet></router-outlet>
+</mat-paginator> -->
+    </div>
+</div>

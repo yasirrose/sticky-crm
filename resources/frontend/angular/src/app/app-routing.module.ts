@@ -7,14 +7,16 @@ const routes: Routes = [
     path: '',
     component: LayoutComponent,
     children: [
+      // {
+      //   path: '',
+      //   loadChildren: () => import('./pages/dashboard/dashboard.module').then(m => m.DashboardModule),
+      //   pathMatch: 'full'
+      // },
       {
+        // path: 'customers',
         path: '',
-        loadChildren: () => import('./pages/dashboard/dashboard.module').then(m => m.DashboardModule),
-        pathMatch: 'full'
-      },
-      {
-        path: 'customers',
         loadChildren: () => import('./pages/customers/customers.module').then(m => m.CustomersModule),
+        pathMatch: 'full'
       },
       {
         path: 'customer-detail',
