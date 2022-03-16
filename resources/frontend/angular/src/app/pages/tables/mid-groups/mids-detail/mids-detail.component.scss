@@ -1,24 +1,24 @@
 mat-dialog-container{
     width: 1000px;
 }
-.mat-column-id {
-    flex: 0 0 50%;
-}
-.mat-column-gateway_id {
-    flex: 0 10px 50%;
-}
-.mat-column-alias {
+// .mat-column-id {
+//     flex: 0 0 50%;
+// }
+// .mat-column-gateway_id {
+//     flex: 0 10px 50%;
+// }
+.mat-column-gateway_alias {
     flex: 0 10px 50%;
     width: 200px;
 }
-.mat-column-username {
-    flex: 0 20px 50%;
-    width: 100px;
-}
-.mat-column-account_name {
-    flex: 0 20px 50%;
-    width: 300px;
-}
+// .mat-column-username {
+//     flex: 0 20px 50%;
+//     width: 100px;
+// }
+// .mat-column-account_name {
+//     flex: 0 20px 50%;
+//     width: 300px;
+// }
 .clickable {
     cursor: pointer;
 }

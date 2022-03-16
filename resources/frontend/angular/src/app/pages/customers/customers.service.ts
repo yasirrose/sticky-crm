@@ -1,9 +1,5 @@
-import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { ChartData } from 'chart.js';
 import { BehaviorSubject, of } from 'rxjs';
-import { map } from 'rxjs/operators';
-import { environment } from 'src/environments/environment';
 import { ApiService } from 'src/app/api.service';
 
 @Injectable()
@@ -27,8 +23,9 @@ export class CustomersService {
       });
     return this.customers;
   }
-  async deleteData(id): Promise<any> {
-    await this.apiService.getData(`destroy_customers?id=${id}`)
+
+  async deleteData(data): Promise<any> {
+    await this.apiService.postData(`destroy_customers`, data)
       .then(res => res.json()).then((data) => {
         this.deleteResponse.next(data);
       });

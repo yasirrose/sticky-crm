@@ -17,6 +17,7 @@ class CreateMidsTable extends Migration
             $table->id();
             $table->unsignedBigInteger('router_id')->nullable()->default(null);
             $table->string('router_name')->nullable()->default(null);
+            $table->Integer('mid_count')->nullable()->default(0);
             $table->timestamp('router_date_in')->nullable()->default(null);
             $table->string('router_desc')->nullable()->default(null);
             $table->string('mid_group_setting_id')->nullable()->default(null);

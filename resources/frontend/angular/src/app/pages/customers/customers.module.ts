@@ -14,15 +14,15 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatSelectModule } from '@angular/material/select';
-import {MatDatepickerModule} from '@angular/material/datepicker';
-import {MatNativeDateModule} from '@angular/material/core';
-import {MatExpansionModule} from '@angular/material/expansion'
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatNativeDateModule } from '@angular/material/core';
+import { MatExpansionModule } from '@angular/material/expansion'
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
-
 import { MatTableModule } from '@angular/material/table';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { ConfirmationDialogComponent } from '../confirmation-dialog/confirmation-dialog.component';
+import { NgxUiLoaderModule } from 'ngx-ui-loader';
 
 @NgModule({
   imports: [
@@ -43,17 +43,15 @@ import { ConfirmationDialogComponent } from '../confirmation-dialog/confirmation
     MatNativeDateModule,
     MatExpansionModule,
     NgbModule,
-
-    // Core
     ListModule,
     BreadcrumbsModule,
-
-    MatTableModule, // <-- Added Table Module
-    MatPaginatorModule, // <-- Added Paginator Module
-    MatProgressBarModule, // <-- Added Loader Module
+    MatTableModule,
+    MatPaginatorModule,
+    MatProgressBarModule,
+    NgxUiLoaderModule
   ],
   declarations: [CustomersComponent, ConfirmationDialogComponent],
   exports: [CustomersComponent],
-  
+
 })
 export class CustomersModule { }

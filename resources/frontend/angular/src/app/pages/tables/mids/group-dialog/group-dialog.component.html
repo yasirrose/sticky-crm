@@ -1,0 +1,20 @@
+<h4 mat-dialog-title>
+    {{title}}
+</h4>
+
+<div mat-dialog-content>
+    <h4>{{message}}</h4>
+    <mat-form-field appearance="fill">
+        <mat-label>Mid Groups</mat-label>
+        <mat-select [(value)]="selectedGroup" (selectionChange)="selection($event.value)">
+            <mat-option *ngFor="let group of groups" [value]="group">
+                {{group}}
+            </mat-option>
+        </mat-select>
+    </mat-form-field>
+</div>
+
+<div mat-dialog-actions>
+    <button mat-raised-button cdkFocusInitial (click)="onDismiss()">Cancel</button>
+    <button mat-raised-button (click)="onConfirm()">Assign</button>
+</div>

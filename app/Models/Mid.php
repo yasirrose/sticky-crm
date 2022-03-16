@@ -14,6 +14,7 @@ class Mid extends Model
     protected $fillable = [
         'router_id',
         'router_name',
+        'mid_count',
         'router_date_in',
         'router_desc',
         'mid_group_setting_id',

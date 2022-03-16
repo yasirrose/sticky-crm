@@ -16,6 +16,7 @@ import { formatDate } from '@angular/common';
 import { environment } from 'src/environments/environment';
 import { ApiService } from 'src/app/api.service';
 import { MidsDetailComponent } from './mids-detail/mids-detail.component';
+import { ActionDialogComponent } from './action-dialog/action-dialog.component';
 import { Pipe, PipeTransform } from '@angular/core';
 import { Notyf } from 'notyf';
 
@@ -45,6 +46,8 @@ export class MidGroupsComponent implements OnInit, PipeTransform, AfterViewInit,
 
   getSubscription: Subscription;
   refreshSubscription: Subscription;
+  addGroupSubscription: Subscription;
+  deleteGroupSubscription: Subscription;
   isLoading = false;
   totalRows = 0;
   pageSize = 25;
@@ -56,19 +59,19 @@ export class MidGroupsComponent implements OnInit, PipeTransform, AfterViewInit,
   // toolTipMids: [];
   toolTipMids = [];
   notyf = new Notyf({ types: [{ type: 'info', background: '#6495ED', icon: '<i class="fa-solid fa-clock"></i>' }] });
-
   @Input()
   columns: ListColumn[] = [
 
-    // { name: 'Actions', property: 'actions', visible: true },
     // { name: 'Id', property: 'id', visible: true, isModelProperty: true },
     // { name: 'router_id', property: 'router_id', visible: true, isModelProperty: true },
+    { name: 'Id', property: 'id', visible: true, isModelProperty: true },
     { name: 'Group Name', property: 'group_name', visible: true, isModelProperty: true },
     { name: 'Assigned Mids', property: 'assigned_mids', visible: true, isModelProperty: false },
     { name: 'Gross Revenue', property: 'gross_revenue', visible: true, isModelProperty: true },
     { name: 'Bank %', property: 'bank_per', visible: true, isModelProperty: true },
     { name: 'Target Bank Balance', property: 'target_bank_balance', visible: true, isModelProperty: true },
-    { name: 'Updated_at', property: 'updated_at', visible: true, isModelProperty: true },
+    { name: 'Updated_at', property: 'updated_at', visible: false, isModelProperty: false },
+    { name: 'Actions', property: 'actions', visible: true },
 
   ] as ListColumn[];
   // pageSize = 20000;
@@ -95,6 +98,8 @@ export class MidGroupsComponent implements OnInit, PipeTransform, AfterViewInit,
   ngOnInit() {
     this.getSubscription = this.midGroupService.getResponse$.subscribe(data => this.manageGetResponse(data));
     this.refreshSubscription = this.midGroupService.refreshResponse$.subscribe(data => this.manageRefreshResponse(data));
+    this.addGroupSubscription = this.midGroupService.addGroupResponse$.subscribe(data => this.manageAddGroupResponse(data));
+    this.deleteGroupSubscription = this.midGroupService.deleteGroupResponse$.subscribe(data => this.manageDeleteGroupResponse(data));
 
     this.getData();
     this.dataSource = new MatTableDataSource();
@@ -112,7 +117,7 @@ export class MidGroupsComponent implements OnInit, PipeTransform, AfterViewInit,
 
   ngAfterViewInit() {
     // this.dataSource.paginator = this.paginator;
-    // this.dataSource.sort = this.sort;
+    this.dataSource.sort = this.sort;
   }
 
   // pageChanged(event: PageEvent) {
@@ -146,11 +151,55 @@ export class MidGroupsComponent implements OnInit, PipeTransform, AfterViewInit,
   getAssignedMids(midGroup) {
     var mid_names = [];
     midGroup.mids_data.forEach(function (mid) {
-      mid_names.push(mid.alias);
+      mid_names.push(mid.gateway_alias);
       console.log('mid_names :', mid_names);
     });
     return mid_names;
   }
+
+  actionDialog(action, obj) {
+    obj.action = action;
+    const dialogRef = this.dialog.open(ActionDialogComponent, {
+      width: '500px',
+      data: obj
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result.event == 'Add') {
+        this.addNewGroup(result.data);
+      } else if (result.event == 'Update') {
+        this.updateRowData(result.data);
+      } else if (result.event == 'Delete') {
+        this.deleteRowData(result.data);
+      }
+    });
+  }
+
+  addNewGroup(data) {
+    if (data) {
+      console.log(data);
+      this.midGroupService.addGroup(data);
+    }
+  }
+
+  updateRowData(data) {
+    if (data) {
+      console.log(data);
+      this.midGroupService.updateGroup(data);
+    }
+
+  }
+
+  deleteRowData(data) {
+    console.log(data);
+    if (data) {
+      this.midGroupService.deleteGroup(data);
+    }
+    // this.dataSource = this.dataSource.filter((value,key)=>{
+    //   return value.id != row_obj.id;
+    // });
+  }
+
   manageGetResponse(data) {
     // console.log('manage get data :', data);
     // this.midGroups = data.data;
@@ -162,10 +211,24 @@ export class MidGroupsComponent implements OnInit, PipeTransform, AfterViewInit,
     // }
     // console.log('manage status true this.toolTipMids :', this.toolTipMids);
   }
-  
+
   manageRefreshResponse(data) {
     if (data.status) {
       this.notyf.success(data.data.new + ' New Mid Groups Found and ' + data.data.updated + ' Mids Updated');
+      this.getData();
+    }
+  }
+
+  manageAddGroupResponse(data) {
+    if (data.status) {
+      this.notyf.success(data.data.message);
+      this.getData();
+    }
+  }
+
+  manageDeleteGroupResponse(data) {
+    if (data.status) {
+      this.notyf.success(data.data.message);
       this.getData();
     }
   }
@@ -194,6 +257,7 @@ export class MidGroupsComponent implements OnInit, PipeTransform, AfterViewInit,
   }
 
   refresh() {
+    console.log('Mid group refresh called');
     this.isLoading = true;
     this.midGroupService.refresh();
   }
@@ -206,6 +270,14 @@ export class MidGroupsComponent implements OnInit, PipeTransform, AfterViewInit,
     if (this.getSubscription) {
       this.midGroupService.getResponse.next([]);
       this.getSubscription.unsubscribe();
+    }
+    if (this.addGroupSubscription) {
+      this.midGroupService.addGroupResponse.next([]);
+      this.addGroupSubscription.unsubscribe();
+    }
+    if (this.deleteGroupSubscription) {
+      this.midGroupService.deleteGroupResponse.next([]);
+      this.deleteGroupSubscription.unsubscribe();
     }
   }
 }

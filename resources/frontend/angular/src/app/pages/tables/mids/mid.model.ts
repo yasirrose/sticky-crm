@@ -2,6 +2,7 @@ export class Mid {
     id: number;
     router_id: number;
     mid_group_name: string;
+    mid_count: string;
     router_date_in: Date;
     router_desc: string;
     mid_group_setting_id: number;
@@ -15,12 +16,15 @@ export class Mid {
     global_monthly_cap: string;
     current_monthly_amount: string;
     processing_percent: string;
+    checked: boolean;
+
     constructor(mid) {
         this.id = mid.id;
         this.router_id = mid.router_id;
         if(mid.global_fields){
             this.mid_group_name = mid.global_fields.mid_group;
         }
+        this.mid_count = mid.mid_count;
         this.router_date_in = mid.router_date_in;
         this.router_desc = mid.router_desc;
         this.mid_group_setting_id = mid.mid_group_setting_id;
@@ -34,5 +38,6 @@ export class Mid {
         this.global_monthly_cap = mid.global_monthly_cap;
         this.current_monthly_amount = mid.current_monthly_amount;
         this.processing_percent = mid.processing_percent;
+        this.checked = false;
     }
 }

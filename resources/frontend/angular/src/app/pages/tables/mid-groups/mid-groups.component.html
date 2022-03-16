@@ -1,9 +1,14 @@
+<!-- <fury-mids (callMidGroupsRefresh)="refresh()"></fury-mids> -->
 <fury-page-layout mode="simple">
     <!-- <fury-page-layout-header>
         <fury-breadcrumbs [@fadeInRight] [crumbs]="['Tables']" current="Mids"></fury-breadcrumbs>
     </fury-page-layout-header> -->
     <fury-page-layout-content [@fadeInUp]>
-        <button class="mb" mat-raised-button color="accent" (click)="refresh()">Refresh</button>
+        <div fxLayoutAlign="space-between">
+            <button class="mb" mat-raised-button color="accent" (click)="refresh()">Refresh Groups</button>
+            <button class="mb" mat-raised-button color="accent" (click)="actionDialog('Add', {})"><i style="font-size: 20px;"
+                    class="bi bi-plus"></i> Add Group</button>
+        </div>
         <fury-list name="Mid-Groups" [columns]="columns" (filterChange)="onFilterChange($event)">
             <mat-progress-bar mode="indeterminate" *ngIf="isLoading"></mat-progress-bar>
             <table [dataSource]="dataSource" mat-table matSort>
@@ -26,11 +31,22 @@
                         </td>
                     </ng-container>
                 </ng-container>
+
                 <!-- important comment -->
                 <ng-container matColumnDef="assigned_mids">
                     <th *matHeaderCellDef mat-header-cell mat-sort-header>Assigned Mids</th>
-                    <td  (click)="openDialog(row)"  *matCellDef="let row, index as i" [matTooltip]="toolTipMids[i] | tooltipList" matTooltipClass="tooltip-list" mat-cell #tooltip="matTooltip" matTooltipPosition="below">
-                        <a routerLink="#" >{{ row.assigned_mids }}</a>
+                    <td (click)="openDialog(row)" *matCellDef="let row, index as i" [matTooltip]="toolTipMids[i] | tooltipList"
+                        matTooltipClass="tooltip-list" mat-cell #tooltip="matTooltip" matTooltipPosition="below">
+                        <a routerLink="#">{{ row.assigned_mids }}</a>
+                    </td>
+                </ng-container>
+
+                <!-- Action Column -->
+                <ng-container matColumnDef="actions">
+                    <th mat-header-cell *matHeaderCellDef> Actions </th>
+                    <td mat-cell *matCellDef="let row">
+                        <a class="edit-link" (click)="actionDialog('Update', row)">Edit</a> |
+                        <a class="delete-link" (click)="actionDialog('Delete', row)">Delete</a>
                     </td>
                 </ng-container>
 
@@ -52,8 +68,7 @@
         </ng-container> -->
 
                 <tr *matHeaderRowDef="visibleColumns" mat-header-row></tr>
-                <tr *matRowDef="let row; columns: visibleColumns;" class="clickable route-animations-elements"
-                    mat-row></tr>
+                <tr *matRowDef="let row; columns: visibleColumns;" class="clickable route-animations-elements" mat-row></tr>
             </table>
 
             <!-- <mat-paginator #paginator [length]="totalRows" [pageIndex]="currentPage" [pageSize]="pageSize"

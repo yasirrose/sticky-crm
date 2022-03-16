@@ -1,0 +1,22 @@
+<h1 mat-dialog-title><strong>{{action}}</strong></h1>
+<div mat-dialog-content>
+    <p>{{message}}</p>
+    <div fxLayout="column" *ngIf="action != 'Delete'; else elseDelete">
+        <mat-form-field appearance="fill">
+            <mat-label>Group Name</mat-label>
+            <input matInput [(ngModel)]="groupName">
+        </mat-form-field>
+        <mat-form-field appearance="fill">
+            <mat-label>Bank Percentage</mat-label>
+            <input matInput [(ngModel)]="bankPercentage">
+            <mat-hint class="text-danger">If field left null, default percentage will be set to 20%</mat-hint>
+        </mat-form-field>
+    </div>
+    <ng-template #elseDelete>
+        Sure to delete Mid Group <b>"{{local_data.group_name}}"</b>?
+    </ng-template>
+</div>
+<div mat-dialog-actions>
+    <button mat-raised-button color="primary" (click)="doAction()">{{action}}</button>
+    <button mat-raised-button color="warn" (click)="closeDialog()">Cancel</button>
+</div>
