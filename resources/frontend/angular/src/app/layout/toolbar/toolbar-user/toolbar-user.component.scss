@@ -76,3 +76,20 @@
     }
   }
 }
+@media (max-width: 1024px) {
+  .toolbar-user {
+    .button {
+      .icon {
+        display: block !important;
+      }
+    }
+
+  }
+  .toolbar-user {
+    .button {
+      span {
+      place-content: center !important;
+      }
+    }    
+  }
+}
