@@ -1,9 +1,11 @@
-import { Component, OnInit, Inject, Input } from '@angular/core';
+import { Component, OnInit, Inject, Input, ViewChild, AfterViewInit } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { CustomerService } from './customer-detail.service';
 import { Subscription } from 'rxjs';
 import { ListColumn } from '../../../../@fury/shared/list/list-column.model';
 import { MatTableDataSource } from '@angular/material/table';
+import { MatSort } from '@angular/material/sort';
 
 
 @Component({
@@ -12,25 +14,27 @@ import { MatTableDataSource } from '@angular/material/table';
   styleUrls: ['./customer-detail.component.scss'],
   providers: [CustomerService]
 })
-export class CustomerDetailComponent implements OnInit {
-  details : [];
-  address_data : [];
+export class CustomerDetailComponent implements OnInit, AfterViewInit {
+  customerDetails: any;
+  addresses: any;
   getSubscription: Subscription;
   message: string = "";
   isLoading = false;
   cancelButtonText = "Cancel";
 
-  @Input()
-  columns: ListColumn[] = [
-    { name: 'Creator Name/Email', property: 'creator', visible: true, isModelProperty: true },
-    { name: 'Country', property: 'country', visible: true, isModelProperty: true },
-    { name: 'City', property: 'city', visible: true, isModelProperty: true },
-    { name: 'State', property: 'state', visible: true, isModelProperty: true },
-    { name: 'Street', property: 'street', visible: true, isModelProperty: true },
-    { name: 'Zip', property: 'zip', visible: true, isModelProperty: true },
-    { name: 'Created At', property: 'created_at', visible: true, isModelProperty: true },
-  ] as ListColumn[];
-  dataSource: MatTableDataSource<null>;
+  // @Input()
+  // columns: ListColumn[] = [
+  //   { name: 'Creator Name/Email', property: 'creator', visible: false, isModelProperty: false },
+  //   { name: 'Country', property: 'country', visible: true, isModelProperty: true },
+  //   { name: 'City', property: 'city', visible: true, isModelProperty: true },
+  //   { name: 'State', property: 'state', visible: true, isModelProperty: true },
+  //   { name: 'Street', property: 'street', visible: true, isModelProperty: true },
+  //   { name: 'Zip', property: 'zip', visible: true, isModelProperty: true },
+  //   { name: 'Created At', property: 'created_at', visible: true, isModelProperty: true },
+  // ] as ListColumn[];
+  // dataSource: MatTableDataSource<null>;
+  // @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
+  // @ViewChild(MatSort, { static: true }) sort: MatSort;
   // visibleColumn: string[] = ['customColumn'];
 
   constructor(
@@ -39,31 +43,39 @@ export class CustomerDetailComponent implements OnInit {
     if (data) {
       this.getData(data.id);
     }
-    this.dialogRef.updateSize('300vw','300vw')
+    // this.dialogRef.updateSize('300vw', '300vw')
   }
-  get visibleColumns() {
-    return this.columns.filter(column => column.visible).map(column => column.property);
-  }
-  
-  async getData(id){
-    await this.customersService.getCustomerDetail(id)
-    .then(data => {
-      this.details = data.data;
-      this.address_data = data.address_data;
-      this.dataSource.data = data.address_data;
-      console.log(this.details);
-      console.log(this.address_data);
-    })
-  }
-  onFilterChange(value) {
-    if (!this.dataSource) {
-      return;
-    }
-    value = value.trim();
-    value = value.toLowerCase();
-    this.dataSource.filter = value;
-  }
+  // get visibleColumns() {
+  //   return this.columns.filter(column => column.visible).map(column => column.property);
+  // }
+
   ngOnInit(): void {
-    this.dataSource = new MatTableDataSource();
+    // this.dataSource = new MatTableDataSource();
   }
+
+  ngAfterViewInit(): void {
+    // this.dataSource.paginator = this.paginator;
+    // this.dataSource.sort = this.sort;
+  }
+
+  async getData(id) {
+    await this.customersService.getCustomerDetail(id)
+      .then(data => {
+        this.customerDetails = data.data;
+        console.log('this.details :', this.customerDetails);
+        this.addresses = data.address_data;
+        console.log('this.addresses  :', this.addresses);
+        // this.dataSource.data = data.data;
+      })
+  }
+
+  onFilterChange(value) {
+    // if (!this.dataSource) {
+    //   return;
+    // }
+    // value = value.trim();
+    // value = value.toLowerCase();
+    // this.dataSource.filter = value;
+  }
+
 }

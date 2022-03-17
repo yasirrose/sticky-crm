@@ -1,36 +1,130 @@
-<fury-page-layout mode="simple">
-  <fury-page-layout-content [@fadeInUp]>
-    <fury-list name="Customers" [columns]="columns" (filterChange)="onFilterChange($event)">
-      <mat-progress-bar mode="indeterminate" *ngIf="isLoading"></mat-progress-bar>
-      <table [dataSource]="dataSource" mat-table matSort>
+<div class="fury-preview-card" fxLayout="column" fxLayout.gt-sm="row">
+  <div class="content" fxFlex>
+    <div class="header">
+      <div class="title">Customer Details</div>
+    </div>
 
-        <!-- Checkbox Column -->
-        <ng-container matColumnDef="checkbox">
-          <th *matHeaderCellDef class="actions-cell" mat-header-cell>
-            <mat-checkbox color="primary" (click)="$event.stopPropagation()"></mat-checkbox>
-          </th>
-          <td *matCellDef="let row" class="actions-cell" mat-cell>
-            <mat-checkbox color="primary" (click)="$event.stopPropagation()"></mat-checkbox>
-          </td>
-        </ng-container>
+    <mat-tab-group class="tabs fury-tabs">
+      <mat-tab label="CUSTOMER DETAIL">
+        <div class="person padding">
+          <div class="main-div" fxLayout="column" fxLayoutGap="20px" fxLayout.gt-sm="row" fxLayoutGap.gt-sm="24px">
+            <div fxLayout="row" fxLayoutGap="24px">
+              <div class="product-column" fxLayout="column" fxLayoutGap="15px" [fxFlex]="40">
+                <!-- <h3>In progress</h3> -->
+                <div fxLayout="row" fxLayoutGap="24px">
+                  <div class="detail-title"><span>ID:</span></div>
+                  <div class="detail-data"><span>{{customerDetails?.id}}</span></div>
+                </div>
+                <div fxLayout="row" fxLayoutGap="24px">
+                  <div class="detail-title"><span>First Name:</span></div>
+                  <div class="detail-data"><span>{{customerDetails?.first_name}}</span></div>
+                </div>
+                <div fxLayout="row" fxLayoutGap="24px">
+                  <div class="detail-title"><span>Email:</span></div>
+                  <div class="detail-data"><span>{{customerDetails?.email}}</span></div>
+                </div>
+                <div fxLayout="row" fxLayoutGap="24px">
+                  <div class="detail-title"><span>Phone:</span></div>
+                  <div class="detail-data"><span>{{customerDetails?.phone}}</span></div>
+                </div>
+                <div fxLayout="row" fxLayoutGap="24px">
+                  <div class="detail-title"><span>Customer Id:</span></div>
+                  <div class="detail-data"><span>{{customerDetails?.customer_id}}</span></div>
+                </div>
+              </div>
+              <div class="product-column" fxLayout="column" fxLayoutGap="15px" [fxFlex]="40">
+                <div fxLayout="row" fxLayoutGap="24px">
+                  <div class="detail-title"><span>Is sms communication enabled:</span></div>
+                  <div class="detail-data"><span>{{customerDetails?.is_sms_communication_enabled}}</span></div>
+                </div>
+                <div fxLayout="row" fxLayoutGap="24px">
+                  <div class="detail-title"><span>Is member:</span></div>
+                  <div class="detail-data"><span>{{customerDetails?.is_member}}</span></div>
+                </div>
+                <div fxLayout="row" fxLayoutGap="24px">
+                  <div class="detail-title"><span>Created At:</span></div>
+                  <div class="detail-data"><span>{{customerDetails?.created_at}}</span></div>
+                </div>
+                <div fxLayout="row" fxLayoutGap="24px">
+                  <div class="detail-title"><span>Updated At:</span></div>
+                  <div class="detail-data"><span>{{customerDetails?.updated_at}}</span></div>
+                </div>
+                <div fxLayout="row" fxLayoutGap="24px">
+                  <div class="detail-title"><span>Deleted At:</span></div>
+                  <div class="detail-data"><span>{{customerDetails?.deleted_at}}</span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </mat-tab>
 
-        <!-- fullName Column --> 
-        <ng-container *ngFor="let column of columns">
-          <ng-container *ngIf="column.isModelProperty" [matColumnDef]="column.property">
-            <th *matHeaderCellDef mat-header-cell mat-sort-header> {{ column.name }}</th>
-            <td *matCellDef="let row" mat-cell>
-              <ng-template [ngIf]="column.property == 'creator'">{{ row[column.property].name }}/{{
-                row[column.property].email }}</ng-template>
-              <ng-template [ngIf]="column.property != 'creator'">{{ row[column.property] }}</ng-template>
-            </td>
-          </ng-container>
-        </ng-container>
-
-        <tr *matHeaderRowDef="visibleColumns" mat-header-row></tr>
-        <tr (click)="updateCustomer(row)" *matRowDef="let row; columns: visibleColumns;" class="clickable route-animations-elements"
-          mat-row></tr>
-      </table>
-    </fury-list>
-
-  </fury-page-layout-content>
-</fury-page-layout>
+      <mat-tab *ngFor="let address of addresses, index as i" label="Address {{i + 1}}">
+        <div class="person padding">
+          <div class="main-div" fxLayout="column" fxLayoutGap="20px" fxLayout.gt-sm="row" fxLayoutGap.gt-sm="24px">
+            <div class="product-column" fxLayout="column" fxLayoutGap="15px" [fxFlex]="40">
+              <div fxLayout="row" fxLayoutGap="24px">
+                <div class="detail-title"><span>First Name:</span></div>
+                <div class="detail-data"><span>{{address?.first_name}}</span></div>
+              </div>
+              <div fxLayout="row" fxLayoutGap="24px">
+                <div class="detail-title"><span>email:</span></div>
+                <div class="detail-data"><span>{{address?.email}}</span></div>
+              </div>
+              <div fxLayout="row" fxLayoutGap="24px">
+                <div class="detail-title"><span>city:</span></div>
+                <div class="detail-data"><span>{{address?.city}}</span></div>
+              </div>
+              <div fxLayout="row" fxLayoutGap="24px">
+                <div class="detail-title"><span>country:</span></div>
+                <div class="detail-data"><span>{{address?.country}}</span></div>
+              </div>
+              <div fxLayout="row" fxLayoutGap="24px">
+                <div class="detail-title"><span>street:</span></div>
+                <div class="detail-data"><span>{{address?.street}}</span></div>
+              </div>
+              <div fxLayout="row" fxLayoutGap="24px">
+                <div class="detail-title"><span>is_default:</span></div>
+                <div class="detail-data"><span>{{address?.is_default}}</span></div>
+              </div>
+              <div fxLayout="row" fxLayoutGap="24px">
+                <div class="detail-title"><span>created_at:</span></div>
+                <div class="detail-data"><span>{{address?.created_at}}</span></div>
+              </div>
+            </div>
+            <div class="product-column" fxLayout="column" fxLayoutGap="15px" [fxFlex]="40">
+              <div fxLayout="row" fxLayoutGap="24px">
+                <div class="detail-title"><span>Last Name:</span></div>
+                <div class="detail-data"><span>{{address?.last_name}}</span></div>
+              </div>
+              <div fxLayout="row" fxLayoutGap="24px">
+                <div class="detail-title"><span>phone:</span></div>
+                <div class="detail-data"><span>{{address?.phone}}</span></div>
+              </div>
+              <div fxLayout="row" fxLayoutGap="24px">
+                <div class="detail-title"><span>state:</span></div>
+                <div class="detail-data"><span>{{address?.state}}</span></div>
+              </div>
+              <div fxLayout="row" fxLayoutGap="24px">
+                <div class="detail-title"><span>zip:</span></div>
+                <div class="detail-data"><span>{{address?.zip}}</span></div>
+              </div>
+              <div fxLayout="row" fxLayoutGap="24px">
+                <div class="detail-title"><span>street_2:</span></div>
+                <div class="detail-data"><span>{{address?.street_2}}</span></div>
+              </div>
+              <div fxLayout="row" fxLayoutGap="24px">
+                <div class="detail-title"><span>phone_key:</span></div>
+                <div class="detail-data"><span>{{address?.phone_key}}</span></div>
+              </div>
+              <div fxLayout="row" fxLayoutGap="24px">
+                <div class="detail-title"><span>created_at:</span></div>
+                <div class="detail-data"><span>{{address?.updated_at}}</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </mat-tab>
+    </mat-tab-group>
+  </div>
+</div>

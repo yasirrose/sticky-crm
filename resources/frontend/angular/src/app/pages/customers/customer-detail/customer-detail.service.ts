@@ -16,8 +16,7 @@ export class CustomerService {
 
   constructor(private apiService: ApiService) { }
   async getCustomerDetail(id): Promise<any> {
-    await this.apiService.getData(`get_customer_detail?id=${id}`)
-    .then(res => res.json()).then((data) => {
+    await this.apiService.getData(`get_customer_detail?id=${id}`).then(res => res.json()).then((data) => {
       this.details = data;
     });
     return this.details;

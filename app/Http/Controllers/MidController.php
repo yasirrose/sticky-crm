@@ -4,9 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Models\Mid;
 use App\Models\Profile;
+use App\Models\Order;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
+use DB;
 
 class MidController extends Controller
 {
@@ -19,8 +21,12 @@ class MidController extends Controller
     {
         $data = Mid::all();
         $profiles = Profile::get();
+        $data->total_mids = Mid::count();
+        // $data->unassigned_mids = Profile::where(['global_fields->mid_group'=>''])->count();
+        // dd($data);
         foreach ($data as $mid) {
             $mid->global_fields = Profile::where(['alias' => $mid->gateway_alias])->pluck('global_fields')->first();
+            // $mid->mid_count = Order::where(['gateway_id'=>$mid->gateway_id])->count();
         }
         return response()->json(['status' => true, 'data' => $data]);
     }
@@ -54,8 +60,8 @@ class MidController extends Controller
      */
     public function show($alias)
     {
-        $data = Profile::where(['alias'=>$alias])->first();
-        return response()->json(['status' => true, 'data'=>$data]);
+        $data = Profile::where(['alias' => $alias])->first();
+        return response()->json(['status' => true, 'data' => $data]);
     }
 
     /**
@@ -87,9 +93,12 @@ class MidController extends Controller
      * @param  \App\Models\Mid  $mid
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Mid $mid)
+    public function destroy($alias)
     {
-        //
+        $profile = Profile::where('alias', $alias)->first();
+        DB::table('profiles')->where('alias', $alias)->update(['global_fields->mid_group' => '']);
+        return response()->json(['status' => true, 'message' => 'Unassigned Mid-group removed for' . $profile->alias]);
+        // dd('die');
     }
     public function pull_payment_router_view()
     {
@@ -149,11 +158,32 @@ class MidController extends Controller
         $url = 'https://thinkbrain.sticky.io/api/v1/gateway_view';
         $gateways = Mid::pluck('gateway_id')->toArray();
 
-
-
         foreach ($gateways as $id) {
             $data = json_decode(Http::withBasicAuth($username, $password)->accept('application/json')->post($url, ['gateway_id' => $id])->getBody()->getContents());
             dd($data);
         }
     }
+
+    public function assign_mid_group(Request $request)
+    {
+        // dd($request->group_name);
+        $profile = Profile::where('alias', $request->alias)->first();
+        DB::table('profiles')->where('alias', $request->alias)->update(['global_fields->mid_group' => $request->group_name]);
+        return response()->json(['status' => true, 'message' => $request->group_name . ' Assigned as Mid-group to ' . $profile->alias]);
+    }
+    public function get_first_mid()
+    {
+        $data = Profile::first();
+        return response()->json(['status' => true, 'data' => $data]);
+    }
+    public function refresh_mid_count()
+    {
+        $data = Mid::all();
+        foreach ($data as $mid) {
+            $mid->mid_count = Order::where(['gateway_id' => $mid->gateway_id])->count();
+            $mid->save();
+        }
+        return response()->json(['status' => true, 'data' => ['message' => "Mid Counts Refreshed Successfully."]]);
+    }
+
 }

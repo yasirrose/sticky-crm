@@ -4,4 +4,5 @@ export class ListColumn {
   visible?: boolean;
   isModelProperty?: boolean;
   displayFn: any;
+  checked?: boolean;
 }

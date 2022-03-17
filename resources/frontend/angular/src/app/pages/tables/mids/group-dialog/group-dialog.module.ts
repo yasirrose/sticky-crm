@@ -19,18 +19,15 @@ import { FurySharedModule } from 'src/@fury/fury-shared.module';
 import { BreadcrumbsModule } from 'src/@fury/shared/breadcrumbs/breadcrumbs.module';
 import { ListModule } from 'src/@fury/shared/list/list.module';
 import { MaterialModule } from 'src/@fury/shared/material-components.module';
-import { MidGroupsRoutingModule } from './mid-groups-routing.module';
-import { MidGroupsComponent, TooltipListPipe } from './mid-groups.component';
-import { MidsDetailComponent } from './mids-detail/mids-detail.component';
-import { RouterModule } from '@angular/router';
-import { MatTooltipModule } from '@angular/material/tooltip';
-import { MidsModule } from '../mids/mids.module';
-import { ActionDialogComponent } from './action-dialog/action-dialog.component';
+// import { MidsRoutingModule } from './mids-routing.module';
+// import { MidsComponent } from './group-dialog.component';
+  import { GroupDialogComponent } from './group-dialog.component';
+
 
 @NgModule({
   imports: [
     CommonModule,
-    MidGroupsRoutingModule,
+    // MidsRoutingModule,
     FormsModule,
     ReactiveFormsModule,
     MaterialModule,
@@ -51,12 +48,9 @@ import { ActionDialogComponent } from './action-dialog/action-dialog.component';
     MatTableModule,
     MatPaginatorModule,
     MatProgressBarModule,
-    RouterModule,
-    MatTooltipModule,
-    MidsModule
   ],
-  declarations: [MidGroupsComponent, MidsDetailComponent, TooltipListPipe, ActionDialogComponent],
-  exports: [MidGroupsComponent],
+  declarations: [GroupDialogComponent, GroupDialogComponent],
+  exports: [GroupDialogComponent],
 
 })
-export class MidGroupsModule { }
+export class GroupDialogModule { }

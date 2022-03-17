@@ -17,7 +17,7 @@ import { Notyf } from 'notyf';
 import { ConfirmationDialogComponent } from '../confirmation-dialog/confirmation-dialog.component';
 import { ConfirmationDialogModel } from '../confirmation-dialog/confirmation-dialog';
 import { Location } from '@angular/common';
-
+ 
 @Component({
   selector: 'fury-customers',
   templateUrl: './customers.component.html',
@@ -28,29 +28,27 @@ export class CustomersComponent implements OnInit, AfterViewInit, OnDestroy {
 
   // subject$: ReplaySubject<Customer[]> = new ReplaySubject<Customer[]>(1);
   // data$: Observable<Customer[]> = this.subject$.asObservable();
-  customers: [];
-
-  //customer coding
   getSubscription: Subscription;
   deleteSubscription: Subscription;
-  isLoading = false;
-  totalRows = 0;
-  pageSize = 25;
-  currentPage = 1;
-  pageSizeOptions: number[] = [5, 10, 25, 100];
+  search = '';
+  customers: [];
   filters = {};
   address = [];
-  search = '';
-  notyf = new Notyf();
-  name: string;
-  id: number;
   idArray = [];
   allIdArray = [];
+  id: number;
+  totalRows: number = 0;
+  pageSize: number = 25;
+  currentPage: number = 1;
+  pageSizeOptions: number[] = [5, 10, 25, 100];
+  name: string;
+  isChecked: boolean = false;
+  isLoading: boolean = false;
+  isDeleting: boolean = false;
   timer: any;
-  isChecked = false;
+  notyf = new Notyf();
 
   @Input()
-  // @Input() public customerId;
   columns: ListColumn[] = [
     { name: 'Checkbox', property: 'checkbox', visible: true },
     { name: 'Customer Id', property: 'id', visible: true, isModelProperty: true },
@@ -92,6 +90,7 @@ export class CustomersComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   async getData() {
+    this.isDeleting = false;
     this.isLoading = true;
     this.isChecked = false;
     this.filters = {
@@ -104,7 +103,7 @@ export class CustomersComponent implements OnInit, AfterViewInit, OnDestroy {
         this.allIdArray = [];
         this.customers = customers.data.data;
         this.dataSource.data = customers.data.data;
-        for(var i = 0; i < customers.data.data.length; i++){
+        for (var i = 0; i < customers.data.data.length; i++) {
           this.allIdArray.push(customers.data.data[i].id);
         }
         setTimeout(() => {
@@ -126,7 +125,7 @@ export class CustomersComponent implements OnInit, AfterViewInit, OnDestroy {
     // this.dataSource.filter = value;
     value = value.toLowerCase();
     this.search = value;
-    clearTimeout(this.timer); 
+    clearTimeout(this.timer);
     this.timer = setTimeout(() => { this.getData() }, 500)
   }
 
@@ -146,7 +145,7 @@ export class CustomersComponent implements OnInit, AfterViewInit, OnDestroy {
 
   manageDeleteResponse(data) {
     if (data.status) {
-      this.notyf.success(data.message);
+      this.notyf.success({ duration: 5000, message: data.message });
       this.getData();
     }
   }
@@ -155,7 +154,7 @@ export class CustomersComponent implements OnInit, AfterViewInit, OnDestroy {
     const dialogRef = this.dialog.open(CustomerDetailComponent, {
       data: { id: id }
     });
-
+    dialogRef.updateSize('1000px');
     dialogRef.afterClosed().subscribe(result => {
     });
   }
@@ -165,40 +164,42 @@ export class CustomersComponent implements OnInit, AfterViewInit, OnDestroy {
     const numRows = this.dataSource.data.length;
     return numSelected === numRows;
   }
+
   masterToggle(event) {
     this.isAllSelected() ?
       this.selection.clear() :
       this.dataSource.data.forEach(
         row => this.selection.select(row)
-        );
-    if(event.checked == false){
+      );
+    if (event.checked == false) {
       this.idArray = [];
       this.idArray.length = 0;
     } else {
       this.idArray = this.allIdArray;
     }
-    if(this.idArray.length != 0){
+    if (this.idArray.length != 0) {
       this.isChecked = true;
     } else {
       this.isChecked = false;
     }
   }
+
   selectToggle(event, value) {
-    if(event.checked){
+    if (event.checked) {
       this.idArray.push(value);
     } else {
       this.idArray.splice(this.idArray.indexOf(value), 1);
     }
-    if(this.idArray.length != 0){
+    if (this.idArray.length != 0) {
       this.isChecked = true;
     } else {
       this.isChecked = false;
     }
   }
-  deleteRecord(){
+
+  deleteRecord() {
     this.handleDeleteAction(this.idArray);
   }
-
 
   handleDeleteAction(id) {
     const dialogData = new ConfirmationDialogModel('Confirm Delete', 'Are you sure you want to delete this customer?');
@@ -210,14 +211,15 @@ export class CustomersComponent implements OnInit, AfterViewInit, OnDestroy {
     dialogRef.afterClosed().subscribe(dialogResult => {
       if (dialogResult) {
         this.customersService.deleteData(id);
-        this.dataSource.data = [];
+        this.isDeleting = true;
+        // this.dataSource.data = [];
         this.idArray = [];
       }
     });
   }
 
   ngOnDestroy(): void {
-    if(this.deleteSubscription){
+    if (this.deleteSubscription) {
       this.customersService.deleteResponse.next([]);
       this.deleteSubscription.unsubscribe();
     }

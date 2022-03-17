@@ -13,18 +13,21 @@ export class MidsService {
   public ordersGetResponse = new BehaviorSubject([]);
   public refreshResponse = new BehaviorSubject([]);
   public getProductsResponse = new BehaviorSubject([]);
+  public assignGroupResponse = new BehaviorSubject([]);
+  public unAssignGroupResponse = new BehaviorSubject([]);
 
   ordersGetResponse$ = this.ordersGetResponse.asObservable();
   refreshResponse$ = this.refreshResponse.asObservable();
-  getProductsResponse$ = this.getProductsResponse.asObservable();
+  assignGroupResponse$ = this.assignGroupResponse.asObservable();
+  unAssignGroupResponse$ = this.unAssignGroupResponse.asObservable();
 
   constructor(private apiService: ApiService) { }
 
   async getMids(): Promise<any> {
     await this.apiService.getData(`mids`).then(res => res.json()).then((data) => {
-        this.mids = data;
-        this.ordersGetResponse.next(data);
-      });
+      this.mids = data;
+      this.ordersGetResponse.next(data);
+    });
     return this.mids;
   }
 
@@ -36,9 +39,13 @@ export class MidsService {
 
   async deleteData(alias): Promise<any> {
     await this.apiService.deleteData(`mids/${alias}`).then(res => res.json()).then((data) => {
-      this.getProductsResponse.next(data);
+      this.unAssignGroupResponse.next(data);
     });
   }
 
-
+  async assignGroup(alias, groupName): Promise<any> {
+    await this.apiService.getData(`assign_mid_group?alias=${alias}&&group_name=${groupName}`).then(res => res.json()).then((data) => {
+      this.assignGroupResponse.next(data);
+    });
+  }
 }
