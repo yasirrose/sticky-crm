@@ -20,8 +20,8 @@ export class MidsService {
 
   constructor(private apiService: ApiService) { }
 
-  async getMids(): Promise<any> {
-    await this.apiService.getData(`mids`).then(res => res.json()).then((data) => {
+  async getMids(filters): Promise<any> {
+    await this.apiService.getData(`mids?start_date=${filters.start}&end_date=${filters.end}`).then(res => res.json()).then((data) => {
         this.mids = data;
         this.ordersGetResponse.next(data);
       });

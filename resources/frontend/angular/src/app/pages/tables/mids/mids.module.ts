@@ -21,6 +21,7 @@ import { ListModule } from '../../../../@fury/shared/list/list.module';
 import { MaterialModule } from '../../../../@fury/shared/material-components.module';
 import { MidsRoutingModule } from './mids-routing.module';
 import { MidsComponent } from './mids.component';
+import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 // import { MidGroupsComponent } from './mid-groups/mid-groups.component';
 
 
@@ -51,6 +52,7 @@ import { MidsComponent } from './mids.component';
     MatTableModule,
     MatPaginatorModule,
     MatProgressBarModule,
+    NgxSkeletonLoaderModule,
   ],
   declarations: [MidsComponent],
   exports: [MidsComponent],

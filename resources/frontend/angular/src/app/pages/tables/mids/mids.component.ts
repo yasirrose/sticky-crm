@@ -5,6 +5,7 @@ import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { Observable, of, ReplaySubject } from 'rxjs';
 import { filter } from 'rxjs/operators';
+import { FormGroup, FormControl } from '@angular/forms';
 import { ListColumn } from '../../../../@fury/shared/list/list-column.model';
 import { Mid } from './mid.model';
 import { fadeInRightAnimation } from '../../../../@fury/animations/fade-in-right.animation';
@@ -31,6 +32,11 @@ export class MidsComponent implements OnInit, AfterViewInit, OnDestroy {
   data$: Observable<Mid[]> = this.subject$.asObservable();
   mids: Mid[];
 
+  range = new FormGroup({
+    start: new FormControl(),
+    end: new FormControl()
+  });
+
   getSubscription: Subscription;
   refreshSubscription: Subscription;
   getProductsSubscription: Subscription;
@@ -43,6 +49,8 @@ export class MidsComponent implements OnInit, AfterViewInit, OnDestroy {
   filterData: any = [];
   filters = {};
   endPoint = '';
+
+  skeletonloader = true;
   pageSizeOptions: number[] = [5, 10, 25, 100];
   notyf = new Notyf({ types: [{ type: 'info', background: '#6495ED', icon: '<i class="fa-solid fa-clock"></i>' }] });
 
@@ -116,15 +124,21 @@ export class MidsComponent implements OnInit, AfterViewInit, OnDestroy {
 
   getData() {
     this.isLoading = true;
-    this.midsService.getMids()
+    this.filters = {
+      "start": formatDate(this.range.get('start').value, 'yyyy/MM/dd', 'en'),
+      "end": formatDate(this.range.get('end').value, 'yyyy/MM/dd', 'en'),
+    }
+    this.midsService.getMids(this.filters)
       .then(mids => {
         console.log('paginate data is: ', mids.data);
         this.mids = mids.data
         this.mapData().subscribe(mids => {
           this.subject$.next(mids);
         });
+        this.skeletonloader = false;
         this.isLoading = false;
       }, error => {
+        this.skeletonloader = false;
         this.isLoading = false;
       });
   }
@@ -187,6 +201,35 @@ export class MidsComponent implements OnInit, AfterViewInit, OnDestroy {
         // this.idArray = [];
       }
     });
+  }
+  selectDate(param) {
+    var startDate = new Date();
+    var endDate = new Date();
+    if (param == 'today') {
+      this.range.get('start').setValue(new Date());
+      this.range.get('end').setValue(new Date());
+    } else if (param == 'yesterday') {
+      this.range.get('start').setValue(new Date(startDate.setDate(startDate.getDate() - 1)));
+      this.range.get('end').setValue(new Date());
+    } else if (param == 'thisMonth') {
+      this.range.get('start').setValue(new Date(startDate.setMonth(startDate.getMonth() - 1)));
+      this.range.get('end').setValue(new Date());
+    } else if (param == 'pastWeek') {
+      this.range.get('start').setValue(new Date(startDate.setDate(startDate.getDate() - 7)));
+      this.range.get('end').setValue(new Date());
+    } else if (param == 'pastTwoWeek') {
+      this.range.get('start').setValue(new Date(startDate.setDate(startDate.getDate() - 14)));
+      this.range.get('end').setValue(new Date());
+    } else if (param == 'lastMonth') {
+      this.range.get('start').setValue(new Date(startDate.setMonth(startDate.getMonth() - 2)));
+      this.range.get('end').setValue(new Date(endDate.setMonth(endDate.getMonth() - 1)));
+    } else if (param == 'lastThreeMonths') {
+      this.range.get('start').setValue(new Date(startDate.setMonth(startDate.getMonth() - 4)));
+      this.range.get('end').setValue(new Date(endDate.setMonth(endDate.getMonth() - 1)));
+    } else if (param == 'lastSixMonths') {
+      this.range.get('start').setValue(new Date(startDate.setMonth(startDate.getMonth() - 7)));
+      this.range.get('end').setValue(new Date(endDate.setMonth(endDate.getMonth() - 1)));
+    }
   }
 
   ngOnDestroy() {
