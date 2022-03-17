@@ -22,6 +22,7 @@ import { MaterialModule } from '../../../../@fury/shared/material-components.mod
 import { MidsRoutingModule } from './mids-routing.module';
 import { MidsComponent, TooltipListPipe } from './mids.component';
 import { GroupDialogComponent } from './group-dialog/group-dialog.component';
+import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 
 
 @NgModule({
@@ -51,6 +52,7 @@ import { GroupDialogComponent } from './group-dialog/group-dialog.component';
     MatTableModule,
     MatPaginatorModule,
     MatProgressBarModule,
+    NgxSkeletonLoaderModule,
   ],
   declarations: [MidsComponent, GroupDialogComponent, TooltipListPipe],
   exports: [MidsComponent],

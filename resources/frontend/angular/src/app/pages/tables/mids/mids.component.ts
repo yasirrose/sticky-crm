@@ -4,8 +4,10 @@ import { Observable, of, ReplaySubject, Subscription } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
-import { MatDialog } from '@angular/material/dialog';
 import { MatSort } from '@angular/material/sort';
+import { MatDialog } from '@angular/material/dialog';
+import { FormGroup, FormControl } from '@angular/forms';
+import { formatDate } from '@angular/common';
 import { ListColumn } from '../../../../@fury/shared/list/list-column.model';
 import { fadeInRightAnimation } from '../../../../@fury/animations/fade-in-right.animation';
 import { fadeInUpAnimation } from '../../../../@fury/animations/fade-in-up.animation';
@@ -45,6 +47,11 @@ export class MidsComponent implements OnInit, AfterViewInit, OnDestroy {
   data$: Observable<Mid[]> = this.subject$.asObservable();
   mids: Mid[];
 
+  range = new FormGroup({
+    start: new FormControl(),
+    end: new FormControl()
+  });
+
   getSubscription: Subscription;
   refreshSubscription: Subscription;
   assignSubscription: Subscription;
@@ -58,6 +65,8 @@ export class MidsComponent implements OnInit, AfterViewInit, OnDestroy {
   filterData: any = [];
   filters = {};
   endPoint = '';
+
+  skeletonloader = true;
   pageSizeOptions: number[] = [5, 10, 25, 100];
   notyf = new Notyf({ types: [{ type: 'info', background: '#6495ED', icon: '<i class="fa-solid fa-clock"></i>' }] });
   totalMids: number = 0;
@@ -144,7 +153,11 @@ export class MidsComponent implements OnInit, AfterViewInit, OnDestroy {
 
   async getData() {
     this.isLoading = true;
-    await this.midsService.getMids()
+    this.filters = {
+      "start": formatDate(this.range.get('start').value, 'yyyy/MM/dd', 'en'),
+      "end": formatDate(this.range.get('end').value, 'yyyy/MM/dd', 'en'),
+    }
+    this.midsService.getMids(this.filters)
       .then(mids => {
         console.log('paginate data is: ', mids.data);
         this.mids = mids.data
@@ -154,8 +167,10 @@ export class MidsComponent implements OnInit, AfterViewInit, OnDestroy {
         this.mapData().subscribe(mids => {
           this.subject$.next(mids);
         });
+        this.skeletonloader = false;
         this.isLoading = false;
       }, error => {
+        this.skeletonloader = false;
         this.isLoading = false;
       });
     this.countContent();
@@ -253,6 +268,35 @@ export class MidsComponent implements OnInit, AfterViewInit, OnDestroy {
         // this.idArray = [];
       }
     });
+  }
+  selectDate(param) {
+    var startDate = new Date();
+    var endDate = new Date();
+    if (param == 'today') {
+      this.range.get('start').setValue(new Date());
+      this.range.get('end').setValue(new Date());
+    } else if (param == 'yesterday') {
+      this.range.get('start').setValue(new Date(startDate.setDate(startDate.getDate() - 1)));
+      this.range.get('end').setValue(new Date());
+    } else if (param == 'thisMonth') {
+      this.range.get('start').setValue(new Date(startDate.setMonth(startDate.getMonth() - 1)));
+      this.range.get('end').setValue(new Date());
+    } else if (param == 'pastWeek') {
+      this.range.get('start').setValue(new Date(startDate.setDate(startDate.getDate() - 7)));
+      this.range.get('end').setValue(new Date());
+    } else if (param == 'pastTwoWeek') {
+      this.range.get('start').setValue(new Date(startDate.setDate(startDate.getDate() - 14)));
+      this.range.get('end').setValue(new Date());
+    } else if (param == 'lastMonth') {
+      this.range.get('start').setValue(new Date(startDate.setMonth(startDate.getMonth() - 2)));
+      this.range.get('end').setValue(new Date(endDate.setMonth(endDate.getMonth() - 1)));
+    } else if (param == 'lastThreeMonths') {
+      this.range.get('start').setValue(new Date(startDate.setMonth(startDate.getMonth() - 4)));
+      this.range.get('end').setValue(new Date(endDate.setMonth(endDate.getMonth() - 1)));
+    } else if (param == 'lastSixMonths') {
+      this.range.get('start').setValue(new Date(startDate.setMonth(startDate.getMonth() - 7)));
+      this.range.get('end').setValue(new Date(endDate.setMonth(endDate.getMonth() - 1)));
+    }
   }
 
   openAssignDialog(alias) {
