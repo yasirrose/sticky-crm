@@ -1,1 +1,0 @@
-@php echo App\Http\Controllers\OrdersController::testFunction();  @endphp

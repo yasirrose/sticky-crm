@@ -13,12 +13,14 @@ export class MidGroupsService {
   public getResponse = new BehaviorSubject([]);
   public refreshResponse = new BehaviorSubject([]);
   public addGroupResponse = new BehaviorSubject([]);
+  public updateGroupResponse = new BehaviorSubject([]);
   public deleteGroupResponse = new BehaviorSubject([]);
 
   getResponse$ = this.getResponse.asObservable();
   refreshResponse$ = this.refreshResponse.asObservable();
   addGroupResponse$ = this.addGroupResponse.asObservable();
   deleteGroupResponse$ = this.deleteGroupResponse.asObservable();
+  updateGroupResponse$ = this.updateGroupResponse.asObservable();
 
   constructor(private apiService: ApiService) { }
 
@@ -44,7 +46,7 @@ export class MidGroupsService {
 
   async updateGroup(data): Promise<any> {
     await this.apiService.updateData(`mid-groups/${data.id}`, data).then(res => res.json()).then((data) => {
-      this.addGroupResponse.next(data);
+      this.updateGroupResponse.next(data);
     });
   }
 

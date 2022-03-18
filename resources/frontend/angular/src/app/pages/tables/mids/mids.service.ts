@@ -9,25 +9,32 @@ import { ApiService } from 'src/app/api.service';
 export class MidsService {
 
   mids: any;
+  columns: any;
   gateway: any;
-  public ordersGetResponse = new BehaviorSubject([]);
+  public getResponse = new BehaviorSubject([]);
   public refreshResponse = new BehaviorSubject([]);
   public getProductsResponse = new BehaviorSubject([]);
   public assignGroupResponse = new BehaviorSubject([]);
   public unAssignGroupResponse = new BehaviorSubject([]);
+  public assignBulkGroupResponse = new BehaviorSubject([]);
+  public removeBulkGroupResponse = new BehaviorSubject([]);
+  public columnsResponse = new BehaviorSubject([]);
 
-  ordersGetResponse$ = this.ordersGetResponse.asObservable();
+  getResponse$ = this.getResponse.asObservable();
   refreshResponse$ = this.refreshResponse.asObservable();
   assignGroupResponse$ = this.assignGroupResponse.asObservable();
   unAssignGroupResponse$ = this.unAssignGroupResponse.asObservable();
+  assignBulkGroupResponse$ = this.assignBulkGroupResponse.asObservable();
+  removeBulkGroupResponse$ = this.removeBulkGroupResponse.asObservable();
+  columnsResponse$ = this.columnsResponse.asObservable();
 
   constructor(private apiService: ApiService) { }
 
   async getMids(filters): Promise<any> {
     await this.apiService.getData(`mids?start_date=${filters.start}&end_date=${filters.end}`).then(res => res.json()).then((data) => {
-        this.mids = data;
-        this.ordersGetResponse.next(data);
-      });
+      this.mids = data;
+      this.getResponse.next(data);
+    });
     return this.mids;
   }
 
@@ -47,5 +54,19 @@ export class MidsService {
     await this.apiService.getData(`assign_mid_group?alias=${alias}&&group_name=${groupName}`).then(res => res.json()).then((data) => {
       this.assignGroupResponse.next(data);
     });
+  }
+
+  async assignBulkGroup(groupName, data): Promise<any> {
+    await this.apiService.postData(`assign_bulk_group?group_name=${groupName}`, data).then(res => res.json()).then((data) => {
+      this.assignBulkGroupResponse.next(data);
+    });
+  }
+
+  async getColumns(): Promise<any> {
+    await this.apiService.getData(`columns/${'mids'}`).then(res => res.json()).then((data) => {
+      this.columns = data;
+      this.columnsResponse.next(data);
+    });
+    return this.columns;
   }
 }

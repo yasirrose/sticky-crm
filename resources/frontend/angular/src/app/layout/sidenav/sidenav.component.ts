@@ -22,13 +22,13 @@ export class SidenavComponent implements OnInit, OnDestroy {
 
   sidenavUserVisible$ = this.themeService.config$.pipe(map(config => config.sidenavUserVisible));
 
-  @Input()
-  @HostBinding('class.collapsed')
-  collapsed: boolean;
+  // @Input()
+  // @HostBinding('class.collapsed')
+  // collapsed: boolean;
 
-  @Input()
-  @HostBinding('class.expanded')
-  expanded: boolean;
+  // @Input()
+  // @HostBinding('class.expanded')
+  // expanded: boolean;
 
   items$: Observable<SidenavItem[]>;
 
@@ -42,21 +42,21 @@ export class SidenavComponent implements OnInit, OnDestroy {
     this.userDetailsSubscription = this.sidenavService.userDetailsResponse$.subscribe(data => this.manageUserDetails(data));
   }
 
-  toggleCollapsed() {
-    this.sidenavService.toggleCollapsed();
-  }
+  // toggleCollapsed() {
+  //   this.sidenavService.toggleCollapsed();
+  // }
 
-  @HostListener('mouseenter')
-  @HostListener('touchenter')
-  onMouseEnter() {
-    this.sidenavService.setExpanded(true);
-  }
+  // @HostListener('mouseenter')
+  // @HostListener('touchenter')
+  // onMouseEnter() {
+  //   this.sidenavService.setExpanded(true);
+  // }
 
-  @HostListener('mouseleave')
-  @HostListener('touchleave')
-  onMouseLeave() {
-    this.sidenavService.setExpanded(false);
-  }
+  // @HostListener('mouseleave')
+  // @HostListener('touchleave')
+  // onMouseLeave() {
+  //   this.sidenavService.setExpanded(false);
+  // }
 
   getData() {
     this.sidenavService.getUserDetails();

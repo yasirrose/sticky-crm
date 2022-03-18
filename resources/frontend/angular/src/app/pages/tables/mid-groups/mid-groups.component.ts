@@ -24,7 +24,8 @@ import { Notyf } from 'notyf';
 export class TooltipListPipe implements PipeTransform {
 
   transform(lines: string[]): string {
-    let list: string = '';
+    let list: string = '  ';
+    // list += '  Mids' + '&nbsp &nbsp ' + 'Amount' + '     ' + 'Per' + '\n';
     lines.forEach(line => {
       list += '• ' + line + '\n';
     });
@@ -48,6 +49,7 @@ export class MidGroupsComponent implements OnInit, PipeTransform, AfterViewInit,
   refreshSubscription: Subscription;
   addGroupSubscription: Subscription;
   deleteGroupSubscription: Subscription;
+  updateGroupSubscription: Subscription;
   isLoading = false;
   totalRows = 0;
   pageSize = 25;
@@ -69,7 +71,6 @@ export class MidGroupsComponent implements OnInit, PipeTransform, AfterViewInit,
   notyf = new Notyf({ types: [{ type: 'info', background: '#6495ED', icon: '<i class="fa-solid fa-clock"></i>' }] });
   @Input()
   columns: ListColumn[] = [
-
     // { name: 'Id', property: 'id', visible: true, isModelProperty: true },
     // { name: 'router_id', property: 'router_id', visible: true, isModelProperty: true },
     { name: 'Id', property: 'id', visible: true, isModelProperty: true },
@@ -97,6 +98,7 @@ export class MidGroupsComponent implements OnInit, PipeTransform, AfterViewInit,
 
   transform(lines: string[]): string {
     let list: string = '';
+    // list += ' Mids' + '            ' + 'Amount' + '         ' + 'Per' + '\n';
     lines.forEach(line => {
       list += '• ' + line + '\n';
     });
@@ -108,6 +110,7 @@ export class MidGroupsComponent implements OnInit, PipeTransform, AfterViewInit,
     this.refreshSubscription = this.midGroupService.refreshResponse$.subscribe(data => this.manageRefreshResponse(data));
     this.addGroupSubscription = this.midGroupService.addGroupResponse$.subscribe(data => this.manageAddGroupResponse(data));
     this.deleteGroupSubscription = this.midGroupService.deleteGroupResponse$.subscribe(data => this.manageDeleteGroupResponse(data));
+    this.updateGroupSubscription = this.midGroupService.updateGroupResponse$.subscribe(data => this.manageUpdateResponse(data));
 
     this.getData();
     this.dataSource = new MatTableDataSource();
@@ -167,7 +170,9 @@ export class MidGroupsComponent implements OnInit, PipeTransform, AfterViewInit,
   getAssignedMids(midGroup) {
     var mid_names = [];
     midGroup.mids_data.forEach(function (mid) {
-      mid_names.push(mid.gateway_alias);
+      let list = '';
+      list += mid.gateway_alias + '\xa0\xa0\xa0 | \xa0\xa0\xa0' + mid.current_monthly_amount + '\xa0\xa0\xa0 | \xa0\xa0\xa0' + mid.processing_percent;
+      mid_names.push(list);
       console.log('mid_names :', mid_names);
     });
     return mid_names;
@@ -203,7 +208,6 @@ export class MidGroupsComponent implements OnInit, PipeTransform, AfterViewInit,
       console.log(data);
       this.midGroupService.updateGroup(data);
     }
-
   }
 
   deleteRowData(data) {
@@ -243,6 +247,13 @@ export class MidGroupsComponent implements OnInit, PipeTransform, AfterViewInit,
   }
 
   manageDeleteGroupResponse(data) {
+    if (data.status) {
+      this.notyf.success(data.data.message);
+      this.getData();
+    }
+  }
+
+  manageUpdateResponse(data) {
     if (data.status) {
       this.notyf.success(data.data.message);
       this.getData();
@@ -324,6 +335,10 @@ export class MidGroupsComponent implements OnInit, PipeTransform, AfterViewInit,
     if (this.deleteGroupSubscription) {
       this.midGroupService.deleteGroupResponse.next([]);
       this.deleteGroupSubscription.unsubscribe();
+    }
+    if (this.updateGroupSubscription) {
+      this.midGroupService.updateGroupResponse.next([]);
+      this.updateGroupSubscription.unsubscribe();
     }
   }
 }

@@ -102,21 +102,21 @@ export class SidenavService implements OnDestroy {
     this._openSubject.next(false);
   }
 
-  setCollapsed(collapsed: boolean) {
-    this._collapsedSubject.next(collapsed);
-  }
+  // setCollapsed(collapsed: boolean) {
+  //   this._collapsedSubject.next(collapsed);
+  // }
 
-  toggleCollapsed() {
-    this._collapsedSubject.next(!this._collapsedSubject.getValue());
-  }
+  // toggleCollapsed() {
+  //   this._collapsedSubject.next(!this._collapsedSubject.getValue());
+  // }
 
-  setExpanded(expanded: boolean) {
-    this._expandedSubject.next(expanded);
-  }
+  // setExpanded(expanded: boolean) {
+  //   this._expandedSubject.next(expanded);
+  // }
 
-  toggleExpanded() {
-    this._expandedSubject.next(!this._expandedSubject.getValue());
-  }
+  // toggleExpanded() {
+  //   this._expandedSubject.next(!this._expandedSubject.getValue());
+  // }
 
   addItems(items: SidenavItem[]) {
     items.forEach(item => this.addItem(item));

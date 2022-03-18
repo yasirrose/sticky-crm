@@ -100,7 +100,7 @@ class MidController extends Controller
     {
         $profile = Profile::where('alias', $alias)->first();
         DB::table('profiles')->where('alias', $alias)->update(['global_fields->mid_group' => '']);
-        return response()->json(['status' => true, 'message' => 'Unassigned Mid-group removed for' . $profile->alias]);
+        return response()->json(['status' => true, 'message' => 'Mid-group removed from' . $profile->alias]);
         // dd('die');
     }
     public function pull_payment_router_view()
@@ -174,11 +174,33 @@ class MidController extends Controller
         DB::table('profiles')->where('alias', $request->alias)->update(['global_fields->mid_group' => $request->group_name]);
         return response()->json(['status' => true, 'message' => $request->group_name . ' Assigned as Mid-group to ' . $profile->alias]);
     }
+
+    public function assign_bulk_group(Request $request)
+    {
+        // dd($request->all());
+        $data = $request->all();
+        $alias = array_column($data, 'gateway_alias');
+        $total_mids = count($alias);
+        if($request->group_name == ''){
+            DB::table('profiles')->whereIn('alias', $alias)->update(['global_fields->mid_group' => '']);
+            return response()->json(['status' => true, 'message' => 'Unassigned group to ' . $total_mids . ' mids']);
+        } else{
+            DB::table('profiles')->whereIn('alias', $alias)->update(['global_fields->mid_group' => $request->group_name]);            
+            return response()->json(['status' => true, 'message' => $request->group_name . ' Assigned as Mid-group to ' . $total_mids . ' mids ']);
+        }
+    }
+
+    public function remove_groups(Request $request){
+        $data = $request->all();
+        dd($data);
+    }
+
     public function get_first_mid()
     {
         $data = Profile::first();
         return response()->json(['status' => true, 'data' => $data]);
     }
+
     public function refresh_mid_count()
     {
         $data = Mid::all();
@@ -188,5 +210,4 @@ class MidController extends Controller
         }
         return response()->json(['status' => true, 'data' => ['message' => "Mid Counts Refreshed Successfully."]]);
     }
-
 }

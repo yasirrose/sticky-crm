@@ -2,6 +2,7 @@ import { AfterViewInit, Component, ElementRef, EventEmitter, Input, Output, View
 import { fromEvent } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { ListColumn } from './list-column.model';
+import { ListService } from './list.service';
 
 @Component({
   selector: 'fury-list',
@@ -16,10 +17,11 @@ export class ListComponent implements AfterViewInit {
 
   @ViewChild('filter') filter: ElementRef;
   @Output() filterChange = new EventEmitter<string>();
+  @Output() refresh = new EventEmitter<string>();
 
   @Input() hideHeader: boolean;
 
-  constructor() {
+  constructor(private listService: ListService) {
   }
 
   ngAfterViewInit() {
@@ -37,5 +39,14 @@ export class ListComponent implements AfterViewInit {
     event.stopPropagation();
     event.stopImmediatePropagation();
     column.visible = !column.visible;
+  }
+
+  async changeVisibility(column, event: any){
+    await this.listService.changeColumn(this.name, column, event.checked).then(data => {
+      // this.refresh.next('');
+    });
+    console.log('table :', this.name);
+    console.log('column :', column);
+    console.log('show :', event.checked);
   }
 }

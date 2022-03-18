@@ -1,5 +1,8 @@
+import { DatePipe } from '@angular/common'
+const datePipe: DatePipe = new DatePipe('en-US')
+
 export class SticketDaily {
-  date: Date;
+  date: string;
   initials: number;
   decline: number;
   decline_per: number;
@@ -8,9 +11,8 @@ export class SticketDaily {
   EOT_approved: number;
   EOT_per: number;
 
-
   constructor(ticket) {
-    this.date = ticket.date;
+    this.date = datePipe.transform(ticket.date, 'MM-dd-yyyy');
     this.initials = ticket.initials;
     this.decline = ticket.decline;
     this.decline_per = ticket.decline_per;

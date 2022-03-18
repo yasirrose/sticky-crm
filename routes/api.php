@@ -17,6 +17,7 @@ use App\Http\Controllers\OrderProductController;
 use App\Http\Controllers\MidController;
 use App\Http\Controllers\MidGroupController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\ColumnController;
 
 /*
 |--------------------------------------------------------------------------
@@ -49,6 +50,7 @@ Route::resource('prospects', ProspectController::class);
 Route::resource('mids', MidController::class);
 Route::resource('mid-groups', MidGroupController::class);
 Route::resource('profiles', ProfileController::class);
+Route::resource('columns', ColumnController::class);
 Route::get('golden-ticket/create/{month}/{year}', [GoldenTicketController::class, 'create']);
 Route::get('get_campaigns', [CampaignsController::class, 'get_campaigns']);
 Route::get('get_campaign_columns/{campaign_name}', [CampaignsController::class, 'get_campaign_columns']);
@@ -87,3 +89,6 @@ Route::get('get_first_mid', [MidController::class, 'get_first_mid']);
 Route::get('refresh_mid_count', [MidController::class, 'refresh_mid_count']);
 Route::get('user-details', [DashboardController::class, 'user_data']);
 Route::post('destroy_customers', [CustomerController::class, 'destroy_customers']);
+Route::post('assign_bulk_group', [MidController::class, 'assign_bulk_group']);
+Route::post('remove_groups', [MidController::class, 'remove_groups']);
+Route::post('change_column', [ColumnController::class, 'change_column']);

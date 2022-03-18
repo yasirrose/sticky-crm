@@ -4,8 +4,7 @@ import { Observable, of, ReplaySubject, Subscription } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
-import { Observable, of, ReplaySubject } from 'rxjs';
-import { filter } from 'rxjs/operators';
+import { formatDate } from '@angular/common';
 import { FormGroup, FormControl } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSort } from '@angular/material/sort';
@@ -57,6 +56,8 @@ export class MidsComponent implements OnInit, AfterViewInit, OnDestroy {
   refreshSubscription: Subscription;
   assignSubscription: Subscription;
   unAssignSubscription: Subscription;
+  bulkUpdateSubscription: Subscription;
+  columnsSubscription: Subscription;
   isLoading = false;
   totalRows = 0;
   pageSize = 25;
@@ -67,7 +68,7 @@ export class MidsComponent implements OnInit, AfterViewInit, OnDestroy {
   filters = {};
   endPoint = '';
 
-  skeletonloader = true;
+  skeletonLoader = true;
   pageSizeOptions: number[] = [5, 10, 25, 100];
   notyf = new Notyf({ types: [{ type: 'info', background: '#6495ED', icon: '<i class="fa-solid fa-clock"></i>' }] });
   totalMids: number = 0;
@@ -77,31 +78,32 @@ export class MidsComponent implements OnInit, AfterViewInit, OnDestroy {
   selectedRows: Mid[] = [];
   selectAll: boolean = false;
   isBulkUpdate: boolean = false;
+  columns: any = [];
 
-  @Input()
-  columns: ListColumn[] = [
+  // @Input()
 
-    { name: 'Checkbox', property: 'checkbox', visible: false },
-    { name: 'Id', property: 'id', visible: false, isModelProperty: false },
-    // { name: 'router_id', property: 'router_id', visible: true, isModelProperty: true },
-    { name: 'Gateway Id', property: 'gateway_id', visible: true, isModelProperty: true },
-    { name: 'Gateway Alias', property: 'gateway_alias', visible: true, isModelProperty: true },
-    { name: 'Group Name', property: 'mid_group_name', visible: true, isModelProperty: false },
-    { name: 'Mid Count', property: 'mid_count', visible: true, isModelProperty: false },
-    { name: 'Router Date In', property: 'router_date_in', visible: false, isModelProperty: true },
-    { name: 'Router Desc', property: 'router_desc', visible: false, isModelProperty: true },
-    { name: 'Mid Group Setting Id', property: 'mid_group_setting_id', visible: false, isModelProperty: true },
-    { name: 'Mid Group Setting', property: 'mid_group_setting', visible: false, isModelProperty: true },
-    { name: 'Strict Preserve', property: 'is_strict_preserve', visible: false, isModelProperty: true },
-    { name: 'Campaign Id', property: 'campaign_id', visible: false, isModelProperty: true },
-    { name: 'Global Monthly Cap', property: 'global_monthly_cap', visible: true, isModelProperty: true },
-    { name: 'Current Monthly Amount', property: 'current_monthly_amount', visible: true, isModelProperty: false },
-    { name: 'Processing Percent', property: 'processing_percent', visible: true, isModelProperty: true },
-    { name: '3d Routed', property: 'is_three_d_routed', visible: false, isModelProperty: true },
-    { name: 'Created On', property: 'created_on', visible: true, isModelProperty: true },
-    { name: 'Actions', property: 'actions', visible: true },
+  // columns: ListColumn[] = [
+  // { name: 'Checkbox', property: 'checkbox', visible: true },
+  // { name: 'Id', property: 'id', visible: false, isModelProperty: false },
+  // // { name: 'router_id', property: 'router_id', visible: true, isModelProperty: true },
+  // { name: 'Gateway Id', property: 'gateway_id', visible: true, isModelProperty: true },
+  // { name: 'Gateway Alias', property: 'gateway_alias', visible: true, isModelProperty: true },
+  // { name: 'Group Name', property: 'mid_group_name', visible: true, isModelProperty: false },
+  // { name: 'Mid Count', property: 'mid_count', visible: true, isModelProperty: false },
+  // { name: 'Router Date In', property: 'router_date_in', visible: false, isModelProperty: true },
+  // { name: 'Router Desc', property: 'router_desc', visible: false, isModelProperty: true },
+  // { name: 'Mid Group Setting Id', property: 'mid_group_setting_id', visible: false, isModelProperty: true },
+  // { name: 'Mid Group Setting', property: 'mid_group_setting', visible: false, isModelProperty: true },
+  // { name: 'Strict Preserve', property: 'is_strict_preserve', visible: false, isModelProperty: true },
+  // { name: 'Campaign Id', property: 'campaign_id', visible: false, isModelProperty: true },
+  // { name: 'Global Monthly Cap', property: 'global_monthly_cap', visible: true, isModelProperty: true },
+  // { name: 'Current Monthly Amount', property: 'current_monthly_amount', visible: true, isModelProperty: false },
+  // { name: 'Processing Percent', property: 'processing_percent', visible: true, isModelProperty: true },
+  // { name: '3d Routed', property: 'is_three_d_routed', visible: false, isModelProperty: true },
+  // { name: 'Created On', property: 'created_on', visible: true, isModelProperty: true },
+  // { name: 'Actions', property: 'actions', visible: true },
 
-  ] as ListColumn[];
+  // ] as ListColumn[];
   // pageSize = 20000;
   dataSource: MatTableDataSource<Mid> | null;
 
@@ -115,15 +117,13 @@ export class MidsComponent implements OnInit, AfterViewInit, OnDestroy {
     this.endPoint = environment.endpoint;
   }
 
-  get visibleColumns() {
-    return this.columns.filter(column => column.visible).map(column => column.property);
-  }
-
   ngOnInit() {
     this.notyf.dismissAll();
     this.refreshSubscription = this.midsService.refreshResponse$.subscribe(data => this.manageRefreshResponse(data))
     this.assignSubscription = this.midsService.assignGroupResponse$.subscribe(data => this.manageAssignResponse(data))
     this.unAssignSubscription = this.midsService.unAssignGroupResponse$.subscribe(data => this.manageUnassignResponse(data))
+    this.unAssignSubscription = this.midsService.assignBulkGroupResponse$.subscribe(data => this.manageBulkGroupResponse(data))
+    // this.columnsSubscription = this.midsService.columnsResponse$.subscribe(data => this.manageColumnsResponse(data))
 
     this.getData();
     this.dataSource = new MatTableDataSource();
@@ -133,6 +133,10 @@ export class MidsComponent implements OnInit, AfterViewInit, OnDestroy {
       this.mids = mids;
       this.dataSource.data = mids;
     });
+  }
+
+  get visibleColumns() {
+    return this.columns.filter(column => column.visible).map(column => column.property);
   }
 
   mapData() {
@@ -154,27 +158,31 @@ export class MidsComponent implements OnInit, AfterViewInit, OnDestroy {
 
   async getData() {
     this.isLoading = true;
-
     this.filters = {
       "start": formatDate(this.range.get('start').value, 'yyyy/MM/dd', 'en'),
       "end": formatDate(this.range.get('end').value, 'yyyy/MM/dd', 'en'),
     }
-    this.midsService.getMids(this.filters)
-      .then(mids => {
-        console.log('paginate data is: ', mids.data);
-        this.mids = mids.data
-        this.totalMids = mids.data.length
-        console.log(' this.totalMids :', this.totalMids);
-
-        this.mapData().subscribe(mids => {
-          this.subject$.next(mids);
-        });
-        this.skeletonloader = false;
-        this.isLoading = false;
-      }, error => {
-        this.skeletonloader = false;
-        this.isLoading = false;
+    await this.midsService.getColumns().then(columns => {
+      this.columns = columns.data;
+      console.log('this.columns :', this.columns);
+    });
+    await this.midsService.getMids(this.filters).then(mids => {
+      console.log('paginate data is: ', mids.data);
+      this.mids = mids.data
+      this.totalMids = mids.data.length
+      console.log(' this.totalMids :', this.totalMids);
+      this.mapData().subscribe(mids => {
+        this.subject$.next(mids);
       });
+      this.skeletonLoader = false;
+      this.isLoading = false;
+      this.selectAll = false;
+      this.isBulkUpdate = false;
+      this.selectedRows = [];
+    }, error => {
+      this.skeletonLoader = false;
+      this.isLoading = false;
+    });
     this.countContent();
   }
 
@@ -229,6 +237,22 @@ export class MidsComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
+  manageBulkGroupResponse(data) {
+    if (data.status) {
+      this.getData();
+      this.notyf.success(data.message);
+      this.midGroupComponent.refresh();
+      this.isBulkUpdate = false;
+    }
+  }
+
+  // manageColumnsResponse(data) {
+  //   if (data.status) {
+  //     this.columns = data.data;
+  //     console.log('this.columns  :', this.columns);
+  //   }
+  // }
+
   manageRefreshResponse(data) {
     if (data.status) {
       this.notyf.success(data.data.new_mids + ' New Mids Found and ' + data.data.updated_mids + ' Mids Updated');
@@ -238,6 +262,7 @@ export class MidsComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   onFilterChange(value) {
+    console.log('value :', value);
     if (!this.dataSource) {
       return;
     }
@@ -301,8 +326,23 @@ export class MidsComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
+  handleBulkDeleteAction() {
+    const dialogData = new ConfirmationDialogModel('Confirm Delete', 'Are you sure to remove these mids from group?');
+    const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
+      maxWidth: '500px',
+      closeOnNavigation: true,
+      data: dialogData
+    })
+    dialogRef.afterClosed().subscribe(dialogResult => {
+      if (dialogResult) {
+        this.midsService.assignBulkGroup('', this.selectedRows);
+        this.selectedRows = [];
+      }
+    });
+  }
+
   openAssignDialog(alias) {
-    const dialogData = new GroupDialogModel('Assign New Group to: ' + alias, 'Please select Mid-Group from the following options.');
+    const dialogData = new GroupDialogModel('Assign New Group to: ' + alias, 'Please select Mid-Group from the following options.', []);
     const dialogRef = this.dialog.open(GroupDialogComponent, {
       maxWidth: '500px',
       closeOnNavigation: true,
@@ -330,30 +370,61 @@ export class MidsComponent implements OnInit, AfterViewInit, OnDestroy {
         mid.checked = false;
         this.isBulkUpdate = false;
       });
+      this.selectedRows = [];
+      this.isBulkUpdate = false;
     }
   }
 
   assignBulkGroup() {
-    this.selectedRows = [];
-    this.mids.map((mid) => {
-      if (mid.checked) {
-        this.selectedRows.push(mid);
-      }
-    })
     console.log(this.selectedRows);
+    const dialogData = new GroupDialogModel('Assign New Group to: ', 'Please select Mid-Group from the following options.', this.selectedRows);
+    const dialogRef = this.dialog.open(GroupDialogComponent, {
+      maxWidth: '500px',
+      closeOnNavigation: true,
+      data: dialogData
+    })
+    dialogRef.afterClosed().subscribe(groupName => {
+      if (groupName) {
+        console.log(groupName);
+        this.midsService.assignBulkGroup(groupName, this.selectedRows);
+        this.selectedRows = [];
+      }
+    });
   }
 
-  updateCheckedRow(row) {
+  updateCheckedRow(event: any, row) {
     console.log('row :', row.checked);
-    if (row.checked) {
-      row.checked = false;
-    } else {
+    if (event.checked) {
       row.checked = true;
+      this.selectedRows.push(row);
+      console.log(' this.selectedRows :', this.selectedRows);
+      this.isBulkUpdate = true;
+    } else {
+      row.checked = false;
+      this.selectedRows.splice(this.selectedRows.indexOf(row), 1);
+      if (this.selectedRows.length === 0) {
+        this.isBulkUpdate = false;
+      }
     }
-    // row.checked = !row.checked;
+  }
+
+  displayChange(event: any, row) {
+    console.log('row :', row);
+    console.log('event :', event);
+
+  }
+  async refreshColumns() {
+    await this.midsService.getColumns().then(columns => {
+      this.columns = columns.data;
+      console.log('this.columns :', this.columns);
+    });
   }
 
   ngOnDestroy() {
+    if (this.getSubscription) {
+      this.midsService.getResponse.next([]);
+      this.getSubscription.unsubscribe();
+    }
     if (this.refreshSubscription) {
       this.midsService.refreshResponse.next([]);
       this.refreshSubscription.unsubscribe();
@@ -361,6 +432,10 @@ export class MidsComponent implements OnInit, AfterViewInit, OnDestroy {
     if (this.assignSubscription) {
       this.midsService.assignGroupResponse.next([]);
       this.assignSubscription.unsubscribe();
+    }
+    if (this.bulkUpdateSubscription) {
+      this.midsService.unAssignGroupResponse.next([]);
+      this.bulkUpdateSubscription.unsubscribe();
     }
   }
 }
