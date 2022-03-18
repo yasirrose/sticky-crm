@@ -1,7 +1,7 @@
 export class Mid {
     id: number;
     router_id: number;
-    account_name: string;
+    mid_group_name: string;
     router_date_in: Date;
     router_desc: string;
     mid_group_setting_id: number;
@@ -11,20 +11,16 @@ export class Mid {
     created_on: string;
     campaign_id: string;
     gateway_id: string;
-    alias: string;
+    gateway_alias: string;
     global_monthly_cap: string;
     current_monthly_amount: string;
-    customer_service_number: string;
     processing_percent: string;
-    username: string;
-    reserve_percent: string;
-    chargeback_fee: string;
-    transaction_fee: string;
-
     constructor(mid) {
         this.id = mid.id;
         this.router_id = mid.router_id;
-        this.account_name = mid.account_name;
+        if(mid.global_fields){
+            this.mid_group_name = mid.global_fields.mid_group;
+        }
         this.router_date_in = mid.router_date_in;
         this.router_desc = mid.router_desc;
         this.mid_group_setting_id = mid.mid_group_setting_id;
@@ -34,15 +30,9 @@ export class Mid {
         this.created_on = mid.created_on;
         this.campaign_id = mid.campaign_id;
         this.gateway_id = mid.gateway_id;
-        this.alias = mid.alias;
-        this.global_monthly_cap = mid.global_fields.global_monthly_cap;
-        this.current_monthly_amount = mid.global_fields.current_monthly_amount;
+        this.gateway_alias = mid.gateway_alias;
+        this.global_monthly_cap = mid.global_monthly_cap;
+        this.current_monthly_amount = mid.current_monthly_amount;
         this.processing_percent = mid.processing_percent;
-        this.username = mid.account_fields.username;
-        this.customer_service_number = mid.global_fields.customer_service_number;
-        this.reserve_percent = mid.global_fields.reserve_percent;
-        this.chargeback_fee = mid.global_fields.chargeback_fee;
-        this.transaction_fee = mid.global_fields.transaction_fee;
-
     }
 }

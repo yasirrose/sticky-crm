@@ -45,16 +45,24 @@ export class MidsDetailComponent implements OnInit, AfterViewInit, OnDestroy {
 
   @Input()
   columns: ListColumn[] = [
-    // { name: 'Actions', property: 'actions', visible: true },
+
     { name: 'Id', property: 'id', visible: true, isModelProperty: true },
-    { name: 'account_name', property: 'account_name', visible: false, isModelProperty: true },
-    { name: 'Gateway Alias', property: 'alias', visible: true, isModelProperty: true },
-    { name: 'Username', property: 'username', visible: true, isModelProperty: true },
-    { name: 'Customer Service Number', property: 'customer_service_number', visible: true, isModelProperty: true },
+    // { name: 'router_id', property: 'router_id', visible: true, isModelProperty: true },
+    { name: 'Gateway Id', property: 'gateway_id', visible: true, isModelProperty: true },
+    { name: 'Gateway Alias', property: 'gateway_alias', visible: true, isModelProperty: true },
+    // { name: 'Group Name', property: 'mid_group_name', visible: true, isModelProperty: false },
+    { name: 'Router Date In', property: 'router_date_in', visible: false, isModelProperty: true },
+    { name: 'Router Desc', property: 'router_desc', visible: false, isModelProperty: true },
+    { name: 'Mid Group Setting Id', property: 'mid_group_setting_id', visible: false, isModelProperty: true },
+    { name: 'Mid Group Setting', property: 'mid_group_setting', visible: false, isModelProperty: true },
+    { name: 'Strict Preserve', property: 'is_strict_preserve', visible: false, isModelProperty: true },
+    { name: 'Campaign Id', property: 'campaign_id', visible: false, isModelProperty: true },
     { name: 'Global Monthly Cap', property: 'global_monthly_cap', visible: true, isModelProperty: true },
-    { name: 'Transaction Fee', property: 'transaction_fee', visible: true, isModelProperty: true },
-    { name: 'Chargeback Fee', property: 'chargeback_fee', visible: true, isModelProperty: true },
-    { name: 'Reserve Percent', property: 'reserve_percent', visible: true, isModelProperty: true },
+    { name: 'Current Monthly Amount', property: 'current_monthly_amount', visible: true, isModelProperty: true },
+    { name: 'Processing Percent', property: 'processing_percent', visible: true, isModelProperty: true },
+    { name: '3d Routed', property: 'is_three_d_routed', visible: false, isModelProperty: true },
+    { name: 'Created On', property: 'created_on', visible: false, isModelProperty: true },
+    // { name: 'Actions', property: 'actions', visible: true },
 
   ] as ListColumn[];
 
@@ -87,6 +95,7 @@ export class MidsDetailComponent implements OnInit, AfterViewInit, OnDestroy {
       this.dataSource.data = mids;
     });
   }
+
   mapData() {
     return of(this.mids.map(mid => new Mid(mid)));
   }

@@ -79,6 +79,40 @@
       </fury-page-layout-content>
 
     <fury-page-layout-content @fadeInUp]>
+
+        <div fxLayout="row" layout-wrap fxLayoutGap="10px">
+            <div>
+                <button class="mb" mat-raised-button color="accent" (click)="refresh()">Refresh Mids</button>
+            </div>
+            <div>
+                <button *ngIf="isBulkUpdate" mat-raised-button color="accent" (click)="assignBulkGroup()">Assign Group</button>
+            </div>
+        </div>
+        <!-- <div class="mt mb"> -->
+        <div fxLayout="row" class="large mb" *ngIf="!isLoading">
+            <div fxFlex="25" class="col1">
+                <div class="items-box">
+                    Total Mids: {{totalMids}}
+                </div>
+            </div>
+            <div fxFlex="25" class="col2">
+                <div class="items-box">
+                    Assigned Mids: {{assignedMids}}
+                </div>
+            </div>
+            <div fxFlex="25" class="col3">
+                <div class="items-box">
+                    Unassigned Mids: {{unAssignedMids}}
+                </div>
+            </div>
+            <div fxFlex="25" class="col4">
+                <div class="items-box">
+                    Uninitialized Mids: {{unInitializedMids}}
+                </div>
+            </div>
+        </div>
+        <!-- </div> -->
+
         <fury-list name="Mids" [columns]="columns" (filterChange)="onFilterChange($event)">
             <!-- <div class="actions">
           <button class="create" (click)="createCustomer()" type="button" mat-mini-fab color="primary">
@@ -91,23 +125,48 @@
                 <!-- Checkbox Column -->
                 <ng-container matColumnDef="checkbox">
                     <th *matHeaderCellDef class="actions-cell" mat-header-cell>
-                        <mat-checkbox color="primary" (click)="$event.stopPropagation()"></mat-checkbox>
+                        <mat-checkbox (change)="updateCheck()" [(ngModel)]="selectAll" color="accent" (click)="$event.stopPropagation()"></mat-checkbox>
                     </th>
                     <td *matCellDef="let row" class="actions-cell" mat-cell>
-                        <mat-checkbox color="primary" (click)="$event.stopPropagation()"></mat-checkbox>
+                        <mat-checkbox [(ngModel)]="row.checked" color="primary" (click)="updateCheckedRow(row)"></mat-checkbox>
                     </td>
                 </ng-container>
 
                 <ng-container *ngFor="let column of columns">
                     <ng-container *ngIf="column.isModelProperty" [matColumnDef]="column.property">
                         <th *matHeaderCellDef mat-header-cell mat-sort-header> {{ column.name }}</th>
-                        <td *matCellDef="let row" mat-cell [ngClass]="row.current_monthly_amount == '0.00' ? 'highlight-danger' : ''">
-                            {{ row[column.property] ? row[column.property] : 'Unassigned' }}
+                        <td *matCellDef="let row" mat-cell>
+                            {{ row[column.property] }}
                         </td>
                     </ng-container>
                 </ng-container>
 
-                <ng-container matColumnDef="actions">
+                <!-- Group name column -->
+                <ng-container matColumnDef="mid_group_name">
+                    <th *matHeaderCellDef mat-header-cell mat-sort-header>Group Name</th>
+                    <td *matCellDef="let row" (click)="openAssignDialog(row.gateway_alias)" mat-cell [ngClass]="{'highlight-group': !row.mid_group_name}">
+                        {{ row.mid_group_name? row.mid_group_name : 'Unassigned' }}
+                    </td>
+                </ng-container>
+                <!-- mid_count column  -->
+                <ng-container matColumnDef="mid_count">
+                    <th *matHeaderCellDef mat-header-cell mat-sort-header>Mid Count</th>
+                    <td *matCellDef="let row, index as i" [matTooltip]="['item 1', 'item 2'] | tooltipList"
+                        matTooltipClass="tooltip-list" mat-cell #tooltip="matTooltip" matTooltipPosition="below">
+                        {{ row.mid_count }}
+                    </td>
+                </ng-container>
+
+                <!-- Global monthly cap column -->
+                <ng-container matColumnDef="current_monthly_amount">
+                    <th *matHeaderCellDef mat-header-cell mat-sort-header>Current Monthly Amount</th>
+                    <td *matCellDef="let row" mat-cell [ngClass]="row.current_monthly_amount == '0.00' ? 'highlight-danger' : ''">
+                        {{ row.current_monthly_amount }}
+                    </td>
+                </ng-container>
+
+                <!-- old actions menu to be deleted -->
+                <!-- <ng-container matColumnDef="actions">
                     <th *matHeaderCellDef class="actions-cell" mat-header-cell mat-sort-header></th>
                     <td *matCellDef="let row" class="actions-cell" mat-cell>
                         <button type="button" mat-icon-button [matMenuTriggerFor]="actionsMenu" (click)="$event.stopPropagation()">
@@ -123,11 +182,18 @@
                             </button>
                         </mat-menu>
                     </td>
+                </ng-container> -->
+
+                <ng-container matColumnDef="actions">
+                    <th mat-header-cell *matHeaderCellDef> Actions </th>
+                    <td mat-cell *matCellDef="let row">
+                        <a class="view-link" (click)="viewMidDetails(row.gateway_alias)">View</a> |
+                        <a class="delete-link" (click)="handleDeleteAction(row.gateway_alias)">Delete</a>
+                    </td>
                 </ng-container>
 
                 <tr *matHeaderRowDef="visibleColumns" mat-header-row></tr>
-                <tr *matRowDef="let row; columns: visibleColumns;" class="clickable route-animations-elements"
-                    mat-row></tr>
+                <tr *matRowDef="let row; columns: visibleColumns;" class="clickable route-animations-elements" mat-row></tr>
             </table>
 
             <!-- <mat-paginator #paginator [length]="totalRows" [pageIndex]="currentPage" [pageSize]="pageSize"

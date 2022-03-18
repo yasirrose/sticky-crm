@@ -1,4 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'fury-breadcrumbs',
@@ -10,10 +11,14 @@ export class BreadcrumbsComponent implements OnInit {
   @Input() current: string;
   @Input() crumbs: any[] = [];
 
-  constructor() {
+  constructor(private router: Router) {
   }
 
   ngOnInit() {
+  }
+
+  openLink(crumb){
+    this.router.navigate(['./'+ crumb]);
   }
 
 }

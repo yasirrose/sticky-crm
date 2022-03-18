@@ -1,4 +1,5 @@
 export class MidGroup {
+    id: string;
     group_name: string;
     group_alias: string;
     assigned_mids: string;
@@ -9,6 +10,7 @@ export class MidGroup {
     updated_at: string;
 
     constructor(midGroup) {
+        this.id = midGroup.id;
         this.group_name = midGroup.group_name;
         this.group_alias = midGroup.group_alias;
         this.assigned_mids = midGroup.assigned_mids;

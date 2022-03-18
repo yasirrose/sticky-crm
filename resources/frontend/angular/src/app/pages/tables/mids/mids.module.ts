@@ -23,6 +23,8 @@ import { MidsRoutingModule } from './mids-routing.module';
 import { MidsComponent } from './mids.component';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 // import { MidGroupsComponent } from './mid-groups/mid-groups.component';
+import { MidsComponent, TooltipListPipe } from './mids.component';
+import { GroupDialogComponent } from './group-dialog/group-dialog.component';
 
 
 @NgModule({
@@ -54,7 +56,7 @@ import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
     MatProgressBarModule,
     NgxSkeletonLoaderModule,
   ],
-  declarations: [MidsComponent],
+  declarations: [MidsComponent, GroupDialogComponent, TooltipListPipe],
   exports: [MidsComponent],
 
 })

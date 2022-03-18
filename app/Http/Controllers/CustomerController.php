@@ -17,14 +17,14 @@ class CustomerController extends Controller
         $query = DB::table('customers')->select('id', 'email', 'first_name', 'last_name', 'phone', 'addresses', 'deleted_at');
         // $total_rows = Customer::where('email','!=','')->count('email');
         $total_rows = 243635;
-        
-        if($request->search != ''){
-            $query->Where('email', 'like', '%'.$request->search.'%')
-            ->orWhere('first_name', 'like', '%'.$request->search.'%')
-            ->orWhere('last_name', 'like', '%'.$request->search.'%');
+
+        if ($request->search != '') {
+            $query->Where('email', 'like', '%' . $request->search . '%')
+                ->orWhere('first_name', 'like', '%' . $request->search . '%')
+                ->orWhere('last_name', 'like', '%' . $request->search . '%');
         }
 
-        $data = $query->orderBy('id', 'desc')->SimplePaginate($no_of_records_per_page);
+        $data = $query->orderBy('id', 'asc')->SimplePaginate($no_of_records_per_page);
         // $total_rows = $query->where('id', '>' ,0)->count('id');
         $total_rows = 198645;
         $total_pages = ceil($total_rows / $data->perPage());
@@ -37,6 +37,7 @@ class CustomerController extends Controller
     public function get_customer_detail(Request $request)
     {
         $customerData = Customer::findOrFail($request->id);
+
         $customerAddress = json_decode($customerData->addresses);
         // dd(json_decode($customerAddress));
         return response()->json(['status' => true, 'data' => $customerData, 'address_data' => $customerAddress]);
@@ -99,12 +100,14 @@ class CustomerController extends Controller
      */
     public function destroy_customers(Request $request)
     {
-        $id = $request->id;
-        $id_array= preg_split("/[,]/",$id);
-        for($i = 0; $i < count($id_array); $i++){
-            DB::table('customers')->where('id', $id_array[$i])->delete();
+        $ids = $request->all();
+        $total_records = count($ids);
+        DB::table('customers')->whereIn('id', $ids)->delete();
+        if ($total_records <= 1) {
+            return response()->json(['status' => true, 'message' => '<b>1</b> Customer Deleted Successfully']);
+        } else {
+            return response()->json(['status' => true, 'message' => $total_records . ' Customers Deleted Successfully']);
         }
-        return response()->json(['status' => true, 'message' => 'Customer Deleted Successfully']);
     }
     public function refresh_customers()
     {

@@ -36,10 +36,8 @@ Route::group(['middleware' => ['web']], function () {
     Route::get('logout', '\App\Http\Controllers\Auth\LoginController@logout');
 });
 Route::resource('dashboard', DashboardController::class);
-Route::get('user-details', [DashboardController::class, 'user_data']);
 Route::resource('orders', OrdersController::class);
 Route::resource('customers', CustomerController::class);
-Route::get('destroy_customers', [CustomerController::class, 'destroy_customers']);
 Route::resource('formulas', FormulasController::class);
 Route::resource('campaigns', CampaignsController::class);
 Route::resource('golden-ticket', GoldenTicketController::class);
@@ -83,5 +81,9 @@ Route::get('pull_payment_router_view', [MidController::class, 'pull_payment_rout
 Route::get('pull_profiles', [ProfileController::class, 'pull_profiles']);
 Route::get('get_gateway_ids', [MidController::class, 'get_gateway_ids']);
 Route::get('refresh_mids_groups', [MidGroupController::class, 'refresh_mids_groups']);
-
-
+Route::get('mid_group_names', [MidGroupController::class, 'mid_group_names']);
+Route::get('assign_mid_group', [MidController::class, 'assign_mid_group']);
+Route::get('get_first_mid', [MidController::class, 'get_first_mid']);
+Route::get('refresh_mid_count', [MidController::class, 'refresh_mid_count']);
+Route::get('user-details', [DashboardController::class, 'user_data']);
+Route::post('destroy_customers', [CustomerController::class, 'destroy_customers']);

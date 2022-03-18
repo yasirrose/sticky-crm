@@ -1,6 +1,7 @@
 /* You can add global styles to this file, and also import other style files */
 @import "./@fury/styles/core";
 @import "./app/app.theme";
+@import "~bootstrap-icons/font/bootstrap-icons.css"; 
 
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
@@ -12,3 +13,125 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
   white-space: pre;
   font-size: 14px;
 }
+/* K_css_Desktop */
+.fury-page-layout-content {
+.mat-expansion-panel.ng-tns-c421-2.ng-tns-c414-3.mat-expanded.ng-star-inserted {
+  overflow: auto !important;
+}
+.mat-form-field-flex.ng-tns-c157-57 {
+  margin-right: 30px;
+}
+}
+.content-inner {
+  .ng-tns-c412-2 {
+    .fury-page-layout-content {
+      .ng-tns-c412-2.ng-star-inserted {
+        margin-top: 30px;
+    }
+    }
+  }
+}
+.toolbar-button {
+.toolbar-user {
+  span {
+  flex-direction: column !important;
+}
+}
+}
+.mat-form-field-appearance-fill .mat-select-arrow-wrapper {
+  transform: translateY(-15%) !important;
+}
+.mat-paginator-page-size  {
+.mat-form-field-appearance-fill .mat-form-field-flex {
+  padding: 0em 0.75em 0 0.75em !important;
+}
+.mat-form-field-appearance-fill .mat-form-field-infix {
+  padding: 0em 0 0.75em 0 !important;
+}
+}
+.mat-paginator-page-size.ng-star-inserted {
+  padding: 15px 0 0px 0 !important;
+}
+
+
+@media (max-width: 1024px) {
+    button.mat-focus-indicator.button {
+        display: block !important;
+    }
+    .fury-page-layout-content  {
+    .mat-expansion-panel {
+      overflow: auto !important;
+  }
+}
+  .mat-expansion-panel {
+  .mat-form-field-flex.ng-tns-c157-57 {
+    margin-right: 20px;
+}
+}.fury-page-layout-content {
+  overflow: auto;
+}
+
+element.style {
+  flex-direction: row;
+  box-sizing: border-box;
+  display: flex;
+  place-content: center space-between;
+  align-items: center;
+}
+.fury-page-layout-content.ng-tns-c410-2 {
+  flex-direction: column !important;
+}
+.fury-page-layout-content {
+button.mat-focus-indicator.ml-1.ng-tns-c410-2.mat-raised-button.mat-button-base.mat-warn {
+  padding: 0 7px !important;
+  min-width: 50px;
+  line-height: 35px;
+  margin: 0 4px 10px 4px;
+}
+.mat-form-field.pl-1 {
+  padding-left: 0;
+}
+}
+.toolbar {
+  fury-toolbar-search.toolbar-button {
+    display: flex !important;
+}
+}
+.toolbar-logo svg {
+  display: none !important;
+}
+.content-inner {
+  .ng-tns-c412-2 {
+    .fury-page-layout-content {
+      .ng-tns-c412-2.ng-star-inserted {
+        margin-top: 20px;
+    }
+    }
+  }
+}
+.config-panel-toggle {
+  bottom: 20px !important;
+  right: 20px !important;
+}
+}
+@media only screen and (min-width:320px) and (max-width:370px) {
+  .toolbar {
+    overflow: auto;
+}
+}
+@media only screen and (min-width:320px) and (max-width:340px) {
+  button.mat-focus-indicator.ml-1.ng-tns-c410-2.mat-raised-button.mat-button-base.mat-warn {
+    width: 30% !important;
+    margin-bottom: 20px !important;
+}
+}
+@media only screen and (min-width:492px) and (max-width:767px) {
+  button.mat-focus-indicator.ml-1.ng-tns-c410-2.mat-raised-button.mat-button-base.mat-warn {
+    width: 30% !important;
+    margin-bottom: 20px !important;
+}
+}
+
+
+
+
