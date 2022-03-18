@@ -17,13 +17,16 @@ class MidController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        $data = Mid::all();
-        $profiles = Profile::get();
-        $data->total_mids = Mid::count();
-        // $data->unassigned_mids = Profile::where(['global_fields->mid_group'=>''])->count();
-        // dd($data);
+        $query = Mid::select('*');
+        $start_date = date('Y-m-d', strtotime($request->start_date));
+        $end_date = date('Y-m-d', strtotime($request->end_date));
+        if ($start_date != null && $start_date != "1970-01-01" && $end_date != null && $end_date != "1970-01-01"){
+            $query->whereBetween('created_on', [$start_date.' 00:00:00', $end_date.' 23:59:59']);
+        }
+        $data = $query->get();
+
         foreach ($data as $mid) {
             $mid->global_fields = Profile::where(['alias' => $mid->gateway_alias])->pluck('global_fields')->first();
             // $mid->mid_count = Order::where(['gateway_id'=>$mid->gateway_id])->count();

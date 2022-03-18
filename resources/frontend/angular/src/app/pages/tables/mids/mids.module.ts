@@ -20,6 +20,9 @@ import { BreadcrumbsModule } from '../../../../@fury/shared/breadcrumbs/breadcru
 import { ListModule } from '../../../../@fury/shared/list/list.module';
 import { MaterialModule } from '../../../../@fury/shared/material-components.module';
 import { MidsRoutingModule } from './mids-routing.module';
+import { MidsComponent } from './mids.component';
+import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
+// import { MidGroupsComponent } from './mid-groups/mid-groups.component';
 import { MidsComponent, TooltipListPipe } from './mids.component';
 import { GroupDialogComponent } from './group-dialog/group-dialog.component';
 
@@ -51,6 +54,7 @@ import { GroupDialogComponent } from './group-dialog/group-dialog.component';
     MatTableModule,
     MatPaginatorModule,
     MatProgressBarModule,
+    NgxSkeletonLoaderModule,
   ],
   declarations: [MidsComponent, GroupDialogComponent, TooltipListPipe],
   exports: [MidsComponent],
