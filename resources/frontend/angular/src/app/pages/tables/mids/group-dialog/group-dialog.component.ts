@@ -15,12 +15,15 @@ export class GroupDialogComponent implements OnInit {
   groups = [];
   endPoint = '';
   selectedGroup: '';
+  rows: [];
 
   constructor(public dialogRef: MatDialogRef<GroupDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: GroupDialogModel) {
     this.title = data.title;
     this.message = data.message;
     this.endPoint = environment.endpoint;
+    this.rows = data.selectedRows;
+    console.log(' this.rows :',  this.rows);
   }
 
   ngOnInit(): void {

@@ -66,8 +66,8 @@ export class SticketDailyComponent implements OnInit {
 
   ngOnInit() {
     this.getSubscription = this.campaignService.sticketDailyResponse$.subscribe(data => this.manageGetResponse(data));
+    
     this.getData();
-
     this.dataSource = new MatTableDataSource();
     this.data$.pipe(
       filter(data => !!data)
@@ -97,11 +97,11 @@ export class SticketDailyComponent implements OnInit {
     await this.campaignService.getDailySticket()
       .then(tickets => {
         this.tickets = tickets.data;
-        this.dataSource.data = tickets.data;
-        setTimeout(() => {
+        // this.dataSource.data = tickets.data;
+        // setTimeout(() => {
           // this.paginator.pageIndex = this.currentPage;
           // this.paginator.length = tickets.pag.count;
-        });
+        // });
         this.mapData().subscribe(tickets => {
           this.subject$.next(tickets);
         });

@@ -41,7 +41,7 @@ export class ConfigPanelComponent implements OnInit {
   }
 
   sidenavCollapsedChange(change: MatCheckboxChange) {
-    this.sidenavService.setCollapsed(change.checked);
+    // this.sidenavService.setCollapsed(change.checked);
   }
 
   sidenavUserChange(change: MatCheckboxChange) {

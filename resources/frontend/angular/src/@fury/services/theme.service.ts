@@ -97,7 +97,7 @@ export class ThemeService {
           footerPosition: 'static'
         });
 
-        this.sidenavService.setCollapsed(true);
+        // this.sidenavService.setCollapsed(true);
         this.setTheme('fury-flat');
         break;
       }

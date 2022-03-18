@@ -116,40 +116,44 @@ class MidGroupController extends Controller
 
     public function refresh_mids_groups()
     {
+        $mid_groups = [];
         $db_mid_group_names = MidGroup::pluck('group_name')->toArray();
         $db_mid_groups = MidGroup::all();
 
         $data = Profile::where('global_fields->mid_group', '!=', '')->whereNotNull('global_fields->mid_group')->get();
 
-        foreach ($data as $key => $profile) {
-            $mid_groups[$key]['name'] = $profile->global_fields->mid_group;
-        }
-        $mid_groups = array_unique(array_column($mid_groups, 'name'));
-        $result = [];
-        $created = 0;
-        $updated = 0;
+        if ($data) {
+            foreach ($data as $key => $profile) {
+                $mid_groups[$key]['name'] = $profile->global_fields->mid_group;
+            }
+            $mid_groups = array_unique(array_column($mid_groups, 'name'));
+            $result = [];
+            $created = 0;
+            $updated = 0;
 
-        if ($mid_groups) {
-            foreach ($mid_groups as $key => $mid_group_name) {
-                $result['group_name'] = $mid_group_name;
-                $profiles = Profile::where('global_fields->mid_group', '=', $mid_group_name);
-                $result['assigned_mids'] = $profiles->count();
-                $result['assigned_mid_ids'] = $profiles->pluck('profile_id')->toArray();
-                $gross_revenue = Mid::whereIn('gateway_id', $result['assigned_mid_ids'])->sum('current_monthly_amount');
-                $result['gross_revenue'] = $gross_revenue;
-                // $result['target_bank_balance'] = $result['gross_revenue'] * 0.2;
-                if (in_array($result['group_name'], $db_mid_group_names)) {
-                    $group = MidGroup::where(['group_name' => $result['group_name']])->first();
-                    $group->update($result);
-                    $updated++;
-                } else {
-                    $model = new MidGroup();
-                    $model->create($result);
-                    $created++;
+            if ($mid_groups) {
+                foreach ($mid_groups as $key => $mid_group_name) {
+                    $result['group_name'] = $mid_group_name;
+                    $profiles = Profile::where('global_fields->mid_group', '=', $mid_group_name);
+                    $result['assigned_mids'] = $profiles->count();
+                    $result['assigned_mid_ids'] = $profiles->pluck('profile_id')->toArray();
+                    $gross_revenue = Mid::whereIn('gateway_id', $result['assigned_mid_ids'])->sum('current_monthly_amount');
+                    $result['gross_revenue'] = $gross_revenue;
+                    // $result['target_bank_balance'] = $result['gross_revenue'] * 0.2;
+                    if (in_array($result['group_name'], $db_mid_group_names)) {
+                        $group = MidGroup::where(['group_name' => $result['group_name']])->first();
+                        $group->update($result);
+                        $updated++;
+                    } else {
+                        $model = new MidGroup();
+                        $model->create($result);
+                        $created++;
+                    }
+                    $result = [];
                 }
-                $result = [];
             }
         }
+        // dd($db_mid_groups[1]);
         foreach ($db_mid_groups as $mid_group) {
             $mid_group->target_bank_balance = ($mid_group->gross_revenue * $mid_group->bank_per) / 100;
             $mid_group->save();

@@ -1,11 +1,14 @@
 <h4 mat-dialog-title>
     {{title}}
+    <ng-container class="flex" *ngIf="rows.length != 0">
+        <h4 *ngFor="let row of rows, index as i">{{i+1}}. {{ row.gateway_alias}} </h4>
+    </ng-container>
 </h4>
 
 <div mat-dialog-content>
     <h4>{{message}}</h4>
-    <mat-form-field appearance="fill">
-        <mat-label>Mid Groups</mat-label>
+    <mat-form-field class="text-center full-width" appearance="fill">
+        <mat-label>Select option to assign Mid Group</mat-label>
         <mat-select [(value)]="selectedGroup" (selectionChange)="selection($event.value)">
             <mat-option *ngFor="let group of groups" [value]="group">
                 {{group}}
@@ -14,7 +17,7 @@
     </mat-form-field>
 </div>
 
-<div mat-dialog-actions>
-    <button mat-raised-button cdkFocusInitial (click)="onDismiss()">Cancel</button>
-    <button mat-raised-button (click)="onConfirm()">Assign</button>
+<div mat-dialog-actions fxLayoutAlign="end end">
+    <button mat-raised-button color="primary" (click)="onConfirm()">Assign</button>
+    <button mat-raised-button color="warn" cdkFocusInitial (click)="onDismiss()">Cancel</button>
 </div>

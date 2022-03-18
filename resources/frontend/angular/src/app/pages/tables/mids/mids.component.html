@@ -13,13 +13,13 @@
     </section> -->
     <fury-page-layout-content class="no-bottom-padding" fxLayoutAlign="start start" fxFlexFill>
         <div class="content" layout="column" class="full-width">
-          <mat-expansion-panel [expanded]="0" hideToggle>
+          <mat-expansion-panel hideToggle>
             <div fxLayoutGap="50px">
               <div fxLayout="column">
-                <div [@fadeInUp]>
+                <div>
                   <h3>Date Filter</h3>
                 </div>
-                <div fxLayout="column" layout-wrap fxLayoutGap="10px" *ngIf="!skeletonloader">
+                <div fxLayout="column" layout-wrap fxLayoutGap="10px" *ngIf="!skeletonLoader">
                   <div fxLayout="row" layout-wrap fxLayoutGap="10px">
                     <div><button mat-raised-button color="warn" (click)="selectDate('today')">Today</button></div>
                     <div><button mat-raised-button color="warn" (click)="selectDate('thisMonth')">This Month</button></div>
@@ -50,41 +50,33 @@
                     </mat-form-field>
                   </div>
                 </div>
-                <ngx-skeleton-loader count="2" appearance="pulse"
-                  animation="progress" 
-                  [theme]="{
-                      height: '50px',
-                      width: '300px',
-                    'border-radius': 0
-                  }"
-                  *ngIf="skeletonloader"> </ngx-skeleton-loader>
+                <ngx-skeleton-loader count="2" appearance="line" animation="progress" [theme]="{ height: '50px', width: '300px','border-radius': 0 }"
+                  *ngIf="skeletonLoader"></ngx-skeleton-loader>
               </div>
-              <div fxLayout="row" fxLayoutAlign="end end" fxLayoutGap="10px" *ngIf="!skeletonloader">
+              <div fxLayout="row" fxLayoutAlign="end end" fxLayoutGap="10px" *ngIf="!skeletonLoader">
                 <div><button mat-raised-button color="accent" (click)="getData()">Apply</button></div>
-                <div><button mat-raised-button color="accent" (click)="refresh()">Refresh</button></div>
+                <!-- <div><button mat-raised-button color="accent" (click)="refresh()">Refresh</button></div> -->
               </div>
               <div fxLayout="row" fxLayoutAlign="end end">
-              <ngx-skeleton-loader count="2" fxLayoutGap="10px" appearance="line"
-              animation="progress" 
-              [theme]="{
-                  height: '30px',
-                  width: '80px',
-                  'border-radius': 0
-                }"
-                *ngIf="skeletonloader"> </ngx-skeleton-loader>
+              <ngx-skeleton-loader count="2" fxLayoutGap="10px" appearance="line" animation="progress" [theme]="{ height: '30px', width: '80px', 'border-radius': 0 }"
+                *ngIf="skeletonLoader"></ngx-skeleton-loader>
               </div>
             </div>
           </mat-expansion-panel>
         </div>
       </fury-page-layout-content>
 
-    <fury-page-layout-content @fadeInUp]>
+    <fury-page-layout-content >
+            <!-- @fadeInUp] -->
         <div fxLayout="row" layout-wrap fxLayoutGap="10px">
             <div>
                 <button class="mb" mat-raised-button color="accent" (click)="refresh()">Refresh Mids</button>
             </div>
             <div>
                 <button *ngIf="isBulkUpdate" mat-raised-button color="accent" (click)="assignBulkGroup()">Assign Group</button>
+            </div>
+            <div>
+                <button *ngIf="isBulkUpdate" mat-raised-button color="warn" (click)="handleBulkDeleteAction()">Remove Groups</button>
             </div>
         </div>
         <!-- <div class="mt mb"> -->
@@ -111,7 +103,7 @@
             </div>
         </div>
         <!-- </div> -->
-        <fury-list name="Mids" [columns]="columns" (filterChange)="onFilterChange($event)">
+        <fury-list name="Mids" [columns]="columns" (refresh)="refreshColumns()" (filterChange)="onFilterChange($event)">
             <!-- <div class="actions">
           <button class="create" (click)="createCustomer()" type="button" mat-mini-fab color="primary">
             <mat-icon>add</mat-icon>
@@ -126,7 +118,7 @@
                         <mat-checkbox (change)="updateCheck()" [(ngModel)]="selectAll" color="accent" (click)="$event.stopPropagation()"></mat-checkbox>
                     </th>
                     <td *matCellDef="let row" class="actions-cell" mat-cell>
-                        <mat-checkbox [(ngModel)]="row.checked" color="primary" (click)="updateCheckedRow(row)"></mat-checkbox>
+                        <mat-checkbox [(ngModel)]="row.checked" color="primary" (change)='updateCheckedRow($event, row)'></mat-checkbox>
                     </td>
                 </ng-container>
 
@@ -163,34 +155,15 @@
                     </td>
                 </ng-container>
 
-                <!-- old actions menu to be deleted -->
-                <!-- <ng-container matColumnDef="actions">
-                    <th *matHeaderCellDef class="actions-cell" mat-header-cell mat-sort-header></th>
-                    <td *matCellDef="let row" class="actions-cell" mat-cell>
-                        <button type="button" mat-icon-button [matMenuTriggerFor]="actionsMenu" (click)="$event.stopPropagation()">
-                            <mat-icon>more_horiz</mat-icon>
-                        </button>
-
-                        <mat-menu #actionsMenu="matMenu" yPosition="below" xPosition="before">
-                            <button (click)="viewMidDetails(row.gateway_alias)" mat-menu-item>
-                                <span>Show Details</span>
-                            </button>
-                            <button (click)="handleDeleteAction(row.gateway_alias)" mat-menu-item>
-                                <span>Remove from Mid Group</span>
-                            </button>
-                        </mat-menu>
-                    </td>
-                </ng-container> -->
-
                 <ng-container matColumnDef="actions">
                     <th mat-header-cell *matHeaderCellDef> Actions </th>
                     <td mat-cell *matCellDef="let row">
                         <a class="view-link" (click)="viewMidDetails(row.gateway_alias)">View</a> |
-                        <a class="delete-link" (click)="handleDeleteAction(row.gateway_alias)">Delete</a>
+                        <a class="delete-link" (click)="handleDeleteAction(row.gateway_alias)">Unassign</a>
                     </td>
                 </ng-container>
 
-                <tr *matHeaderRowDef="visibleColumns" mat-header-row></tr>
+                <tr *matHeaderRowDef="visibleColumns" mat-header-row (change)='displayChange($event, row)'  ></tr>
                 <tr *matRowDef="let row; columns: visibleColumns;" class="clickable route-animations-elements" mat-row></tr>
             </table>
 
