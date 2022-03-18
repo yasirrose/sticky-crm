@@ -23,7 +23,7 @@ class MidController extends Controller
         $start_date = date('Y-m-d', strtotime($request->start_date));
         $end_date = date('Y-m-d', strtotime($request->end_date));
         if ($start_date != null && $start_date != "1970-01-01" && $end_date != null && $end_date != "1970-01-01"){
-            $query->whereBetween('created_at', [$start_date.' 00:00:00', $end_date.' 23:59:59']);
+            $query->whereBetween('created_on', [$start_date.' 00:00:00', $end_date.' 23:59:59']);
         }
         $data = $query->get();
 

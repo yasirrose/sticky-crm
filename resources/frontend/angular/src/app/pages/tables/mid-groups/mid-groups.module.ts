@@ -26,6 +26,7 @@ import { RouterModule } from '@angular/router';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MidsModule } from '../mids/mids.module';
 import { ActionDialogComponent } from './action-dialog/action-dialog.component';
+import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 
 @NgModule({
   imports: [
@@ -53,7 +54,8 @@ import { ActionDialogComponent } from './action-dialog/action-dialog.component';
     MatProgressBarModule,
     RouterModule,
     MatTooltipModule,
-    MidsModule
+    MidsModule,
+    NgxSkeletonLoaderModule,
   ],
   declarations: [MidGroupsComponent, MidsDetailComponent, TooltipListPipe, ActionDialogComponent],
   exports: [MidGroupsComponent],

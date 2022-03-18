@@ -24,8 +24,8 @@ export class MidGroupsService {
 
   constructor(private apiService: ApiService) { }
 
-  async getMidGroups(): Promise<any> {
-    await this.apiService.getData(`mid-groups`).then(res => res.json()).then((data) => {
+  async getMidGroups(filters): Promise<any> {
+    await this.apiService.getData(`mid-groups?start_date=${filters.start}&end_date=${filters.end}`).then(res => res.json()).then((data) => {
         this.midGroups = data;
         this.getResponse.next(data);
       });
