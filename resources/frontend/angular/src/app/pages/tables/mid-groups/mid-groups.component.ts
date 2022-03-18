@@ -52,9 +52,17 @@ export class MidGroupsComponent implements OnInit, PipeTransform, AfterViewInit,
   all_fields = [];
   all_values = [];
   filterData: any = [];
+  filters = {};
   pageSizeOptions: number[] = [5, 10, 25, 100];
   // toolTipMids: [];
   toolTipMids = [];
+
+  range = new FormGroup({
+    start: new FormControl(),
+    end: new FormControl()
+  });
+
+  skeletonloader = true;
   notyf = new Notyf({ types: [{ type: 'info', background: '#6495ED', icon: '<i class="fa-solid fa-clock"></i>' }] });
 
   @Input()
@@ -125,7 +133,13 @@ export class MidGroupsComponent implements OnInit, PipeTransform, AfterViewInit,
 
   async getData() {
     this.isLoading = true;
-    await this.midGroupService.getMidGroups()
+    
+    this.filters = {
+      "start": formatDate(this.range.get('start').value, 'yyyy/MM/dd', 'en'),
+      "end": formatDate(this.range.get('end').value, 'yyyy/MM/dd', 'en'),
+    }
+
+    await this.midGroupService.getMidGroups(this.filters)
       .then(midGroups => {
         console.log('paginate data is: ', midGroups.data);
         this.midGroups = midGroups.data;
@@ -133,8 +147,10 @@ export class MidGroupsComponent implements OnInit, PipeTransform, AfterViewInit,
         this.mapData().subscribe(midGroups => {
           this.subject$.next(midGroups);
         });
+        this.skeletonloader = false;
         this.isLoading = false;
       }, error => {
+        this.skeletonloader = false;
         this.isLoading = false;
       });
     for (let i = 0; i < this.midGroups.length; i++) {
@@ -191,6 +207,36 @@ export class MidGroupsComponent implements OnInit, PipeTransform, AfterViewInit,
     // dialogRef.updateSize('1000px');
     dialogRef.afterClosed().subscribe(result => {
     });
+  }
+
+  selectDate(param) {
+    var startDate = new Date();
+    var endDate = new Date();
+    if (param == 'today') {
+      this.range.get('start').setValue(new Date());
+      this.range.get('end').setValue(new Date());
+    } else if (param == 'yesterday') {
+      this.range.get('start').setValue(new Date(startDate.setDate(startDate.getDate() - 1)));
+      this.range.get('end').setValue(new Date());
+    } else if (param == 'thisMonth') {
+      this.range.get('start').setValue(new Date(startDate.setMonth(startDate.getMonth() - 1)));
+      this.range.get('end').setValue(new Date());
+    } else if (param == 'pastWeek') {
+      this.range.get('start').setValue(new Date(startDate.setDate(startDate.getDate() - 7)));
+      this.range.get('end').setValue(new Date());
+    } else if (param == 'pastTwoWeek') {
+      this.range.get('start').setValue(new Date(startDate.setDate(startDate.getDate() - 14)));
+      this.range.get('end').setValue(new Date());
+    } else if (param == 'lastMonth') {
+      this.range.get('start').setValue(new Date(startDate.setMonth(startDate.getMonth() - 2)));
+      this.range.get('end').setValue(new Date(endDate.setMonth(endDate.getMonth() - 1)));
+    } else if (param == 'lastThreeMonths') {
+      this.range.get('start').setValue(new Date(startDate.setMonth(startDate.getMonth() - 4)));
+      this.range.get('end').setValue(new Date(endDate.setMonth(endDate.getMonth() - 1)));
+    } else if (param == 'lastSixMonths') {
+      this.range.get('start').setValue(new Date(startDate.setMonth(startDate.getMonth() - 7)));
+      this.range.get('end').setValue(new Date(endDate.setMonth(endDate.getMonth() - 1)));
+    }
   }
 
   refresh() {

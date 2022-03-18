@@ -24,6 +24,7 @@ import { MidGroupsComponent, TooltipListPipe } from './mid-groups.component';
 import { MidsDetailComponent } from './mids-detail/mids-detail.component';
 import { RouterModule } from '@angular/router';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 
 @NgModule({
   imports: [
@@ -50,7 +51,8 @@ import { MatTooltipModule } from '@angular/material/tooltip';
     MatPaginatorModule,
     MatProgressBarModule,
     RouterModule,
-    MatTooltipModule
+    MatTooltipModule,
+    NgxSkeletonLoaderModule,
   ],
   declarations: [MidGroupsComponent, MidsDetailComponent, TooltipListPipe],
   exports: [MidGroupsComponent],
