@@ -56,6 +56,7 @@ import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
     MatTooltipModule,
     MidsModule,
     NgxSkeletonLoaderModule,
+    MidsModule
   ],
   declarations: [MidGroupsComponent, MidsDetailComponent, TooltipListPipe, ActionDialogComponent],
   exports: [MidGroupsComponent],
