@@ -75,6 +75,8 @@ export class OrdersComponent implements OnInit, AfterViewInit, OnDestroy {
   gatewayCategory = "allGatewayCategories";
   gatewayType = "all";
   creditOrDebit = "all";
+  start_date = '';
+  end_date = '';
 
   campaignOptions: [];
   productOptions: [];
@@ -241,25 +243,28 @@ export class OrdersComponent implements OnInit, AfterViewInit, OnDestroy {
   pageChanged(event: PageEvent) {
     this.pageSize = event.pageSize;
     this.currentPage = event.pageIndex;
-    console.log(this.pageSize)
-    console.log(this.currentPage)
     this.getData();
   }
 
   getData() {
     this.isLoading = true;
+    if(this.range.get('start').value != null){
+      this.start_date = formatDate(this.range.get('start').value, 'yyyy/MM/dd', 'en')
+    }
+    if(this.range.get('end').value != null){
+      this.end_date = formatDate(this.range.get('end').value, 'yyyy/MM/dd', 'en')
+    }
     this.filters = {
       "currentPage": this.currentPage,
       "pageSize": this.pageSize,
-      "start": formatDate(this.range.get('start').value, 'yyyy/MM/dd', 'en'),
-      "end": formatDate(this.range.get('end').value, 'yyyy/MM/dd', 'en'),
+      "start": this.start_date,
+      "end": this.end_date,
       'all_fields': this.all_fields,
       'all_values': this.all_values,
       'search' : this.search
     }
     this.ordersService.getOrders(this.filters)
       .then(orders => {
-        console.log('paginate data is: ',orders.data.data);
         this.orders = orders.data.data;
         // this.dataSource.data = orders.data;
         setTimeout(() => {
@@ -280,7 +285,6 @@ export class OrdersComponent implements OnInit, AfterViewInit, OnDestroy {
     const response = fetch(`${this.endPoint}/api/getDropDownContent`)
       .then(res => res.json()).then((data) => {
         this.filterData = data;
-        console.log('Drop Data is: ',this.filterData); 
       });
   }
   commonFilter(value, field) {
@@ -312,13 +316,11 @@ export class OrdersComponent implements OnInit, AfterViewInit, OnDestroy {
     if (data.status) {
       this.campaignOptions = data.data;
     }
-    console.log('campaign data', this.campaignOptions);
   }
   manageProductsResponse(data) {
     if (data.status) {
       this.productOptions = data.data;
     }
-    console.log('campaign data', this.productOptions);
   }
 
   createCustomer() {

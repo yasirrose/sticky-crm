@@ -45,8 +45,5 @@ export class ListComponent implements AfterViewInit {
     await this.listService.changeColumn(this.name, column, event.checked).then(data => {
       // this.refresh.next('');
     });
-    console.log('table :', this.name);
-    console.log('column :', column);
-    console.log('show :', event.checked);
   }
 }

@@ -350,7 +350,6 @@ export class CreateFormulaComponent implements OnInit, AfterViewInit, OnDestroy 
     if (data.status) {
       this.campaignOptions = data.data;
     }
-    console.log('campaign data', this.campaignOptions);
   }
 
   manageCampaignColumns(data) {
@@ -366,7 +365,6 @@ export class CreateFormulaComponent implements OnInit, AfterViewInit, OnDestroy 
 
   generateFields() {
     if (this.fieldsCount != null) {
-      console.log(this.fieldsCount);
       this.isGeneratedFields = true;
     } else {
       this.notyf.error('Please select number of operands');
@@ -408,14 +406,8 @@ export class CreateFormulaComponent implements OnInit, AfterViewInit, OnDestroy 
         if (this.selectedOperators[i]) {
           this.formula += this.selectedOperators[i];
         }
-        console.log(this.formula);
       }
-      // this.formula += ')';
       this.isFormulated = true;
-      console.log(this.formula);
-      // alert("created formula is: "+ this.formula);
-      console.log(this.selectedOperands);
-      console.log(this.selectedOperators);
     }
     else {
       this.isFormulated = false;
@@ -435,7 +427,6 @@ export class CreateFormulaComponent implements OnInit, AfterViewInit, OnDestroy 
   }
 
   removeField() {
-    console.log(this.fieldsCount);
     if (this.fieldsCount >= 0) {
       if (this.fieldsCount == 2) {
         this.isRemoveHidden = true;
@@ -454,7 +445,6 @@ export class CreateFormulaComponent implements OnInit, AfterViewInit, OnDestroy 
   }
 
   campaignChanged(value) {
-    console.log('selected campaign', value);
     this.formulaService.getCampaignColumns(value);
   }
 
@@ -487,7 +477,6 @@ export class CreateFormulaComponent implements OnInit, AfterViewInit, OnDestroy 
         'name': name,
         'shortcut_name': shortcut_name
       };
-      console.log(data);
 
       this.formulaService.saveFormula(data);
     }

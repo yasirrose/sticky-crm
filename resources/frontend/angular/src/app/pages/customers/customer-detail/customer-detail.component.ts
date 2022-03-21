@@ -62,9 +62,7 @@ export class CustomerDetailComponent implements OnInit, AfterViewInit {
     await this.customersService.getCustomerDetail(id)
       .then(data => {
         this.customerDetails = data.data;
-        console.log('this.details :', this.customerDetails);
         this.addresses = data.address_data;
-        console.log('this.addresses  :', this.addresses);
         // this.dataSource.data = data.data;
       })
   }

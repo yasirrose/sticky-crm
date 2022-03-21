@@ -20,9 +20,11 @@ class MidGroupController extends Controller
     public function index(Request $request)
     {
         $query = MidGroup::select('*');
-        $start_date = date('Y-m-d', strtotime($request->start_date));
-        $end_date = date('Y-m-d', strtotime($request->end_date));
-        if ($start_date != null && $start_date != "1970-01-01" && $end_date != null && $end_date != "1970-01-01"){
+        $start_date = $request->start_date;
+        $end_date = $request->end_date;
+        if ($start_date != null && $end_date != null){
+            $start_date = date('Y-m-d', strtotime($request->start_date));
+            $end_date = date('Y-m-d', strtotime($request->start_date));
             $query->whereBetween('created_at', [$start_date.' 00:00:00', $end_date.' 23:59:59']);
         }
         $data = $query->get();

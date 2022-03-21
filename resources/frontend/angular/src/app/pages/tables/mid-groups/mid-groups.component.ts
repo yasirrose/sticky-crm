@@ -61,6 +61,8 @@ export class MidGroupsComponent implements OnInit, PipeTransform, AfterViewInit,
   pageSizeOptions: number[] = [5, 10, 25, 100];
   // toolTipMids: [];
   toolTipMids = [];
+  start_date = '';
+  end_date = '';
 
   range = new FormGroup({
     start: new FormControl(),
@@ -134,22 +136,24 @@ export class MidGroupsComponent implements OnInit, PipeTransform, AfterViewInit,
   // pageChanged(event: PageEvent) {
   //   this.pageSize = event.pageSize;
   //   this.currentPage = event.pageIndex;
-  //   console.log(this.pageSize)
-  //   console.log(this.currentPage)
   //   this.getData();
   // }
 
   async getData() {
     this.isLoading = true;
-    
+    if(this.range.get('start').value != null){
+      this.start_date = formatDate(this.range.get('start').value, 'yyyy/MM/dd', 'en')
+    }
+    if(this.range.get('end').value != null){
+      this.end_date = formatDate(this.range.get('end').value, 'yyyy/MM/dd', 'en')
+    }
     this.filters = {
-      "start": formatDate(this.range.get('start').value, 'yyyy/MM/dd', 'en'),
-      "end": formatDate(this.range.get('end').value, 'yyyy/MM/dd', 'en'),
+      "start": this.start_date,
+      "end": this.end_date,
     }
 
     await this.midGroupService.getMidGroups(this.filters)
       .then(midGroups => {
-        console.log('paginate data is: ', midGroups.data);
         this.midGroups = midGroups.data;
         this.dataSource.data = midGroups.data;
         this.mapData().subscribe(midGroups => {
@@ -163,7 +167,6 @@ export class MidGroupsComponent implements OnInit, PipeTransform, AfterViewInit,
       });
     for (let i = 0; i < this.midGroups.length; i++) {
       this.toolTipMids[i] = this.getAssignedMids(this.midGroups[i]);
-      console.log('this.toolTipMids :', this.toolTipMids);
     }
   }
 
@@ -173,7 +176,6 @@ export class MidGroupsComponent implements OnInit, PipeTransform, AfterViewInit,
       let list = '';
       list += mid.gateway_alias + '\xa0\xa0\xa0 | \xa0\xa0\xa0' + mid.current_monthly_amount + '\xa0\xa0\xa0 | \xa0\xa0\xa0' + mid.processing_percent;
       mid_names.push(list);
-      console.log('mid_names :', mid_names);
     });
     return mid_names;
   }
@@ -198,20 +200,17 @@ export class MidGroupsComponent implements OnInit, PipeTransform, AfterViewInit,
 
   addNewGroup(data) {
     if (data) {
-      console.log(data);
       this.midGroupService.addGroup(data);
     }
   }
 
   updateRowData(data) {
     if (data) {
-      console.log(data);
       this.midGroupService.updateGroup(data);
     }
   }
 
   deleteRowData(data) {
-    console.log(data);
     if (data) {
       this.midGroupService.deleteGroup(data);
     }
@@ -221,15 +220,12 @@ export class MidGroupsComponent implements OnInit, PipeTransform, AfterViewInit,
   }
 
   manageGetResponse(data) {
-    // console.log('manage get data :', data);
     // this.midGroups = data.data;
-    // console.log('mange get this.midGroups :', this.midGroups);
     // for (let i = 0; i < this.midGroups.length; i++) {
     //   this.midGroups[i].mids_data.forEach(function (mid) {
     //     this.toolTipMids[i] = mid.alias;
     //   });
     // }
-    // console.log('manage status true this.toolTipMids :', this.toolTipMids);
   }
 
   manageRefreshResponse(data) {
@@ -270,7 +266,6 @@ export class MidGroupsComponent implements OnInit, PipeTransform, AfterViewInit,
   }
 
   openDialog(data) {
-    console.log('openDialog(data) :', data);
 
     const dialogRef = this.dialog.open(MidsDetailComponent, {
       data: {
@@ -314,7 +309,6 @@ export class MidGroupsComponent implements OnInit, PipeTransform, AfterViewInit,
   }
 
   refresh() {
-    console.log('Mid group refresh called');
     this.isLoading = true;
     this.midGroupService.refresh();
   }

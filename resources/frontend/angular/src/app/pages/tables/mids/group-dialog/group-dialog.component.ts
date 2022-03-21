@@ -23,7 +23,6 @@ export class GroupDialogComponent implements OnInit {
     this.message = data.message;
     this.endPoint = environment.endpoint;
     this.rows = data.selectedRows;
-    console.log(' this.rows :',  this.rows);
   }
 
   ngOnInit(): void {
@@ -41,6 +40,5 @@ export class GroupDialogComponent implements OnInit {
     this.dialogRef.close(false);
   }
   selection(data){
-    console.log(data);
   }
 }

@@ -88,7 +88,6 @@ export class GoldenTicketComponent implements OnInit {
     for (var i = c_year + 1; i < c_year + 5; i++) {
       this.years.push(i);
     }
-    console.log("years", this.years);
   }
 
   /**

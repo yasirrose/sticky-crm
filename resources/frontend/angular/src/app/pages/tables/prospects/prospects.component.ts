@@ -148,8 +148,6 @@ export class ProspectsComponent implements OnInit {
   pageChanged(event: PageEvent) {
     this.pageSize = event.pageSize;
     this.currentPage = event.pageIndex;
-    console.log(this.pageSize)
-    console.log(this.currentPage)
     this.getData();
   }
 
@@ -166,7 +164,6 @@ export class ProspectsComponent implements OnInit {
     }
     this.prospectsService.getProspects(this.filters)
       .then(prospects => {
-        console.log('paginate data is: ', prospects.data.data);
         this.prospects = prospects.data.data;
         // this.dataSource.data = prospects.data.data;
         setTimeout(() => {
@@ -186,7 +183,6 @@ export class ProspectsComponent implements OnInit {
     const response = fetch(`${this.endPoint}/api/getDropDownContent`)
       .then(res => res.json()).then((data) => {
         this.filterData = data;
-        console.log('Drop Data is: ', this.filterData);
       });
   }
 
@@ -229,14 +225,12 @@ export class ProspectsComponent implements OnInit {
     if (data.status) {
       this.campaignOptions = data.data;
     }
-    console.log('campaign data', this.campaignOptions);
   }
 
   manageProductsResponse(data) {
     if (data.status) {
       this.productOptions = data.data;
     }
-    console.log('campaign data', this.productOptions);
   }
 
   onFilterChange(value) {

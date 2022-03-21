@@ -37,9 +37,9 @@ export class CustomersComponent implements OnInit, AfterViewInit, OnDestroy {
   idArray = [];
   allIdArray = [];
   id: number;
-  totalRows: number = 0;
-  pageSize: number = 25;
-  currentPage: number = 1;
+  totalRows = 0;
+  pageSize = 25;
+  currentPage = 0;
   pageSizeOptions: number[] = [5, 10, 25, 100];
   name: string;
   isChecked: boolean = false;
@@ -72,7 +72,7 @@ export class CustomersComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngOnInit(): void {
     this.location.replaceState('/customer');
-    this.getSubscription = this.customersService.customersGetResponse$.subscribe(data => this.manageGetResponse(data));
+    // this.getSubscription = this.customersService.customersGetResponse$.subscribe(data => this.manageGetResponse(data));
     this.deleteSubscription = this.customersService.deleteResponse$.subscribe(data => this.manageDeleteResponse(data));
     this.getData();
     this.dataSource = new MatTableDataSource();
@@ -110,6 +110,7 @@ export class CustomersComponent implements OnInit, AfterViewInit, OnDestroy {
           this.paginator.pageIndex = this.currentPage;
           this.paginator.length = customers.pag.count;
         });
+        
         this.isLoading = false;
       }, error => {
         this.isLoading = false;
@@ -129,19 +130,19 @@ export class CustomersComponent implements OnInit, AfterViewInit, OnDestroy {
     this.timer = setTimeout(() => { this.getData() }, 500)
   }
 
-  manageGetResponse(customers) {
-    if (customers.status) {
-      this.customers = customers.data.data;
-      this.dataSource.data = customers.data.data;
-      setTimeout(() => {
-        this.paginator.pageIndex = this.currentPage;
-        this.paginator.length = customers.pag.count;
-      });
-      this.isLoading = false;
-    } else {
-      this.isLoading = false;
-    }
-  }
+  // manageGetResponse(customers) {
+  //   if (customers.status) {
+  //     this.customers = customers.data.data;
+  //     this.dataSource.data = customers.data.data;
+  //     setTimeout(() => {
+  //       this.paginator.pageIndex = this.currentPage;
+  //       this.paginator.length = customers.pag.count;
+  //     });
+  //     this.isLoading = false;
+  //   } else {
+  //     this.isLoading = false;
+  //   }
+  // }
 
   manageDeleteResponse(data) {
     if (data.status) {

@@ -30,8 +30,8 @@ class ProspectController extends Controller
         }
 
         $rows = $query->SimplePaginate($no_of_records_per_page);
-        // $total_rows = $query->where('id', '>' ,0)->count('id');
-        $total_rows = 260466;
+        $total_rows = $query->count('id');
+        // $total_rows = 260466;
         $total_pages = ceil($total_rows / $rows->perPage());
     
         $pag['count'] = $total_rows;

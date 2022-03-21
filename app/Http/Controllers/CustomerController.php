@@ -15,8 +15,6 @@ class CustomerController extends Controller
         $no_of_records_per_page = isset($request->per_page) ? $request->per_page : 25;
 
         $query = DB::table('customers')->select('id', 'email', 'first_name', 'last_name', 'phone', 'addresses', 'deleted_at');
-        // $total_rows = Customer::where('email','!=','')->count('email');
-        $total_rows = 243635;
 
         if ($request->search != '') {
             $query->Where('email', 'like', '%' . $request->search . '%')
@@ -25,8 +23,7 @@ class CustomerController extends Controller
         }
 
         $data = $query->orderBy('id', 'asc')->SimplePaginate($no_of_records_per_page);
-        // $total_rows = $query->where('id', '>' ,0)->count('id');
-        $total_rows = 198645;
+        $total_rows = $query->count('id');
         $total_pages = ceil($total_rows / $data->perPage());
         $pag['count'] = $total_rows;
         $pag['total_pages'] = $total_pages;
