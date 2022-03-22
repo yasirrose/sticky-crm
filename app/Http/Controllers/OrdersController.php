@@ -707,8 +707,8 @@ class OrdersController extends Controller
         $api_data = json_decode(Http::asForm()->withBasicAuth($username, $password)->accept('application/json')->post(
             $url,
             [
-                'start_date' => '03/08/2022',
-                'end_date' => '03/09/2022',
+                'start_date' => '03/16/2022',
+                'end_date' => '03/21/2022',
                 'campaign_id' => 'all',
                 'criteria' => 'all'
             ]
