@@ -20,6 +20,8 @@ export class Prospect {
   affiliate: string;
   sub_affiliate: string;
   // note: string;
+  checked: boolean;
+
 
   constructor(prospect) {
     this.id = prospect.id;
@@ -31,7 +33,7 @@ export class Prospect {
     this.city = prospect.city;
     this.state = prospect.state;
     this.state = prospect.state;
-    this.zip  = prospect.zip
+    this.zip = prospect.zip
     this.country = prospect.country;
     this.phone = prospect.phone;
     this.email = prospect.email;
@@ -43,5 +45,7 @@ export class Prospect {
     this.affiliate = prospect.affiliate;
     this.sub_affiliate = prospect.sub_affiliate;
     // this.note = prospect.note;
+    this.checked = false;
+
   }
 }

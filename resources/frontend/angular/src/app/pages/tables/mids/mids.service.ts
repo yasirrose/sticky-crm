@@ -11,13 +11,13 @@ export class MidsService {
   mids: any;
   columns: any;
   gateway: any;
-  public getResponse = new BehaviorSubject([]);
-  public refreshResponse = new BehaviorSubject([]);
-  public getProductsResponse = new BehaviorSubject([]);
-  public assignGroupResponse = new BehaviorSubject([]);
-  public unAssignGroupResponse = new BehaviorSubject([]);
-  public assignBulkGroupResponse = new BehaviorSubject([]);
-  public removeBulkGroupResponse = new BehaviorSubject([]);
+  public getResponse = new BehaviorSubject({});
+  public refreshResponse = new BehaviorSubject({});
+  public getProductsResponse = new BehaviorSubject({});
+  public assignGroupResponse = new BehaviorSubject({});
+  public unAssignGroupResponse = new BehaviorSubject({});
+  public assignBulkGroupResponse = new BehaviorSubject({});
+  public removeBulkGroupResponse = new BehaviorSubject({});
   public columnsResponse = new BehaviorSubject([]);
 
   getResponse$ = this.getResponse.asObservable();

@@ -261,7 +261,7 @@ export class OrdersComponent implements OnInit, AfterViewInit, OnDestroy {
       "end": this.end_date,
       'all_fields': this.all_fields,
       'all_values': this.all_values,
-      'search' : this.search
+      'search': this.search
     }
     this.ordersService.getOrders(this.filters)
       .then(orders => {
@@ -379,6 +379,7 @@ export class OrdersComponent implements OnInit, AfterViewInit, OnDestroy {
   }
   openDialog(id) {
     const dialogRef = this.dialog.open(ProductDetailComponent, {
+      disableClose: true,
       data: { id: id }
     });
     dialogRef.updateSize('1000px');

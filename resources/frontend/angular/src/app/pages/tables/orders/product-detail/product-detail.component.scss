@@ -1,39 +1,60 @@
-mat-dialog-container{
-    width: 1000px;
+mat-dialog-container {
+  width: 1000px;
 }
-.product-column{
-    width: 600px;
+.product-column {
+  width: 600px;
 }
-.detail-title{
-    width: 200px
+.detail-title {
+  width: 200px;
 }
-.detail-data{
-    width: 200px;
+.detail-data {
+  width: 200px;
 }
 .fury-preview-card {
-    box-shadow: none !important;
+  box-shadow: none !important;
 }
-.main-div{
-    box-shadow: none !important;
+.main-div {
+  box-shadow: none !important;
 }
-.fury-tabs{
-    background: none !important;
+.fury-tabs {
+  background: none !important;
 }
-.fury-default .fury-tabs .mat-tab-labels{
-    background: none !important;
+.fury-default .fury-tabs .mat-tab-labels {
+  background: none !important;
 }
-.tabs{
-    background: none !important;
+.tabs {
+  background: none !important;
 }
-.mat-tab-labels{
-    
-    background: none !important;
+.mat-tab-labels {
+  background: none !important;
 }
-mat-tab-group{
-    background: none !important;
+mat-tab-group {
+  background: none !important;
 }
 .dialog-title {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+//close button css
+.close-button {
+  float: right;
+  top: -15px;
+  right: -15px;
+}
+.close-icon {
+  transition: 1s ease-in-out;
+}
+.close-icon:hover {
+  transform: rotate(180deg);
+}
+::ng-deep .icon-outside .close-button {
+  float: right;
+  top: -52px;
+  right: -52px;
+}
+::ng-deep .icon-outside .mat-dialog-container {
+  overflow: unset;
+}
+//ends

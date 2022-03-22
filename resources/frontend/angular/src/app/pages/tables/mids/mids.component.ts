@@ -52,7 +52,6 @@ export class MidsComponent implements OnInit, AfterViewInit, OnDestroy {
     end: new FormControl()
   });
 
-  getSubscription: Subscription;
   refreshSubscription: Subscription;
   assignSubscription: Subscription;
   unAssignSubscription: Subscription;
@@ -72,7 +71,6 @@ export class MidsComponent implements OnInit, AfterViewInit, OnDestroy {
 
   skeletonLoader = true;
   pageSizeOptions: number[] = [5, 10, 25, 100];
-  notyf = new Notyf({ types: [{ type: 'info', background: '#6495ED', icon: '<i class="fa-solid fa-clock"></i>' }] });
   totalMids: number = 0;
   assignedMids: number = 0;
   unAssignedMids: number = 0;
@@ -81,6 +79,7 @@ export class MidsComponent implements OnInit, AfterViewInit, OnDestroy {
   selectAll: boolean = false;
   isBulkUpdate: boolean = false;
   columns: any = [];
+  notyf = new Notyf({ types: [{ type: 'info', background: '#6495ED', icon: '<i class="fa-solid fa-clock"></i>' }] });
 
   // @Input()
 
@@ -117,6 +116,7 @@ export class MidsComponent implements OnInit, AfterViewInit, OnDestroy {
 
   constructor(private dialog: MatDialog, private midsService: MidsService, private apiService: ApiService, private router: Router, public midGroupComponent: MidGroupsComponent) {
     this.endPoint = environment.endpoint;
+    this.notyf.dismissAll();
   }
 
   ngOnInit() {
@@ -124,7 +124,7 @@ export class MidsComponent implements OnInit, AfterViewInit, OnDestroy {
     this.refreshSubscription = this.midsService.refreshResponse$.subscribe(data => this.manageRefreshResponse(data))
     this.assignSubscription = this.midsService.assignGroupResponse$.subscribe(data => this.manageAssignResponse(data))
     this.unAssignSubscription = this.midsService.unAssignGroupResponse$.subscribe(data => this.manageUnassignResponse(data))
-    this.unAssignSubscription = this.midsService.assignBulkGroupResponse$.subscribe(data => this.manageBulkGroupResponse(data))
+    this.bulkUpdateSubscription = this.midsService.assignBulkGroupResponse$.subscribe(data => this.manageBulkGroupResponse(data))
     // this.columnsSubscription = this.midsService.columnsResponse$.subscribe(data => this.manageColumnsResponse(data))
 
     this.getData();
@@ -158,10 +158,10 @@ export class MidsComponent implements OnInit, AfterViewInit, OnDestroy {
 
   async getData() {
     this.isLoading = true;
-    if(this.range.get('start').value != null){
+    if (this.range.get('start').value != null) {
       this.start_date = formatDate(this.range.get('start').value, 'yyyy/MM/dd', 'en')
     }
-    if(this.range.get('end').value != null){
+    if (this.range.get('end').value != null) {
       this.end_date = formatDate(this.range.get('end').value, 'yyyy/MM/dd', 'en')
     }
     this.filters = {
@@ -223,25 +223,31 @@ export class MidsComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
-  manageAssignResponse(data) {
-    if (data.status) {
-      this.getData();
-      this.notyf.success(data.message);
-      this.midGroupComponent.refresh();
+  async manageAssignResponse(data) {
+    if (Object.keys(data).length) {
+      if (data.status) {
+        await this.getData();
+        this.notyf.success(data.message);
+        this.midGroupComponent.refresh();
+      } else if (!data.status) {
+        this.notyf.error({ duration: 0, dismissible: true, message: data.message });
+      }
     }
   }
 
-  manageUnassignResponse(data) {
-    if (data.status) {
-      this.getData();
-      this.notyf.success(data.message);
-      this.midGroupComponent.refresh();
+  async manageUnassignResponse(data) {
+    if (Object.keys(data).length) {
+      if (data.status) {
+        await this.getData();
+        this.notyf.success(data.message);
+        this.midGroupComponent.refresh();
+      }
     }
   }
 
-  manageBulkGroupResponse(data) {
+  async manageBulkGroupResponse(data) {
     if (data.status) {
-      this.getData();
+      await this.getData();
       this.notyf.success(data.message);
       this.midGroupComponent.refresh();
       this.isBulkUpdate = false;
@@ -254,10 +260,10 @@ export class MidsComponent implements OnInit, AfterViewInit, OnDestroy {
   //   }
   // }
 
-  manageRefreshResponse(data) {
+  async manageRefreshResponse(data) {
     if (data.status) {
+      await this.getData();
       this.notyf.success(data.data.new_mids + ' New Mids Found and ' + data.data.updated_mids + ' Mids Updated');
-      this.getData();
       this.midGroupComponent.refresh();
     }
   }
@@ -356,6 +362,7 @@ export class MidsComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   updateCheck() {
+    this.selectedRows = [];
     if (this.selectAll === true) {
       this.mids.map((mid) => {
         mid.checked = true;
@@ -368,9 +375,9 @@ export class MidsComponent implements OnInit, AfterViewInit, OnDestroy {
         mid.checked = false;
         this.isBulkUpdate = false;
       });
-      this.selectedRows = [];
       this.isBulkUpdate = false;
     }
+    console.log(this.selectedRows);
   }
 
   assignBulkGroup() {
@@ -411,22 +418,23 @@ export class MidsComponent implements OnInit, AfterViewInit, OnDestroy {
     });
   }
 
-  ngOnDestroy() {
-    if (this.getSubscription) {
-      this.midsService.getResponse.next([]);
-      this.getSubscription.unsubscribe();
-    }
+  ngOnDestroy(): void {
+    this.notyf.dismissAll();
     if (this.refreshSubscription) {
-      this.midsService.refreshResponse.next([]);
+      this.midsService.refreshResponse.next({});
       this.refreshSubscription.unsubscribe();
     }
     if (this.assignSubscription) {
-      this.midsService.assignGroupResponse.next([]);
+      this.midsService.assignGroupResponse.next({});
       this.assignSubscription.unsubscribe();
     }
     if (this.bulkUpdateSubscription) {
-      this.midsService.unAssignGroupResponse.next([]);
+      this.midsService.assignBulkGroupResponse.next({});
       this.bulkUpdateSubscription.unsubscribe();
+    }
+    if (this.unAssignSubscription) {
+      this.midsService.unAssignGroupResponse.next({});
+      this.unAssignSubscription.unsubscribe();
     }
   }
 }

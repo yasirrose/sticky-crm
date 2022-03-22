@@ -702,8 +702,8 @@ class OrdersController extends Controller
         $api_data = json_decode(Http::asForm()->withBasicAuth($username, $password)->accept('application/json')->post(
             $url,
             [
-                'start_date' => '03/03/2022',
-                'end_date' => '03/07/2022',
+                'start_date' => '03/08/2022',
+                'end_date' => '03/15/2022',
                 'campaign_id' => 'all',
                 'criteria' => 'all'
             ]
@@ -745,10 +745,10 @@ class OrdersController extends Controller
                     $result->totals_breakdown = serialize($result->totals_breakdown);
                     if (in_array($result->order_id, $db_order_ids)) {
                         $updated_orders++;
-                        $order = Order::where(['order_id' => $result->order_id])->first();
-                        $order->update((array)$result);
-
-                        $order_product = OrderProduct::where(['order_id' => $order->order_id])->first();
+                        $db_order = Order::where(['order_id' => $result->order_id])->first();
+                        $db_order->update((array)$result);
+                        
+                        $order_product = OrderProduct::where(['order_id' => $db_order->order_id])->first();
                         $mass_assignment = $this->get_order_product_mass($result);
                         $order_product->update($mass_assignment);
 

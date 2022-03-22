@@ -16,17 +16,17 @@ class ProspectController extends Controller
         $pageno = isset($request->page) ? $request->page : 1;
         $no_of_records_per_page = isset($request->per_page) ? $request->per_page : 25;
         
-        $query = Prospect::select('id','first_name','last_name','address','city','state','zip','country','phone','email','affiliate','sub_affiliate')->orderBy('id', 'desc');
+        $query = Prospect::select('id', 'first_name', 'last_name', 'address', 'city', 'state', 'zip', 'country', 'phone', 'email', 'affiliate', 'sub_affiliate')->orderBy('id', 'desc');
         // $total_rows = Prospect::where('id', '>', 0)->count('id');
         // $total_rows = DB::table('prospects')->select('id')->count();
         
         // $total_rows = 200000;
 
-        if($request->search != ''){
+        if ($request->search != '') {
             $query->where('first_name', 'like', '%' . $request->search . '%')
-            ->orWhere('last_name', 'like', '%'.$request->search.'%')
-            ->orWhere('email', 'like', '%'.$request->search.'%')
-            ->orWhere('address', 'like', '%'.$request->search.'%');
+                ->orWhere('last_name', 'like', '%' . $request->search . '%')
+                ->orWhere('email', 'like', '%' . $request->search . '%')
+                ->orWhere('address', 'like', '%' . $request->search . '%');
         }
 
         $rows = $query->SimplePaginate($no_of_records_per_page);
@@ -103,11 +103,25 @@ class ProspectController extends Controller
         $prospect = Prospect::find($id);
         if ($prospect) {
             $prospect->delete();
-            return response()->json(['status' => true, 'message' => 'Prospect Deleted Successfully']);
+            return response()->json(['status' => true, 'message' => '1 Prospect Deleted Successfully']);
         } else {
             return response()->json(['status' => false, 'message' => "Opps!! Prospect Could not be deleted"]);
         }
     }
+
+    public function delete_prospects(Request $request)
+    {
+        $data = $request->all();
+        $ids = array_column($data, 'id');
+        $total_records = count($ids);
+        Prospect::whereIn('id', $ids)->delete();
+        if ($total_records <= 1) {
+            return response()->json(['status' => true, 'message' => '<b>1</b> Customer Deleted Successfully']);
+        } else {
+            return response()->json(['status' => true, 'message' => $total_records . ' Customers Deleted Successfully']);
+        }
+    }
+
     public function pull_prospects_dec()
     {
 

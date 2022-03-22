@@ -4,6 +4,12 @@
   </fury-page-layout-header> -->
 
   <fury-page-layout-content [@fadeInUp]>
+    <div class="mb" fxLayout="row" layout-wrap fxLayoutGap="10px">
+      <div>
+        <button *ngIf="isBulkUpdate" mat-raised-button color="warn" (click)="handleBulkDeleteAction()">Delete
+          {{selectedRows?.length}} Prospects</button>
+      </div>
+    </div>
     <fury-list name="Prospects" [columns]="columns" (filterChange)="onFilterChange($event)">
       <!-- <div class="actions">
         <button class="create" (click)="createCustomer()" type="button" mat-mini-fab color="primary">
@@ -16,10 +22,10 @@
         <!-- Checkbox Column -->
         <ng-container matColumnDef="checkbox">
           <th *matHeaderCellDef class="actions-cell" mat-header-cell>
-            <mat-checkbox color="primary" (click)="$event.stopPropagation()"></mat-checkbox>
+            <mat-checkbox (change)="updateCheck()" [(ngModel)]="selectAll" color="accent" (click)="$event.stopPropagation()"></mat-checkbox>
           </th>
           <td *matCellDef="let row" class="actions-cell" mat-cell>
-            <mat-checkbox color="primary" (click)="$event.stopPropagation()"></mat-checkbox>
+            <mat-checkbox [(ngModel)]="row.checked" color="primary" (change)='updateCheckedRow($event, row)'></mat-checkbox>
           </td>
         </ng-container>
 
@@ -32,24 +38,17 @@
           </ng-container>
         </ng-container>
 
+        <!-- Action Column -->
         <ng-container matColumnDef="actions">
-          <th *matHeaderCellDef class="actions-cell" mat-header-cell mat-sort-header></th>
-          <td *matCellDef="let row" class="actions-cell" mat-cell>
-            <button type="button" mat-icon-button [matMenuTriggerFor]="actionsMenu" (click)="$event.stopPropagation()">
-              <mat-icon>more_horiz</mat-icon>
-            </button>
-
-            <mat-menu #actionsMenu="matMenu" yPosition="below" xPosition="before">
-              <button (click)="deleteProspect(row.id)" mat-menu-item>
-                <span><mat-icon>delete</mat-icon>Delete Prospect</span>
-              </button>
-            </mat-menu>
+          <th mat-header-cell *matHeaderCellDef> Actions </th>
+          <td mat-cell *matCellDef="let row">
+            <!-- <a class="view-link" (click)="openDialog(row.id)">View</a> | -->
+            <a class="delete-link" (click)="deleteProspect(row.id)">Delete</a>
           </td>
         </ng-container>
 
         <tr *matHeaderRowDef="visibleColumns" mat-header-row></tr>
-        <tr (click)="openDialog(row.id)" *matRowDef="let row; columns: visibleColumns;" class="clickable route-animations-elements"
-          mat-row></tr>
+        <tr *matRowDef="let row; columns: visibleColumns;" class="clickable route-animations-elements" mat-row></tr>
       </table>
 
       <mat-paginator #paginator [length]="totalRows" [pageIndex]="currentPage" [pageSize]="pageSize" [pageSizeOptions]="pageSizeOptions"

@@ -8,7 +8,8 @@ import { fadeInRightAnimation } from '../../../@fury/animations/fade-in-right.an
 import { fadeInUpAnimation } from '../../../@fury/animations/fade-in-up.animation';
 import { FormGroup, FormControl } from '@angular/forms';
 import { CustomersService } from './customers.service';
-import { Subscription } from 'rxjs';
+import { Subscription, Observable, of, ReplaySubject } from 'rxjs';
+import { filter } from 'rxjs/operators';
 import { formatDate } from '@angular/common';
 import { Customer } from './Customers.model';
 import { CustomerDetailComponent } from './customer-detail/customer-detail.component';
@@ -17,7 +18,7 @@ import { Notyf } from 'notyf';
 import { ConfirmationDialogComponent } from '../confirmation-dialog/confirmation-dialog.component';
 import { ConfirmationDialogModel } from '../confirmation-dialog/confirmation-dialog';
 import { Location } from '@angular/common';
- 
+
 @Component({
   selector: 'fury-customers',
   templateUrl: './customers.component.html',
@@ -26,12 +27,12 @@ import { Location } from '@angular/common';
 })
 export class CustomersComponent implements OnInit, AfterViewInit, OnDestroy {
 
-  // subject$: ReplaySubject<Customer[]> = new ReplaySubject<Customer[]>(1);
-  // data$: Observable<Customer[]> = this.subject$.asObservable();
+  subject$: ReplaySubject<Customer[]> = new ReplaySubject<Customer[]>(1);
+  data$: Observable<Customer[]> = this.subject$.asObservable();
   getSubscription: Subscription;
   deleteSubscription: Subscription;
   search = '';
-  customers: [];
+  customers: Customer[];
   filters = {};
   address = [];
   idArray = [];
@@ -58,7 +59,7 @@ export class CustomersComponent implements OnInit, AfterViewInit, OnDestroy {
     { name: 'Phone', property: 'phone', visible: true, isModelProperty: true },
     { name: 'Actions', property: 'actions', visible: true },
   ] as ListColumn[];
-  dataSource: MatTableDataSource<Customer>;
+  dataSource: MatTableDataSource<Customer> | null;
   selection = new SelectionModel<Customer>(true, []);
 
   @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
@@ -70,17 +71,27 @@ export class CustomersComponent implements OnInit, AfterViewInit, OnDestroy {
     return this.columns.filter(column => column.visible).map(column => column.property);
   }
 
+  mapData() {
+    return of(this.customers.map(customer => new Customer(customer)));
+  }
+
+  ngAfterViewInit() {
+    this.dataSource.paginator = this.paginator;
+    this.dataSource.sort = this.sort;
+  }
+
   ngOnInit(): void {
     this.location.replaceState('/customer');
     // this.getSubscription = this.customersService.customersGetResponse$.subscribe(data => this.manageGetResponse(data));
     this.deleteSubscription = this.customersService.deleteResponse$.subscribe(data => this.manageDeleteResponse(data));
     this.getData();
     this.dataSource = new MatTableDataSource();
-  }
-
-  ngAfterViewInit(): void {
-    this.dataSource.paginator = this.paginator;
-    this.dataSource.sort = this.sort;
+    this.data$.pipe(
+      filter(data => !!data)
+    ).subscribe((customers) => {
+      this.customers = customers;
+      this.dataSource.data = customers;
+    });
   }
 
   pageChanged(event: PageEvent) {
@@ -102,15 +113,17 @@ export class CustomersComponent implements OnInit, AfterViewInit, OnDestroy {
       .then(customers => {
         this.allIdArray = [];
         this.customers = customers.data.data;
-        this.dataSource.data = customers.data.data;
-        for (var i = 0; i < customers.data.data.length; i++) {
-          this.allIdArray.push(customers.data.data[i].id);
-        }
+        // this.dataSource.data = customers.data.data;
         setTimeout(() => {
           this.paginator.pageIndex = this.currentPage;
           this.paginator.length = customers.pag.count;
         });
-        
+        this.mapData().subscribe(prospects => {
+          this.subject$.next(prospects);
+        });
+        for (var i = 0; i < customers.data.data.length; i++) {
+          this.allIdArray.push(customers.data.data[i].id);
+        }
         this.isLoading = false;
       }, error => {
         this.isLoading = false;
@@ -144,15 +157,17 @@ export class CustomersComponent implements OnInit, AfterViewInit, OnDestroy {
   //   }
   // }
 
-  manageDeleteResponse(data) {
+
+  async manageDeleteResponse(data) {
     if (data.status) {
+      await this.getData();
       this.notyf.success({ duration: 5000, message: data.message });
-      this.getData();
     }
   }
 
   openDialog(id) {
     const dialogRef = this.dialog.open(CustomerDetailComponent, {
+      disableClose: true,
       data: { id: id }
     });
     dialogRef.updateSize('1000px');
@@ -207,6 +222,7 @@ export class CustomersComponent implements OnInit, AfterViewInit, OnDestroy {
     const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
       maxWidth: '500px',
       closeOnNavigation: true,
+      disableClose: true,
       data: dialogData
     })
     dialogRef.afterClosed().subscribe(dialogResult => {
