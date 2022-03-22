@@ -595,8 +595,8 @@ class OrdersController extends Controller
         $api_data = json_decode(Http::asForm()->withBasicAuth($username, $password)->accept('application/json')->post(
             $url,
             [
-                'start_date' => '12/01/2021',
-                'end_date' => '12/31/2021',
+                'start_date' => '03/08/2022',
+                'end_date' => '03/15/2022',
                 'campaign_id' => 'all',
                 'criteria' => 'all',
                 'return_type' => 'order_view'
@@ -690,6 +690,11 @@ class OrdersController extends Controller
 
     public function pull_orders_jan()
     {
+        // error_reporting(E_ALL);
+        // ini_set('display_errors', 1);
+
+        ini_set('memory_limit', '512M');
+        set_time_limit(0);
         $new_orders = 0;
         $updated_orders = 0;
         $db_order_ids = Order::pluck('order_id')->toArray();
@@ -703,7 +708,7 @@ class OrdersController extends Controller
             $url,
             [
                 'start_date' => '03/08/2022',
-                'end_date' => '03/15/2022',
+                'end_date' => '03/09/2022',
                 'campaign_id' => 'all',
                 'criteria' => 'all'
             ]
@@ -1115,7 +1120,8 @@ class OrdersController extends Controller
         }
     }
     public static function testFunction(){
-        $data['email'] = 'testing@yopmail.com';
-        return DB::table('users')->insert($data);
+        $data['NAME'] = 'name';
+        $data['ADDRESS'] = 'address';
+        return DB::table('EMPLOYEES')->insert($data);
     }
 }
