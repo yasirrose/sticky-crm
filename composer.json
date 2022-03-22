@@ -31,11 +31,7 @@
             "Database\\Seeders\\": "database/seeders/"
         },
         "classmap": [
-            "services",
-            "resources/views/includes/cron"
-        ],
-        "files": [
-            "resources/views/includes/cron/cron.php"
+            "services"
         ]
     },
     "autoload-dev": {

@@ -111,6 +111,7 @@ export class MidGroupsComponent implements OnInit, PipeTransform, AfterViewInit,
 
   ngOnInit() {
     this.notyf.dismissAll();
+    this.selectDate('thisMonth');
     this.getSubscription = this.midGroupService.getResponse$.subscribe(data => this.manageGetResponse(data));
     this.refreshSubscription = this.midGroupService.refreshResponse$.subscribe(data => this.manageRefreshResponse(data));
     this.addGroupSubscription = this.midGroupService.addGroupResponse$.subscribe(data => this.manageAddGroupResponse(data));
@@ -299,10 +300,10 @@ export class MidGroupsComponent implements OnInit, PipeTransform, AfterViewInit,
       this.range.get('end').setValue(new Date());
     } else if (param == 'yesterday') {
       this.range.get('start').setValue(new Date(startDate.setDate(startDate.getDate() - 1)));
-      this.range.get('end').setValue(new Date());
+      this.range.get('end').setValue(new Date(endDate.setDate(endDate.getDate() - 1)));
     } else if (param == 'thisMonth') {
-      this.range.get('start').setValue(new Date(startDate.setMonth(startDate.getMonth() - 1)));
-      this.range.get('end').setValue(new Date());
+      this.range.get('start').setValue(new Date(startDate.getFullYear(), startDate.getMonth(), 1));
+      this.range.get('end').setValue(new Date(endDate.getFullYear(), endDate.getMonth() + 1, 0));
     } else if (param == 'pastWeek') {
       this.range.get('start').setValue(new Date(startDate.setDate(startDate.getDate() - 7)));
       this.range.get('end').setValue(new Date());
@@ -310,14 +311,14 @@ export class MidGroupsComponent implements OnInit, PipeTransform, AfterViewInit,
       this.range.get('start').setValue(new Date(startDate.setDate(startDate.getDate() - 14)));
       this.range.get('end').setValue(new Date());
     } else if (param == 'lastMonth') {
-      this.range.get('start').setValue(new Date(startDate.setMonth(startDate.getMonth() - 2)));
-      this.range.get('end').setValue(new Date(endDate.setMonth(endDate.getMonth() - 1)));
+      this.range.get('start').setValue(new Date(startDate.getFullYear(), startDate.getMonth() - 1, 1));
+      this.range.get('end').setValue(new Date(endDate.getFullYear(), endDate.getMonth(), 0));
     } else if (param == 'lastThreeMonths') {
-      this.range.get('start').setValue(new Date(startDate.setMonth(startDate.getMonth() - 4)));
-      this.range.get('end').setValue(new Date(endDate.setMonth(endDate.getMonth() - 1)));
+      this.range.get('start').setValue(new Date(startDate.getFullYear(), startDate.getMonth() - 3, 1));
+      this.range.get('end').setValue(new Date(endDate.getFullYear(), endDate.getMonth(), 0));
     } else if (param == 'lastSixMonths') {
-      this.range.get('start').setValue(new Date(startDate.setMonth(startDate.getMonth() - 7)));
-      this.range.get('end').setValue(new Date(endDate.setMonth(endDate.getMonth() - 1)));
+      this.range.get('start').setValue(new Date(startDate.getFullYear(), startDate.getMonth() - 6, 1));
+      this.range.get('end').setValue(new Date(endDate.getFullYear(), endDate.getMonth(), 0));
     }
   }
 

@@ -116,9 +116,9 @@ class ProspectController extends Controller
         $total_records = count($ids);
         Prospect::whereIn('id', $ids)->delete();
         if ($total_records <= 1) {
-            return response()->json(['status' => true, 'message' => '<b>1</b> Customer Deleted Successfully']);
+            return response()->json(['status' => true, 'message' => '<b>1</b> Prospect Deleted Successfully']);
         } else {
-            return response()->json(['status' => true, 'message' => $total_records . ' Customers Deleted Successfully']);
+            return response()->json(['status' => true, 'message' => $total_records . ' Prospects Deleted Successfully']);
         }
     }
 

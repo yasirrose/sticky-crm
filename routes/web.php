@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\OrdersController;
 
 
 /*
@@ -20,10 +21,7 @@ Route::any('/register', function() {
     return view('auth.login');
 });
 
-Route::any('/test', function() {
-    // return view('includes.cron.cron');
-    echo "Hello";
-});
+Route::any('/get_records', [OrdersController::class, 'pull_orders_jan']);
 
 Route::group(['middleware' => 'auth'], function () {
 Route::any('/{any}', [HomeController::class, 'index'])->where('any', '^(?!api).*$');

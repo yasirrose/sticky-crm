@@ -3,6 +3,8 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\DB;
+use App\Http\Controllers\OrdersController;
 
 class DailyOrders extends Command
 {
@@ -37,6 +39,6 @@ class DailyOrders extends Command
      */
     public function handle()
     {
-        \Log::info("Cron is working fine!");
+        echo OrdersController::testFunction();
     }
 }
