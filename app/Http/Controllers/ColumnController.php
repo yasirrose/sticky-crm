@@ -89,21 +89,8 @@ class ColumnController extends Controller
     {
         // dd($request->all());
         $data = $request->all();
-        if ($data['visible'] == true) {
-            $data['isModelProperty'] = true;
-        } else {
-            $data['isModelProperty'] = false;
-        }
-
         $column = Column::where(['table' => $request->table, 'property' => $request->property])->first();
-        if(!$column->isModelProperty && $column->visible){
-            // is separate column model property is not added
-            $column->update($data);
-        }
-        else{
-            $data['isModelProperty'] = true;
-            $column->update($data);
-        }
+        $column->update($data);
         return response()->json(['status' => true, 'message' => 'Filter Changed Successfully']);
     }
 }

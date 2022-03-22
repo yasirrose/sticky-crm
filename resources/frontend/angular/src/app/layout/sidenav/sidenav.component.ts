@@ -63,7 +63,6 @@ export class SidenavComponent implements OnInit, OnDestroy {
   }
 
   manageUserDetails(data) {
-    console.log(data);
     if (data.status) {
       this.userName = data.name;
       this.userEmail = data.email;

@@ -1,3 +1,6 @@
+import { DatePipe } from '@angular/common'
+const datePipe: DatePipe = new DatePipe('en-US')
+
 export class Order {
   order_id: number;
   id: number;
@@ -201,7 +204,7 @@ export class Order {
     // this.main_product_quantity = order.main_product_quantity;
     this.order_confirmed = order.order_confirmed;
     this.order_confirmed_date = order.order_confirmed_date;
-    this.acquisition_date = order.acquisition_date;
+    this.acquisition_date = datePipe.transform(order.acquisition_date, 'MM-dd-yyyy');;
     this.is_blacklisted = order.is_blacklisted;
     // this.ancestor_id = order.ancestor_id;
     // this.decline_salvage_discount_percent = order.decline_salvage_discount_percent;

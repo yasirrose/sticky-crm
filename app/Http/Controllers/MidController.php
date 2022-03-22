@@ -20,9 +20,11 @@ class MidController extends Controller
     public function index(Request $request)
     {
         $query = Mid::select('*');
-        $start_date = date('Y-m-d', strtotime($request->start_date));
-        $end_date = date('Y-m-d', strtotime($request->end_date));
-        if ($start_date != null && $start_date != "1970-01-01" && $end_date != null && $end_date != "1970-01-01"){
+        $start_date = $request->start_date;
+        $end_date = $request->end_date;
+        if ($start_date != null && $end_date != null){
+            $start_date = date('Y-m-d', strtotime($request->start_date));
+            $end_date = date('Y-m-d', strtotime($request->start_date));
             $query->whereBetween('created_on', [$start_date.' 00:00:00', $end_date.' 23:59:59']);
         }
         $data = $query->get();
@@ -169,10 +171,14 @@ class MidController extends Controller
 
     public function assign_mid_group(Request $request)
     {
-        // dd($request->group_name);
+        // dd($request->alias);
         $profile = Profile::where('alias', $request->alias)->first();
-        DB::table('profiles')->where('alias', $request->alias)->update(['global_fields->mid_group' => $request->group_name]);
-        return response()->json(['status' => true, 'message' => $request->group_name . ' Assigned as Mid-group to ' . $profile->alias]);
+        if($profile){
+            DB::table('profiles')->where('alias', $request->alias)->update(['global_fields->mid_group' => $request->group_name]);
+            return response()->json(['status' => true, 'message' => $request->group_name . ' Assigned as Mid-group to ' . $profile->alias]);
+        }else{
+            return response()->json(['status' => false, 'message' => 'Gateway Alias ' . $request->alias . ' is not found against any Profile.']);
+        }
     }
 
     public function assign_bulk_group(Request $request)

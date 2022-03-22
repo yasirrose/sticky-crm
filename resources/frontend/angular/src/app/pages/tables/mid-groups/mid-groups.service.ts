@@ -10,11 +10,11 @@ export class MidGroupsService {
 
   midGroups: any;
   gateway: any;
-  public getResponse = new BehaviorSubject([]);
-  public refreshResponse = new BehaviorSubject([]);
-  public addGroupResponse = new BehaviorSubject([]);
-  public updateGroupResponse = new BehaviorSubject([]);
-  public deleteGroupResponse = new BehaviorSubject([]);
+  public getResponse = new BehaviorSubject({});
+  public refreshResponse = new BehaviorSubject({});
+  public addGroupResponse = new BehaviorSubject({});
+  public updateGroupResponse = new BehaviorSubject({});
+  public deleteGroupResponse = new BehaviorSubject({});
 
   getResponse$ = this.getResponse.asObservable();
   refreshResponse$ = this.refreshResponse.asObservable();

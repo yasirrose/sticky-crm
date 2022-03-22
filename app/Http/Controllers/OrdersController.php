@@ -19,15 +19,17 @@ class OrdersController extends Controller
      */
     public function index(Request $request)
     {
-        $start_date = date('Y-m-d', strtotime($request->start_date));
-        $end_date = date('Y-m-d', strtotime($request->end_date));
+        $start_date = $request->start_date;
+        $end_date = $request->end_date;
         $pageno = isset($request->pageno) ? $request->pageno : 0;
         $no_of_records_per_page = isset($request->per_page) ? $request->per_page : 25;
         
         $query = DB::table('orders')->select('id','order_id','created_by_employee_name','billing_first_name', 'billing_last_name', 'billing_street_address', 'order_total', 'acquisition_month', 'acquisition_year', 'c1', 'affid', 'trx_month', 'order_sales_tax_amount', 'decline_reason','is_cascaded','decline_reason_details','is_fraud','is_chargeback','chargeback_date','is_rma','rma_number','rma_reason','is_recurring','is_void','void_amount','void_date','is_refund','refund_amount','refund_date','order_confirmed','order_confirmed_date','acquisition_date','is_blacklisted','coupon_id','created_by_user_name','order_sales_tax','order_status','promo_code','recurring_date','response_code','return_reason');
         
         // $total_rows = 30000;
-        if ($start_date != null && $start_date != "1970-01-01" && $end_date != null && $end_date != "1970-01-01"){
+        if ($start_date != null && $end_date != null){
+            $start_date = date('Y-m-d', strtotime($request->start_date));
+            $end_date = date('Y-m-d', strtotime($request->start_date));
             $query->whereBetween('acquisition_date', [$start_date.' 00:00:00', $end_date.' 23:59:59']);
         }
         
@@ -58,9 +60,9 @@ class OrdersController extends Controller
         //         ->orWhere('created_by_user_name', 'like', '%' . $request->search . '%');
         //     }
             
+        $total_rows = $query->count('id');
         $rows = $query->orderBy('id', 'desc')->SimplePaginate($no_of_records_per_page);
-        // $total_rows = $query->where('id', '>' ,0)->count('id');
-        $total_rows = 303502;
+        // $total_rows = 303502;
         $total_pages = ceil($total_rows / $rows->perPage());
 
         $pag['count'] = $total_rows;
@@ -700,8 +702,8 @@ class OrdersController extends Controller
         $api_data = json_decode(Http::asForm()->withBasicAuth($username, $password)->accept('application/json')->post(
             $url,
             [
-                'start_date' => '03/03/2022',
-                'end_date' => '03/07/2022',
+                'start_date' => '03/08/2022',
+                'end_date' => '03/15/2022',
                 'campaign_id' => 'all',
                 'criteria' => 'all'
             ]
@@ -743,10 +745,10 @@ class OrdersController extends Controller
                     $result->totals_breakdown = serialize($result->totals_breakdown);
                     if (in_array($result->order_id, $db_order_ids)) {
                         $updated_orders++;
-                        $order = Order::where(['order_id' => $result->order_id])->first();
-                        $order->update((array)$result);
-
-                        $order_product = OrderProduct::where(['order_id' => $order->order_id])->first();
+                        $db_order = Order::where(['order_id' => $result->order_id])->first();
+                        $db_order->update((array)$result);
+                        
+                        $order_product = OrderProduct::where(['order_id' => $db_order->order_id])->first();
                         $mass_assignment = $this->get_order_product_mass($result);
                         $order_product->update($mass_assignment);
 

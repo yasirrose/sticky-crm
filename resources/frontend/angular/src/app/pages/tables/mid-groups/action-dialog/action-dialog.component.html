@@ -1,4 +1,8 @@
-<h1 mat-dialog-title><strong>{{action}}</strong></h1>
+<button mat-icon-button class="close-button" [mat-dialog-close]="true">
+    <mat-icon class="close-icon">close</mat-icon>
+</button>
+
+<h4 mat-dialog-title>{{action}}</h4>
 <div mat-dialog-content>
     <p>{{message}}</p>
     <div fxLayout="column" *ngIf="action != 'Delete'; else elseDelete">
@@ -13,10 +17,18 @@
         </mat-form-field>
     </div>
     <ng-template #elseDelete>
-        Sure to delete Mid Group <b>"{{local_data.group_name}}"</b>?
+        <p>Are you sure to delete Mid Group <b>"{{local_data.group_name}}"</b>?</p>
     </ng-template>
 </div>
-<div mat-dialog-actions>
+
+<div mat-dialog-actions fxLayoutAlign="end end" *ngIf="action != 'Delete'; else elseDeleteButtons">
     <button mat-raised-button color="primary" (click)="doAction()">{{action}}</button>
-    <button mat-raised-button color="warn" (click)="closeDialog()">Cancel</button>
+    <button mat-raised-button color="gray" (click)="closeDialog()">Cancel</button>
 </div>
+
+<ng-template #elseDeleteButtons>
+    <div mat-dialog-actions fxLayoutAlign="end end">
+        <button mat-raised-button color="warn" (click)="doAction()">{{action}}</button>
+        <button mat-raised-button color="gray" (click)="closeDialog()">Cancel</button>
+    </div>
+</ng-template>

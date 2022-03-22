@@ -1,9 +1,12 @@
+import { DatePipe } from '@angular/common'
+const datePipe: DatePipe = new DatePipe('en-US')
+
 export class Mid {
     id: number;
     router_id: number;
     mid_group_name: string;
     mid_count: string;
-    router_date_in: Date;
+    router_date_in: string;
     router_desc: string;
     mid_group_setting_id: number;
     mid_group_setting: number;
@@ -21,23 +24,23 @@ export class Mid {
     constructor(mid) {
         this.id = mid.id;
         this.router_id = mid.router_id;
-        if(mid.global_fields){
+        if (mid.global_fields) {
             this.mid_group_name = mid.global_fields.mid_group;
         }
         this.mid_count = mid.mid_count;
-        this.router_date_in = mid.router_date_in;
+        this.router_date_in = datePipe.transform(mid.router_date_in, 'MM-dd-yyyy');
         this.router_desc = mid.router_desc;
         this.mid_group_setting_id = mid.mid_group_setting_id;
         this.mid_group_setting = mid.mid_group_setting;
         this.is_three_d_routed = mid.is_three_d_routed;
         this.is_strict_preserve = mid.is_strict_preserve;
-        this.created_on = mid.created_on;
+        this.created_on = datePipe.transform(mid.created_on, 'MM-dd-yyyy');
         this.campaign_id = mid.campaign_id;
         this.gateway_id = mid.gateway_id;
         this.gateway_alias = mid.gateway_alias;
         this.global_monthly_cap = mid.global_monthly_cap;
         this.current_monthly_amount = mid.current_monthly_amount;
-        this.processing_percent = mid.processing_percent;
+        this.processing_percent = mid.processing_percent.substring(0, mid.processing_percent.length - 3) + ' %';
         this.checked = false;
     }
 }

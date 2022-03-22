@@ -30,10 +30,8 @@ export class MidViewComponent implements OnInit {
     // this.route.queryParams
     // .subscribe(params => {
     //   this.alias = params.alias;
-    //   console.log(this.alias);
     // });
     this.route.params.subscribe((params: Params) => this.alias = params['alias']);
-    console.log('this.alias :', this.alias);
 
     this.getData();
   }
@@ -41,7 +39,6 @@ export class MidViewComponent implements OnInit {
   getData() {
     this.midViewService.getMid(this.alias)
       .then(mid => {
-        console.log('paginate data is: ', mid.data);
         this.mid = mid.data
       });
   }

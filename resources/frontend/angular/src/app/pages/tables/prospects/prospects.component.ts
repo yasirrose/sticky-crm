@@ -9,16 +9,15 @@ import { ListColumn } from '../../../../@fury/shared/list/list-column.model';
 import { Prospect } from './prospect.model';
 import { fadeInRightAnimation } from '../../../../@fury/animations/fade-in-right.animation';
 import { fadeInUpAnimation } from '../../../../@fury/animations/fade-in-up.animation';
-
-//self imports
 import { FormGroup, FormControl } from '@angular/forms';
 import { ProspectsService } from './prospects.service';
 import { Subscription } from 'rxjs';
 import { formatDate } from '@angular/common';
 import { environment } from '../../../../environments/environment';
-// import { ProductDetailComponent } from './product-detail/product-detail.component';
 import { ApiService } from 'src/app/api.service';
 import { Notyf } from 'notyf';
+import { ConfirmationDialogComponent } from '../../confirmation-dialog/confirmation-dialog.component';
+import { ConfirmationDialogModel } from '../../confirmation-dialog/confirmation-dialog';
 
 @Component({
   selector: 'fury-prospects',
@@ -27,15 +26,15 @@ import { Notyf } from 'notyf';
   animations: [fadeInRightAnimation, fadeInUpAnimation]
 })
 export class ProspectsComponent implements OnInit {
+
   subject$: ReplaySubject<Prospect[]> = new ReplaySubject<Prospect[]>(1);
   data$: Observable<Prospect[]> = this.subject$.asObservable();
   prospects: Prospect[];
-
-  //customer coding
   getSubscription: Subscription;
   getCampaignsSubscription: Subscription;
   getProductsSubscription: Subscription;
   deleteSubscription: Subscription;
+  deleteAllSubscription: Subscription;
   isLoading = false;
   totalRows = 0;
   pageSize = 25;
@@ -78,15 +77,19 @@ export class ProspectsComponent implements OnInit {
 
   campaignOptions: [];
   productOptions: [];
-  search= '';
-  timer : any;
+  search = '';
+  timer: any;
   cardOptions: string[] = ['visa', 'master'];
   pageSizeOptions: number[] = [5, 10, 25, 100];
   // stateOptions: any = (states as any).default;
+  selectedRows: Prospect[] = [];
+  selectAll: boolean = false;
+  isBulkUpdate: boolean = false;
 
   @Input()
   columns: ListColumn[] = [
-    { name: 'Id', property: 'id', isModelProperty: true },
+    { name: 'Checkbox', property: 'checkbox', visible: true, isModelProperty: false },
+    { name: 'Id', property: 'id', visible: true, isModelProperty: true },
     // { name: 'campaign_id', property: 'campaign_id', visible: true, isModelProperty: false },
     { name: 'First Name', property: 'first_name', visible: true, isModelProperty: true },
     { name: 'Last Name', property: 'last_name', visible: true, isModelProperty: true },
@@ -122,14 +125,10 @@ export class ProspectsComponent implements OnInit {
   }
 
   ngOnInit() {
-    // this.prospectsService.getCampaigns();
-    // this.prospectsService.getProducts();
-    // this.getCampaignsSubscription = this.prospectsService.getProspectResponse$.subscribe(data => this.manageCampaignsResponse(data))
     this.deleteSubscription = this.prospectsService.deleteResponse$.subscribe(data => this.manageDeleteResponse(data));
-    // this.getProductsSubscription = this.prospectsService.getProductsResponse$.subscribe(data => this.manageProductsResponse(data))
+    this.deleteAllSubscription = this.prospectsService.deleteAllResponse$.subscribe(data => this.manageDeleteAllResponse(data));
 
     this.getData();
-    // this.getDropData();
     this.dataSource = new MatTableDataSource();
     this.data$.pipe(
       filter(data => !!data)
@@ -148,13 +147,12 @@ export class ProspectsComponent implements OnInit {
   pageChanged(event: PageEvent) {
     this.pageSize = event.pageSize;
     this.currentPage = event.pageIndex;
-    console.log(this.pageSize)
-    console.log(this.currentPage)
     this.getData();
   }
 
-  getData() {
+  async getData() {
     this.isLoading = true;
+    this.isBulkUpdate = false;
     this.filters = {
       "currentPage": this.currentPage,
       "pageSize": this.pageSize,
@@ -164,9 +162,8 @@ export class ProspectsComponent implements OnInit {
       'all_values': this.all_values,
       'search': this.search
     }
-    this.prospectsService.getProspects(this.filters)
+    await this.prospectsService.getProspects(this.filters)
       .then(prospects => {
-        console.log('paginate data is: ', prospects.data.data);
         this.prospects = prospects.data.data;
         // this.dataSource.data = prospects.data.data;
         setTimeout(() => {
@@ -186,7 +183,6 @@ export class ProspectsComponent implements OnInit {
     const response = fetch(`${this.endPoint}/api/getDropDownContent`)
       .then(res => res.json()).then((data) => {
         this.filterData = data;
-        console.log('Drop Data is: ', this.filterData);
       });
   }
 
@@ -215,28 +211,35 @@ export class ProspectsComponent implements OnInit {
     }
   }
 
-  manageDeleteResponse(data) {
+  async manageDeleteResponse(data) {
     if (data.status) {
+      await this.getData();
       this.notyf.success(data.message);
-      this.getData();
     }
     // else if(!data.status) {
     //   this.notyf.error(data.message);
     // }
   }
 
+  async manageDeleteAllResponse(data) {
+    if (data.status) {
+      this.selectAll = false;
+      this.selectedRows = [];
+      await this.getData();
+      this.notyf.success(data.message);
+    }
+  }
+
   manageCampaignsResponse(data) {
     if (data.status) {
       this.campaignOptions = data.data;
     }
-    console.log('campaign data', this.campaignOptions);
   }
 
   manageProductsResponse(data) {
     if (data.status) {
       this.productOptions = data.data;
     }
-    console.log('campaign data', this.productOptions);
   }
 
   onFilterChange(value) {
@@ -248,7 +251,7 @@ export class ProspectsComponent implements OnInit {
     // this.dataSource.filter = value
     value = value.toLowerCase();
     this.search = value;
-    clearTimeout(this.timer); 
+    clearTimeout(this.timer);
     this.timer = setTimeout(() => { this.getData() }, 500)
   }
 
@@ -283,21 +286,77 @@ export class ProspectsComponent implements OnInit {
   }
 
   deleteProspect(id) {
-    this.prospectsService.deleteProposal(id);
+    const dialogData = new ConfirmationDialogModel('Confirm Delete', 'Are you sure you want to delete this prospect?');
+    const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
+      maxWidth: '500px',
+      closeOnNavigation: true,
+      data: dialogData
+    })
+    dialogRef.afterClosed().subscribe(dialogResult => {
+      if (dialogResult) {
+        this.prospectsService.deleteProposal(id);
+        // this.isDeleting = true;
+        // this.dataSource.data = [];
+        // this.idArray = [];
+      }
+    });
   }
 
-  // openDialog(id) {
-  //   const dialogRef = this.dialog.open(ProductDetailComponent, {
-  //     data: { id: id }
-  //   });
-  //   dialogRef.updateSize('1000px');
-  //   dialogRef.afterClosed().subscribe(result => {
-  //   });
-  // }
+  updateCheck() {
+    if (this.selectAll === true) {
+      this.selectedRows = [];
+      this.prospects.map((prospect) => {
+        prospect.checked = true;
+        this.selectedRows.push(prospect);
+        this.isBulkUpdate = true;
+      });
+
+    } else {
+      this.prospects.map((prospect) => {
+        prospect.checked = false;
+        this.isBulkUpdate = false;
+      });
+      this.selectedRows = [];
+      this.isBulkUpdate = false;
+    }
+  }
+
+  updateCheckedRow(event: any, row) {
+    if (event.checked) {
+      row.checked = true;
+      this.selectedRows.push(row);
+      this.isBulkUpdate = true;
+    } else {
+      row.checked = false;
+      this.selectedRows.splice(this.selectedRows.indexOf(row), 1);
+      if (this.selectedRows.length === 0) {
+        this.isBulkUpdate = false;
+      }
+    }
+  }
+
+  handleBulkDeleteAction() {
+    const dialogData = new ConfirmationDialogModel('Confirm Delete', 'Are you sure to delete these prospects?');
+    const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
+      maxWidth: '500px',
+      closeOnNavigation: true,
+      data: dialogData
+    })
+    dialogRef.afterClosed().subscribe(dialogResult => {
+      if (dialogResult) {
+        this.prospectsService.deleteAll(this.selectedRows);
+      }
+    });
+  }
+
   ngOnDestroy() {
     if (this.deleteSubscription) {
       this.prospectsService.deleteResponse.next([]);
       this.deleteSubscription.unsubscribe();
+    }
+    if (this.deleteAllSubscription) {
+      this.prospectsService.deleteAllResponse.next([]);
+      this.deleteAllSubscription.unsubscribe();
     }
   }
 }

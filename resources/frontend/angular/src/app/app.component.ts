@@ -56,7 +56,7 @@ export class AppComponent {
       {
         name: 'Customers',
         // routeOrFunction: '/customer',
-        routeOrFunction: '/',
+        routeOrFunction: '/customer',
         icon: 'group',
         badgeColor: '#2196F3',
         position: 7,

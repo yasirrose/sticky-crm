@@ -74,7 +74,6 @@ export class ProductDetailComponent implements OnInit {
     this.data$.pipe(
       filter(data => !!data)
     ).subscribe((products) => {
-      console.log("products:", products);
       this.products = products;
       this.dataSource.data = products;
     });

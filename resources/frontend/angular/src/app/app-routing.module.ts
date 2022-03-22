@@ -14,7 +14,7 @@ const routes: Routes = [
       // },
       {
         // path: 'customers',
-        path: '',
+        path: 'customer',
         loadChildren: () => import('./pages/customers/customers.module').then(m => m.CustomersModule),
         pathMatch: 'full'
       },

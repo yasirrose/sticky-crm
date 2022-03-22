@@ -21,7 +21,8 @@ Route::any('/register', function() {
 });
 
 Route::any('/test', function() {
-    return view('includes.cron.cron');
+    // return view('includes.cron.cron');
+    echo "Hello";
 });
 
 Route::group(['middleware' => 'auth'], function () {

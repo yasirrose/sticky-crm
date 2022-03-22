@@ -80,7 +80,6 @@ export class MidsDetailComponent implements OnInit, AfterViewInit, OnDestroy {
       this.mids = data.mids;
       this.group = data.group;
       this.dataSource = new MatTableDataSource(this.mids);
-      console.log(' data.mids :', data.mids);
       this.mapData().subscribe(mids => {
         this.subject$.next(mids);
       });
@@ -108,8 +107,6 @@ export class MidsDetailComponent implements OnInit, AfterViewInit, OnDestroy {
   pageChanged(event: PageEvent) {
     // this.pageSize = event.pageSize;
     // this.currentPage = event.pageIndex;
-    // console.log(this.pageSize)
-    // console.log(this.currentPage)
     // this.getData();
   }
 

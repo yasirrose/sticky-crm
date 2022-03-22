@@ -1,7 +1,5 @@
-import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, of } from 'rxjs';
-import { environment } from 'src/environments/environment';
 import { ApiService } from 'src/app/api.service';
 
 
@@ -14,9 +12,11 @@ export class ProspectsService {
   gateway: any;
   public GetProspectsResponse = new BehaviorSubject([]);
   public deleteResponse = new BehaviorSubject([]);
+  public deleteAllResponse = new BehaviorSubject([]);
 
   getProspectResponse$ = this.GetProspectsResponse.asObservable();
   deleteResponse$ = this.deleteResponse.asObservable();
+  deleteAllResponse$ = this.deleteAllResponse.asObservable();
 
   constructor(private apiService: ApiService) { }
 
@@ -30,9 +30,14 @@ export class ProspectsService {
   }
 
   async deleteProposal(id): Promise<any> {
-    await this.apiService.deleteData(`prospects/${id}`)
-      .then(res => res.json()).then((data) => {
+    await this.apiService.deleteData(`prospects/${id}`).then(res => res.json()).then((data) => {
         this.deleteResponse.next(data);
       });
+  }
+
+  async deleteAll(data): Promise<any> {
+    await this.apiService.postData(`delete_prospects`, data).then(res => res.json()).then((data) => {
+      this.deleteAllResponse.next(data);
+    });
   }
 }

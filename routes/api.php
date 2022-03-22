@@ -92,3 +92,4 @@ Route::post('destroy_customers', [CustomerController::class, 'destroy_customers'
 Route::post('assign_bulk_group', [MidController::class, 'assign_bulk_group']);
 Route::post('remove_groups', [MidController::class, 'remove_groups']);
 Route::post('change_column', [ColumnController::class, 'change_column']);
+Route::post('delete_prospects', [ProspectController::class, 'delete_prospects']);

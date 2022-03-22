@@ -10,7 +10,7 @@ class Column extends Model
     use HasFactory;
     protected $guarded = [];
     protected $casts = [
-        'isVisible' => 'boolean',
+        'visible' => 'boolean',
         'IsModelProperty' => 'boolean',
       ];
     protected $table = 'columns';
