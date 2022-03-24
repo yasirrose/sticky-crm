@@ -18,6 +18,7 @@ use App\Http\Controllers\MidController;
 use App\Http\Controllers\MidGroupController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ColumnController;
+use App\Http\Controllers\AffiliateController;
 
 /*
 |--------------------------------------------------------------------------
@@ -51,6 +52,7 @@ Route::resource('mids', MidController::class);
 Route::resource('mid-groups', MidGroupController::class);
 Route::resource('profiles', ProfileController::class);
 Route::resource('columns', ColumnController::class);
+Route::resource('affiliates', AffiliateController::class);
 Route::get('golden-ticket/create/{month}/{year}', [GoldenTicketController::class, 'create']);
 Route::get('get_campaigns', [CampaignsController::class, 'get_campaigns']);
 Route::get('get_campaign_columns/{campaign_name}', [CampaignsController::class, 'get_campaign_columns']);
@@ -93,3 +95,4 @@ Route::post('assign_bulk_group', [MidController::class, 'assign_bulk_group']);
 Route::post('remove_groups', [MidController::class, 'remove_groups']);
 Route::post('change_column', [ColumnController::class, 'change_column']);
 Route::post('delete_prospects', [ProspectController::class, 'delete_prospects']);
+Route::get('pull_affiliates', [AffiliateController::class, 'pull_affiliates']);

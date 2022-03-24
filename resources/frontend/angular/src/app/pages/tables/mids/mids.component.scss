@@ -98,5 +98,12 @@
 .delete-link {
   color: #f62217;
 }
+.sticky-columns {
+  // display: flex;
+  // flex-direction: column;
+  height: 550px;
+  max-width: 100%;
+  overflow: auto;
+}
 @media screen and (max-width: 992px) {
 }

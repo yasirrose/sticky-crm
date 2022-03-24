@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Affiliate extends Model
 {
     use HasFactory;
-    protected $table = 'networks';
+    protected $table = 'affiliates';
     protected $casts = [
         'relationship' => 'object',
     ];

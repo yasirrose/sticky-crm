@@ -13,61 +13,64 @@
     </section> -->
     <fury-page-layout-content class="no-bottom-padding" fxLayoutAlign="start start" fxFlexFill>
         <div class="content" layout="column" class="full-width">
-          <mat-expansion-panel hideToggle>
-            <div fxLayoutGap="50px">
-              <div fxLayout="column">
-                <div>
-                  <h3>Date Filter</h3>
-                </div>
-                <div fxLayout="column" layout-wrap fxLayoutGap="10px" *ngIf="!skeletonLoader">
-                  <div fxLayout="row" layout-wrap fxLayoutGap="10px">
-                    <div><button mat-raised-button color="warn" (click)="selectDate('today')">Today</button></div>
-                    <div><button mat-raised-button color="warn" (click)="selectDate('thisMonth')">This Month</button></div>
-                    <div>
-                      <button mat-raised-button color="warn" [matMenuTriggerFor]="more">More</button>
-                      <mat-menu #more="matMenu">
-                        <button mat-menu-item (click)="selectDate('yesterday')">Yesterday</button>
-                        <button mat-menu-item (click)="selectDate('pastWeek')">Past Week</button>
-                        <button mat-menu-item (click)="selectDate('pastTwoWeek')">Past 2 Weeks</button>
-                        <button mat-menu-item (click)="selectDate('lastMonth')">Last Month</button>
-                        <button mat-menu-item (click)="selectDate('lastThreeMonths')">Last 3 Months</button>
-                        <button mat-menu-item (click)="selectDate('lastSixMonths')">Past 6 Months</button>
-                      </mat-menu>
-                    </div>
-                  </div>
-                  <div>
-                    <mat-form-field appearance="fill">
-                      <mat-label>Enter a date range</mat-label>
-                      <mat-date-range-input [formGroup]="range" [rangePicker]="picker">
-                        <input matStartDate formControlName="start" placeholder="Start date">
-                        <input matEndDate formControlName="end" placeholder="End date">
-                      </mat-date-range-input>
-                      <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-                      <mat-date-range-picker #picker></mat-date-range-picker>
-    
-                      <mat-error *ngIf="range.controls.start.hasError('matStartDateInvalid')">Invalid start date</mat-error>
-                      <mat-error *ngIf="range.controls.end.hasError('matEndDateInvalid')">Invalid end date</mat-error>
-                    </mat-form-field>
-                  </div>
-                </div>
-                <ngx-skeleton-loader count="2" appearance="line" animation="progress" [theme]="{ height: '50px', width: '300px','border-radius': 0 }"
-                  *ngIf="skeletonLoader"></ngx-skeleton-loader>
-              </div>
-              <div fxLayout="row" fxLayoutAlign="end end" fxLayoutGap="10px" *ngIf="!skeletonLoader">
-                <div><button mat-raised-button color="accent" (click)="getData()">Apply</button></div>
-                <!-- <div><button mat-raised-button color="accent" (click)="refresh()">Refresh</button></div> -->
-              </div>
-              <div fxLayout="row" fxLayoutAlign="end end">
-              <ngx-skeleton-loader count="2" fxLayoutGap="10px" appearance="line" animation="progress" [theme]="{ height: '30px', width: '80px', 'border-radius': 0 }"
-                *ngIf="skeletonLoader"></ngx-skeleton-loader>
-              </div>
-            </div>
-          </mat-expansion-panel>
-        </div>
-      </fury-page-layout-content>
+            <mat-expansion-panel hideToggle>
+                <div fxLayoutGap="50px">
+                    <div fxLayout="column">
+                        <div>
+                            <h3>Date Filter</h3>
+                        </div>
+                        <div fxLayout="column" layout-wrap fxLayoutGap="10px" *ngIf="!skeletonLoader">
+                            <div fxLayout="row" layout-wrap fxLayoutGap="10px">
+                                <div><button mat-raised-button color="warn" (click)="selectDate('today')">Today</button></div>
+                                <div><button mat-raised-button color="warn" (click)="selectDate('thisMonth')">This
+                                        Month</button></div>
+                                <div>
+                                    <button mat-raised-button color="warn" [matMenuTriggerFor]="more">More</button>
+                                    <mat-menu #more="matMenu">
+                                        <button mat-menu-item (click)="selectDate('yesterday')">Yesterday</button>
+                                        <button mat-menu-item (click)="selectDate('pastWeek')">Past Week</button>
+                                        <button mat-menu-item (click)="selectDate('pastTwoWeek')">Past 2 Weeks</button>
+                                        <button mat-menu-item (click)="selectDate('lastMonth')">Last Month</button>
+                                        <button mat-menu-item (click)="selectDate('lastThreeMonths')">Last 3 Months</button>
+                                        <button mat-menu-item (click)="selectDate('lastSixMonths')">Past 6 Months</button>
+                                    </mat-menu>
+                                </div>
+                            </div>
+                            <div>
+                                <mat-form-field appearance="fill">
+                                    <mat-label>Enter a date range</mat-label>
+                                    <mat-date-range-input [formGroup]="range" [rangePicker]="picker">
+                                        <input matStartDate formControlName="start" placeholder="Start date">
+                                        <input matEndDate formControlName="end" placeholder="End date">
+                                    </mat-date-range-input>
+                                    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                                    <mat-date-range-picker #picker></mat-date-range-picker>
 
-    <fury-page-layout-content >
-            <!-- @fadeInUp] -->
+                                    <mat-error *ngIf="range.controls.start.hasError('matStartDateInvalid')">Invalid
+                                        start date</mat-error>
+                                    <mat-error *ngIf="range.controls.end.hasError('matEndDateInvalid')">Invalid end
+                                        date</mat-error>
+                                </mat-form-field>
+                            </div>
+                        </div>
+                        <ngx-skeleton-loader count="2" appearance="line" animation="progress" [theme]="{ height: '50px', width: '300px','border-radius': 0 }"
+                            *ngIf="skeletonLoader"></ngx-skeleton-loader>
+                    </div>
+                    <div fxLayout="row" fxLayoutAlign="end end" fxLayoutGap="10px" *ngIf="!skeletonLoader">
+                        <div><button mat-raised-button color="accent" (click)="getData()">Apply</button></div>
+                        <!-- <div><button mat-raised-button color="accent" (click)="refresh()">Refresh</button></div> -->
+                    </div>
+                    <div fxLayout="row" fxLayoutAlign="end end">
+                        <ngx-skeleton-loader count="2" fxLayoutGap="10px" appearance="line" animation="progress"
+                            [theme]="{ height: '30px', width: '80px', 'border-radius': 0 }" *ngIf="skeletonLoader"></ngx-skeleton-loader>
+                    </div>
+                </div>
+            </mat-expansion-panel>
+        </div>
+    </fury-page-layout-content>
+
+    <fury-page-layout-content>
+        <!-- @fadeInUp] -->
         <div fxLayout="row" layout-wrap fxLayoutGap="10px">
             <div>
                 <button class="mb" mat-raised-button color="accent" (click)="refresh()">Refresh Mids</button>
@@ -76,7 +79,8 @@
                 <button *ngIf="isBulkUpdate" mat-raised-button color="accent" (click)="assignBulkGroup()">Assign Group</button>
             </div>
             <div>
-                <button *ngIf="isBulkUpdate" mat-raised-button color="warn" (click)="handleBulkDeleteAction()">Remove Groups</button>
+                <button *ngIf="isBulkUpdate" mat-raised-button color="warn" (click)="handleBulkDeleteAction()">Remove
+                    Groups</button>
             </div>
         </div>
         <!-- <div class="mt mb"> -->
@@ -103,6 +107,7 @@
             </div>
         </div>
         <!-- </div> -->
+
         <fury-list name="Mids" [columns]="columns" (refresh)="refreshColumns()" (filterChange)="onFilterChange($event)">
             <!-- <div class="actions">
           <button class="create" (click)="createCustomer()" type="button" mat-mini-fab color="primary">
@@ -110,63 +115,68 @@
           </button>
         </div> -->
             <mat-progress-bar mode="indeterminate" *ngIf="isLoading"></mat-progress-bar>
-            <table [dataSource]="dataSource" mat-table matSort>
+            <div class="sticky-columns">
+                <table [dataSource]="dataSource" mat-table matSort>
 
-                <!-- Checkbox Column -->
-                <ng-container matColumnDef="checkbox">
-                    <th *matHeaderCellDef class="actions-cell" mat-header-cell>
-                        <mat-checkbox (change)="updateCheck()" [(ngModel)]="selectAll" color="accent" (click)="$event.stopPropagation()"></mat-checkbox>
-                    </th>
-                    <td *matCellDef="let row" class="actions-cell" mat-cell>
-                        <mat-checkbox [(ngModel)]="row.checked" color="primary" (change)='updateCheckedRow($event, row)'></mat-checkbox>
-                    </td>
-                </ng-container>
-
-                <ng-container *ngFor="let column of columns">
-                    <ng-container *ngIf="column.isModelProperty" [matColumnDef]="column.property">
-                        <th *matHeaderCellDef mat-header-cell mat-sort-header> {{ column.name }}</th>
-                        <td *matCellDef="let row" mat-cell>
-                            {{ row[column.property] }}
+                    <!-- Checkbox Column -->
+                    <ng-container matColumnDef="checkbox">
+                        <th *matHeaderCellDef class="actions-cell" mat-header-cell>
+                            <mat-checkbox (change)="updateCheck()" [(ngModel)]="selectAll" color="accent" (click)="$event.stopPropagation()"></mat-checkbox>
+                        </th>
+                        <td *matCellDef="let row" class="actions-cell" mat-cell>
+                            <mat-checkbox [(ngModel)]="row.checked" color="primary" (change)='updateCheckedRow($event, row)'></mat-checkbox>
                         </td>
                     </ng-container>
-                </ng-container>
 
-                <!-- Group name column -->
-                <ng-container matColumnDef="mid_group_name">
-                    <th *matHeaderCellDef mat-header-cell mat-sort-header>Group Name</th>
-                    <td *matCellDef="let row" (click)="openAssignDialog(row.gateway_alias)" mat-cell [ngClass]="{'highlight-group': !row.mid_group_name}">
-                        {{ row.mid_group_name? row.mid_group_name : 'Unassigned' }}
-                    </td>
-                </ng-container>
-                
-                <!-- mid_count column  -->
-                <ng-container matColumnDef="mid_count">
-                    <th *matHeaderCellDef mat-header-cell mat-sort-header>Mid Count</th>
-                    <td *matCellDef="let row, index as i" [matTooltip]="['item 1', 'item 2'] | tooltipList"
-                        matTooltipClass="tooltip-list" mat-cell #tooltip="matTooltip" matTooltipPosition="below">
-                        {{ row.mid_count }}
-                    </td>
-                </ng-container>
+                    <ng-container *ngFor="let column of columns">
+                        <ng-container *ngIf="column.isModelProperty" [matColumnDef]="column.property">
+                            <th *matHeaderCellDef mat-header-cell mat-sort-header> {{ column.name }}</th>
+                            <td *matCellDef="let row" mat-cell>
+                                {{ row[column.property] }}
+                            </td>
+                        </ng-container>
+                    </ng-container>
 
-                <!-- Global monthly cap column -->
-                <ng-container matColumnDef="current_monthly_amount">
-                    <th *matHeaderCellDef mat-header-cell mat-sort-header>Current Monthly Amount</th>
-                    <td *matCellDef="let row" mat-cell [ngClass]="row.current_monthly_amount == '0.00' ? 'highlight-danger' : ''">
-                        {{ row.current_monthly_amount }}
-                    </td>
-                </ng-container>
+                    <!-- Group name column -->
+                    <ng-container matColumnDef="mid_group_name">
+                        <th *matHeaderCellDef mat-header-cell mat-sort-header>Group Name</th>
+                        <td *matCellDef="let row" (click)="openAssignDialog(row.gateway_alias)" mat-cell [ngClass]="{'highlight-group': !row.mid_group_name}">
+                            {{ row.mid_group_name? row.mid_group_name : 'Unassigned' }}
+                        </td>
+                    </ng-container>
 
-                <ng-container matColumnDef="actions">
-                    <th mat-header-cell *matHeaderCellDef> Actions </th>
-                    <td mat-cell *matCellDef="let row">
-                        <a class="view-link" (click)="viewMidDetails(row.gateway_alias)">View</a> |
-                        <a class="delete-link" (click)="handleDeleteAction(row.gateway_alias)">Unassign</a>
-                    </td>
-                </ng-container>
+                    <!-- mid_count column  -->
+                    <ng-container matColumnDef="mid_count">
+                        <th *matHeaderCellDef mat-header-cell mat-sort-header>Mid Count</th>
+                        <td *matCellDef="let row, index as i" [matTooltip]="['item 1', 'item 2'] | tooltipList"
+                            matTooltipClass="tooltip-list" mat-cell #tooltip="matTooltip" matTooltipPosition="below">
+                            {{ row.mid_count }}
+                        </td>
+                    </ng-container>
 
-                <tr *matHeaderRowDef="visibleColumns" mat-header-row (change)='displayChange($event, row)'  ></tr>
-                <tr *matRowDef="let row; columns: visibleColumns;" class="clickable route-animations-elements" mat-row></tr>
-            </table>
+                    <!-- Global monthly cap column -->
+                    <ng-container matColumnDef="current_monthly_amount">
+                        <th *matHeaderCellDef mat-header-cell mat-sort-header>Current Monthly Amount</th>
+                        <td *matCellDef="let row" mat-cell [ngClass]="row.current_monthly_amount == '0.00' ? 'highlight-danger' : ''">
+                            {{ row.current_monthly_amount }}
+                        </td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="actions">
+                        <th mat-header-cell *matHeaderCellDef> Actions </th>
+                        <td mat-cell *matCellDef="let row">
+                            <a class="view-link" (click)="viewMidDetails(row.gateway_alias)">View</a> |
+                            <a class="delete-link" (click)="handleDeleteAction(row.gateway_alias)">Unassign</a>
+                        </td>
+                    </ng-container>
+
+                    <!-- <mat-header-row *matHeaderRowDef="visibleColumns" [style.min-height]="0" ></mat-header-row> -->
+                    <tr *matHeaderRowDef="visibleColumns;  sticky: true" mat-header-row (change)='displayChange($event, row)'></tr>
+                    <tr *matRowDef="let row; columns: visibleColumns;" class="clickable route-animations-elements"
+                        mat-row></tr>
+                </table>
+            </div>
+
 
             <!-- <mat-paginator #paginator [length]="totalRows" [pageIndex]="currentPage" [pageSize]="pageSize"
                 [pageSizeOptions]="pageSizeOptions" (page)="pageChanged($event)" aria-label="Select page">

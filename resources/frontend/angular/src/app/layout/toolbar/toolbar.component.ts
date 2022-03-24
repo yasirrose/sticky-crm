@@ -15,6 +15,7 @@ export class ToolbarComponent implements OnInit {
 
   @Output() openSidenav = new EventEmitter();
   @Output() openQuickPanel = new EventEmitter();
+  @Output() openConfigPanel = new EventEmitter();
 
   
   constructor(private themeService: ThemeService) {
@@ -23,5 +24,7 @@ export class ToolbarComponent implements OnInit {
 
   ngOnInit() { }
 
-
+  toggleConfigPanel(){
+    this.openConfigPanel.emit();
+  }
 }
