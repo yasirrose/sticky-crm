@@ -4,7 +4,7 @@
 
 <!-- QUICKPANEL -->
 <fury-sidebar #configPanel="furySidebar" [backdrop]="backdrop" [invisibleBackdrop]="true" position="right">
-  <!-- <fury-config-panel></fury-config-panel> -->
+  <fury-config-panel></fury-config-panel>
 </fury-sidebar>
 <!-- END QUICKPANEL -->
 
@@ -60,7 +60,7 @@
 
 <ng-template #toolbar>
   <!-- TOOLBAR -->
-  <fury-toolbar (openQuickPanel)="openQuickPanel()" [hasNavigation]="topNavigation$ | async" (openSidenav)="openSidenav()"
+  <fury-toolbar (openConfigPanel)="openConfigPanel()" [hasNavigation]="topNavigation$ | async" (openSidenav)="openSidenav()"
     *ngIf="toolbarVisible$ | async" fxFlex="none"></fury-toolbar>
   <!-- END TOOLBAR -->
 

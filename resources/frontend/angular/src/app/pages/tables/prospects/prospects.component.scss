@@ -10,3 +10,10 @@
 .mb {
   margin-bottom: 10px;
 }
+.sticky-columns {
+  // display: flex;
+  // flex-direction: column;
+  height: 550px;
+  max-width: 100%;
+  overflow: auto;
+}

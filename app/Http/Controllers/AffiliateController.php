@@ -14,7 +14,8 @@ class AffiliateController extends Controller
      */
     public function index()
     {
-        //
+        $data = Affiliate::all();
+        return response()->json(['status' => true, 'data' => $data]);
     }
 
     /**
@@ -81,5 +82,9 @@ class AffiliateController extends Controller
     public function destroy(Affiliate $affiliate)
     {
         //
+    }
+    public function pull_affiliates()
+    {
+        return response()->json(['status' => true]);
     }
 }
