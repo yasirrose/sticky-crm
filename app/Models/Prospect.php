@@ -13,7 +13,7 @@ class Prospect extends Model
     protected $table = 'prospects';
     protected $dates = ['deleted_at'];
     // public $timestamps = false;
-    protected $cast = [
+    protected $casts = [
         'notes' => 'array'
     ];
     protected $fillable = [

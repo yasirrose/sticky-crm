@@ -162,8 +162,12 @@ class Order extends Model
     {
         return Schema::getColumnListing($this->table);
     }
-    // public function getProductsAttribute($value)
-    // {
-    //     return unserialize($value);
-    // }
+    public function product()
+    {
+        return $this->hasOne(OrderProduct::class, 'order_id', 'order_id');
+    }
+    public function getProductsAttribute($value)
+    {
+        return unserialize($value);
+    }
 }

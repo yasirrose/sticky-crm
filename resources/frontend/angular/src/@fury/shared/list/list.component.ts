@@ -27,18 +27,21 @@ export class ListComponent implements AfterViewInit {
   ngAfterViewInit() {
     if (!this.hideHeader) {
       fromEvent(this.filter.nativeElement, 'keyup').pipe(
-        distinctUntilChanged(),
-        debounceTime(150)
+        // distinctUntilChanged(),
+        // debounceTime(150)
       ).subscribe(() => {
         this.filterChange.emit(this.filter.nativeElement.value);
       });
     }
   }
 
-  toggleColumnVisibility(column, event) {
+  async toggleColumnVisibility(column, event) {
     event.stopPropagation();
     event.stopImmediatePropagation();
     column.visible = !column.visible;
+    await this.listService.changeColumn(this.name, column, event.checked).then(data => {
+      // this.refresh.next('');
+    });
   }
 
   async changeVisibility(column, event: any){
