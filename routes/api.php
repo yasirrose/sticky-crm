@@ -96,3 +96,4 @@ Route::post('remove_groups', [MidController::class, 'remove_groups']);
 Route::post('change_column', [ColumnController::class, 'change_column']);
 Route::post('delete_prospects', [ProspectController::class, 'delete_prospects']);
 Route::get('pull_affiliates', [AffiliateController::class, 'pull_affiliates']);
+Route::get('refresh_decline_percentage', [MidController::class, 'refresh_decline_percentage']);

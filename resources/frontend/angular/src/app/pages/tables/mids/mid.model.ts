@@ -19,6 +19,8 @@ export class Mid {
     global_monthly_cap: string;
     current_monthly_amount: string;
     processing_percent: string;
+    decline_per: string;
+    decline_orders: [];
     checked: boolean;
 
     constructor(mid) {
@@ -41,6 +43,8 @@ export class Mid {
         this.global_monthly_cap = mid.global_monthly_cap;
         this.current_monthly_amount = mid.current_monthly_amount;
         this.processing_percent = mid.processing_percent.substring(0, mid.processing_percent.length - 3) + ' %';
+        this.decline_per = mid.decline_per + ' %';
+        this.decline_orders = mid.decline_orders;
         this.checked = false;
     }
 }

@@ -80,6 +80,7 @@ export class MidsComponent implements OnInit, AfterViewInit, OnDestroy {
   isBulkUpdate: boolean = false;
   columns: any = [];
   notyf = new Notyf({ types: [{ type: 'info', background: '#6495ED', icon: '<i class="fa-solid fa-clock"></i>' }] });
+  toolTipMids = [];
 
   // @Input()
 
@@ -182,259 +183,297 @@ export class MidsComponent implements OnInit, AfterViewInit, OnDestroy {
       this.selectAll = false;
       this.isBulkUpdate = false;
       this.selectedRows = [];
+
     }, error => {
       this.skeletonLoader = false;
       this.isLoading = false;
     });
     this.countContent();
+    for (let i = 0; i < this.mids.length; i++) {
+      this.toolTipMids[i] = this.getAssignedMids(this.mids[i]);
+    }
   }
 
-  countContent() {
-    this.assignedMids = 0;
-    this.unAssignedMids = 0;
-    this.unInitializedMids = 0;
-
-    this.mids.forEach((mid) => {
-      if (mid.current_monthly_amount == '0.00') {
-        this.unInitializedMids++;
+  getAssignedMids(mid) {
+    var productNames = [];
+    // for (var i = 0; i < mid.decline_orders.length; i++) {
+    //   productNames[mid[i].name] = 1 + (productNames[mid[i].name] || 0);
+    // }
+    mid.decline_orders.forEach(function (v) {
+      let list = '';
+      list += v.name + " --> " + mid.decline_orders.filter(function (w) { return w.name == v.name; }).length;
+      if (!productNames.includes(list)){
+        productNames.push(list);
       }
-      else if (!mid.mid_group_name) {
-        this.unAssignedMids++;
-      } else {
-        this.assignedMids++;
-      }
-    });
+  });
+
+  // mid.decline_orders.forEach(function (data, index) {
+  //   productNames = data.reduce((acc, val) => {
+  //     acc[val] = acc[val] === undefined ? 1 : acc[val] += 1;
+  //     return acc;
+  //   }, {});
+  // });
+
+  //   productNames[data.name] = (productNames[data.name] || 0) + 1;
+  console.log('productNames', productNames);
+    return productNames;
+var result = [];
+// productNames.forEach(function (item, index) {
+//   var list = '';
+//   list += item;
+//   console.log('item :', item);
+//   result.push(list);
+// });
+console.log('result :', result);
+return productNames;
   }
 
-  async getDropData() {
-    const response = fetch(`${this.endPoint}/api/getDropDownContent`)
-      .then(res => res.json()).then((data) => {
-        this.filterData = data;
-      });
-  }
+countContent() {
+  this.assignedMids = 0;
+  this.unAssignedMids = 0;
+  this.unInitializedMids = 0;
 
-  manageGetResponse(mids) {
-    if (mids.status) {
-      this.mids = mids.data;
-      this.dataSource.data = mids.data;
-      this.isLoading = false;
+  this.mids.forEach((mid) => {
+    if (mid.current_monthly_amount == '0.00') {
+      this.unInitializedMids++;
+    }
+    else if (!mid.mid_group_name) {
+      this.unAssignedMids++;
     } else {
-      this.isLoading = false;
+      this.assignedMids++;
     }
-  }
+  });
+}
 
-  async manageAssignResponse(data) {
-    if (Object.keys(data).length) {
-      if (data.status) {
-        await this.getData();
-        this.notyf.success(data.message);
-        this.midGroupComponent.refresh();
-      } else if (!data.status) {
-        this.notyf.error({ duration: 0, dismissible: true, message: data.message });
-      }
-    }
-  }
+async getDropData() {
+  const response = fetch(`${this.endPoint}/api/getDropDownContent`)
+    .then(res => res.json()).then((data) => {
+      this.filterData = data;
+    });
+}
 
-  async manageUnassignResponse(data) {
-    if (Object.keys(data).length) {
-      if (data.status) {
-        await this.getData();
-        this.notyf.success(data.message);
-        this.midGroupComponent.refresh();
-      }
-    }
+manageGetResponse(mids) {
+  if (mids.status) {
+    this.mids = mids.data;
+    this.dataSource.data = mids.data;
+    this.isLoading = false;
+  } else {
+    this.isLoading = false;
   }
+}
 
-  async manageBulkGroupResponse(data) {
+async manageAssignResponse(data) {
+  if (Object.keys(data).length) {
     if (data.status) {
       await this.getData();
       this.notyf.success(data.message);
       this.midGroupComponent.refresh();
-      this.isBulkUpdate = false;
+    } else if (!data.status) {
+      this.notyf.error({ duration: 0, dismissible: true, message: data.message });
     }
   }
+}
 
-  // manageColumnsResponse(data) {
-  //   if (data.status) {
-  //     this.columns = data.data;
-  //   }
-  // }
-
-  async manageRefreshResponse(data) {
+async manageUnassignResponse(data) {
+  if (Object.keys(data).length) {
     if (data.status) {
       await this.getData();
-      this.notyf.success(data.data.new_mids + ' New Mids Found and ' + data.data.updated_mids + ' Mids Updated');
+      this.notyf.success(data.message);
       this.midGroupComponent.refresh();
     }
   }
+}
 
-  onFilterChange(value) {
-    if (!this.dataSource) {
-      return;
+async manageBulkGroupResponse(data) {
+  if (data.status) {
+    await this.getData();
+    this.notyf.success(data.message);
+    this.midGroupComponent.refresh();
+    this.isBulkUpdate = false;
+  }
+}
+
+// manageColumnsResponse(data) {
+//   if (data.status) {
+//     this.columns = data.data;
+//   }
+// }
+
+async manageRefreshResponse(data) {
+  if (data.status) {
+    await this.getData();
+    this.notyf.success(data.data.new_mids + ' New Mids Found and ' + data.data.updated_mids + ' Mids Updated');
+    this.midGroupComponent.refresh();
+  }
+}
+
+onFilterChange(value) {
+  if (!this.dataSource) {
+    return;
+  }
+  value = value.trim();
+  value = value.toLowerCase();
+  this.dataSource.filter = value;
+}
+
+viewMidDetails(alias) {
+  this.router.navigate(['mid-view', alias]);
+}
+
+refresh() {
+  this.isLoading = true;
+  this.midsService.refresh();
+}
+
+handleDeleteAction(alias) {
+  const dialogData = new ConfirmationDialogModel('Confirm Delete', 'Are you sure to remove this from group?');
+  const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
+    maxWidth: '500px',
+    closeOnNavigation: true,
+    data: dialogData
+  })
+  dialogRef.afterClosed().subscribe(dialogResult => {
+    if (dialogResult) {
+      this.midsService.deleteData(alias);
+      // this.isLoading = true;
+      // this.dataSource.data = [];
+      // this.idArray = [];
     }
-    value = value.trim();
-    value = value.toLowerCase();
-    this.dataSource.filter = value;
+  });
+}
+selectDate(param) {
+  var startDate = new Date();
+  var endDate = new Date();
+  if (param == 'today') {
+    this.range.get('start').setValue(new Date());
+    this.range.get('end').setValue(new Date());
+  } else if (param == 'yesterday') {
+    this.range.get('start').setValue(new Date(startDate.setDate(startDate.getDate() - 1)));
+    this.range.get('end').setValue(new Date());
+  } else if (param == 'thisMonth') {
+    this.range.get('start').setValue(new Date(startDate.setMonth(startDate.getMonth() - 1)));
+    this.range.get('end').setValue(new Date());
+  } else if (param == 'pastWeek') {
+    this.range.get('start').setValue(new Date(startDate.setDate(startDate.getDate() - 7)));
+    this.range.get('end').setValue(new Date());
+  } else if (param == 'pastTwoWeek') {
+    this.range.get('start').setValue(new Date(startDate.setDate(startDate.getDate() - 14)));
+    this.range.get('end').setValue(new Date());
+  } else if (param == 'lastMonth') {
+    this.range.get('start').setValue(new Date(startDate.setMonth(startDate.getMonth() - 2)));
+    this.range.get('end').setValue(new Date(endDate.setMonth(endDate.getMonth() - 1)));
+  } else if (param == 'lastThreeMonths') {
+    this.range.get('start').setValue(new Date(startDate.setMonth(startDate.getMonth() - 4)));
+    this.range.get('end').setValue(new Date(endDate.setMonth(endDate.getMonth() - 1)));
+  } else if (param == 'lastSixMonths') {
+    this.range.get('start').setValue(new Date(startDate.setMonth(startDate.getMonth() - 7)));
+    this.range.get('end').setValue(new Date(endDate.setMonth(endDate.getMonth() - 1)));
   }
+}
 
-  viewMidDetails(alias) {
-    this.router.navigate(['mid-view', alias]);
-  }
-
-  refresh() {
-    this.isLoading = true;
-    this.midsService.refresh();
-  }
-
-  handleDeleteAction(alias) {
-    const dialogData = new ConfirmationDialogModel('Confirm Delete', 'Are you sure to remove this from group?');
-    const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
-      maxWidth: '500px',
-      closeOnNavigation: true,
-      data: dialogData
-    })
-    dialogRef.afterClosed().subscribe(dialogResult => {
-      if (dialogResult) {
-        this.midsService.deleteData(alias);
-        // this.isLoading = true;
-        // this.dataSource.data = [];
-        // this.idArray = [];
-      }
-    });
-  }
-  selectDate(param) {
-    var startDate = new Date();
-    var endDate = new Date();
-    if (param == 'today') {
-      this.range.get('start').setValue(new Date());
-      this.range.get('end').setValue(new Date());
-    } else if (param == 'yesterday') {
-      this.range.get('start').setValue(new Date(startDate.setDate(startDate.getDate() - 1)));
-      this.range.get('end').setValue(new Date());
-    } else if (param == 'thisMonth') {
-      this.range.get('start').setValue(new Date(startDate.setMonth(startDate.getMonth() - 1)));
-      this.range.get('end').setValue(new Date());
-    } else if (param == 'pastWeek') {
-      this.range.get('start').setValue(new Date(startDate.setDate(startDate.getDate() - 7)));
-      this.range.get('end').setValue(new Date());
-    } else if (param == 'pastTwoWeek') {
-      this.range.get('start').setValue(new Date(startDate.setDate(startDate.getDate() - 14)));
-      this.range.get('end').setValue(new Date());
-    } else if (param == 'lastMonth') {
-      this.range.get('start').setValue(new Date(startDate.setMonth(startDate.getMonth() - 2)));
-      this.range.get('end').setValue(new Date(endDate.setMonth(endDate.getMonth() - 1)));
-    } else if (param == 'lastThreeMonths') {
-      this.range.get('start').setValue(new Date(startDate.setMonth(startDate.getMonth() - 4)));
-      this.range.get('end').setValue(new Date(endDate.setMonth(endDate.getMonth() - 1)));
-    } else if (param == 'lastSixMonths') {
-      this.range.get('start').setValue(new Date(startDate.setMonth(startDate.getMonth() - 7)));
-      this.range.get('end').setValue(new Date(endDate.setMonth(endDate.getMonth() - 1)));
+handleBulkDeleteAction() {
+  const dialogData = new ConfirmationDialogModel('Confirm Delete', 'Are you sure to remove these mids from group?');
+  const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
+    maxWidth: '500px',
+    closeOnNavigation: true,
+    data: dialogData
+  })
+  dialogRef.afterClosed().subscribe(dialogResult => {
+    if (dialogResult) {
+      this.midsService.assignBulkGroup('', this.selectedRows);
+      this.selectedRows = [];
     }
-  }
+  });
+}
 
-  handleBulkDeleteAction() {
-    const dialogData = new ConfirmationDialogModel('Confirm Delete', 'Are you sure to remove these mids from group?');
-    const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
-      maxWidth: '500px',
-      closeOnNavigation: true,
-      data: dialogData
-    })
-    dialogRef.afterClosed().subscribe(dialogResult => {
-      if (dialogResult) {
-        this.midsService.assignBulkGroup('', this.selectedRows);
-        this.selectedRows = [];
-      }
+openAssignDialog(alias) {
+  const dialogData = new GroupDialogModel('Assign New Group to: ' + alias, 'Please select Mid-Group from the following options.', []);
+  const dialogRef = this.dialog.open(GroupDialogComponent, {
+    maxWidth: '500px',
+    closeOnNavigation: true,
+    data: dialogData
+  })
+  dialogRef.afterClosed().subscribe(groupName => {
+    if (groupName) {
+      this.midsService.assignGroup(alias, groupName);
+    }
+  });
+}
+
+updateCheck() {
+  this.selectedRows = [];
+  if (this.selectAll === true) {
+    this.mids.map((mid) => {
+      mid.checked = true;
+      this.selectedRows.push(mid);
+      this.isBulkUpdate = true;
     });
-  }
 
-  openAssignDialog(alias) {
-    const dialogData = new GroupDialogModel('Assign New Group to: ' + alias, 'Please select Mid-Group from the following options.', []);
-    const dialogRef = this.dialog.open(GroupDialogComponent, {
-      maxWidth: '500px',
-      closeOnNavigation: true,
-      data: dialogData
-    })
-    dialogRef.afterClosed().subscribe(groupName => {
-      if (groupName) {
-        this.midsService.assignGroup(alias, groupName);
-      }
+  } else {
+    this.mids.map((mid) => {
+      mid.checked = false;
+      this.isBulkUpdate = false;
     });
+    this.isBulkUpdate = false;
   }
+  console.log(this.selectedRows);
+}
 
-  updateCheck() {
-    this.selectedRows = [];
-    if (this.selectAll === true) {
-      this.mids.map((mid) => {
-        mid.checked = true;
-        this.selectedRows.push(mid);
-        this.isBulkUpdate = true;
-      });
+assignBulkGroup() {
+  const dialogData = new GroupDialogModel('Assign New Group to: ', 'Please select Mid-Group from the following options.', this.selectedRows);
+  const dialogRef = this.dialog.open(GroupDialogComponent, {
+    maxWidth: '500px',
+    closeOnNavigation: true,
+    data: dialogData
+  })
+  dialogRef.afterClosed().subscribe(groupName => {
+    if (groupName) {
+      this.midsService.assignBulkGroup(groupName, this.selectedRows);
+      this.selectedRows = [];
+    }
+  });
+}
 
-    } else {
-      this.mids.map((mid) => {
-        mid.checked = false;
-        this.isBulkUpdate = false;
-      });
+updateCheckedRow(event: any, row) {
+  if (event.checked) {
+    row.checked = true;
+    this.selectedRows.push(row);
+    this.isBulkUpdate = true;
+  } else {
+    row.checked = false;
+    this.selectedRows.splice(this.selectedRows.indexOf(row), 1);
+    if (this.selectedRows.length === 0) {
       this.isBulkUpdate = false;
     }
-    console.log(this.selectedRows);
   }
+}
 
-  assignBulkGroup() {
-    const dialogData = new GroupDialogModel('Assign New Group to: ', 'Please select Mid-Group from the following options.', this.selectedRows);
-    const dialogRef = this.dialog.open(GroupDialogComponent, {
-      maxWidth: '500px',
-      closeOnNavigation: true,
-      data: dialogData
-    })
-    dialogRef.afterClosed().subscribe(groupName => {
-      if (groupName) {
-        this.midsService.assignBulkGroup(groupName, this.selectedRows);
-        this.selectedRows = [];
-      }
-    });
-  }
+displayChange(event: any, row) {
 
-  updateCheckedRow(event: any, row) {
-    if (event.checked) {
-      row.checked = true;
-      this.selectedRows.push(row);
-      this.isBulkUpdate = true;
-    } else {
-      row.checked = false;
-      this.selectedRows.splice(this.selectedRows.indexOf(row), 1);
-      if (this.selectedRows.length === 0) {
-        this.isBulkUpdate = false;
-      }
-    }
-  }
+}
+async refreshColumns() {
+  await this.midsService.getColumns().then(columns => {
+    this.columns = columns.data;
+  });
+}
 
-  displayChange(event: any, row) {
-
+ngOnDestroy(): void {
+  this.notyf.dismissAll();
+  if(this.refreshSubscription) {
+    this.midsService.refreshResponse.next({});
+    this.refreshSubscription.unsubscribe();
   }
-  async refreshColumns() {
-    await this.midsService.getColumns().then(columns => {
-      this.columns = columns.data;
-    });
+    if(this.assignSubscription) {
+    this.midsService.assignGroupResponse.next({});
+    this.assignSubscription.unsubscribe();
   }
-
-  ngOnDestroy(): void {
-    this.notyf.dismissAll();
-    if (this.refreshSubscription) {
-      this.midsService.refreshResponse.next({});
-      this.refreshSubscription.unsubscribe();
-    }
-    if (this.assignSubscription) {
-      this.midsService.assignGroupResponse.next({});
-      this.assignSubscription.unsubscribe();
-    }
-    if (this.bulkUpdateSubscription) {
-      this.midsService.assignBulkGroupResponse.next({});
-      this.bulkUpdateSubscription.unsubscribe();
-    }
-    if (this.unAssignSubscription) {
-      this.midsService.unAssignGroupResponse.next({});
-      this.unAssignSubscription.unsubscribe();
-    }
+    if(this.bulkUpdateSubscription) {
+    this.midsService.assignBulkGroupResponse.next({});
+    this.bulkUpdateSubscription.unsubscribe();
   }
+    if(this.unAssignSubscription) {
+    this.midsService.unAssignGroupResponse.next({});
+    this.unAssignSubscription.unsubscribe();
+  }
+}
 }

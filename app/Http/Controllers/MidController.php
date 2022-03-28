@@ -19,19 +19,21 @@ class MidController extends Controller
      */
     public function index(Request $request)
     {
+        // $data = Mid::where(['id'=>1])->get();
+        // dd(json_decode($data[0]->decline_orders));
         $query = Mid::select('*');
         $start_date = $request->start_date;
         $end_date = $request->end_date;
-        if ($start_date != null && $end_date != null){
+        if ($start_date != null && $end_date != null) {
             $start_date = date('Y-m-d', strtotime($request->start_date));
             $end_date = date('Y-m-d', strtotime($request->start_date));
-            $query->whereBetween('created_on', [$start_date.' 00:00:00', $end_date.' 23:59:59']);
+            $query->whereBetween('created_on', [$start_date . ' 00:00:00', $end_date . ' 23:59:59']);
         }
         $data = $query->get();
 
         foreach ($data as $mid) {
+            $mid->decline_orders = json_decode($mid->decline_orders);
             $mid->global_fields = Profile::where(['alias' => $mid->gateway_alias])->pluck('global_fields')->first();
-            // $mid->mid_count = Order::where(['gateway_id'=>$mid->gateway_id])->count();
         }
         return response()->json(['status' => true, 'data' => $data]);
     }
@@ -173,10 +175,10 @@ class MidController extends Controller
     {
         // dd($request->alias);
         $profile = Profile::where('alias', $request->alias)->first();
-        if($profile){
+        if ($profile) {
             DB::table('profiles')->where('alias', $request->alias)->update(['global_fields->mid_group' => $request->group_name]);
             return response()->json(['status' => true, 'message' => $request->group_name . ' Assigned as Mid-group to ' . $profile->alias]);
-        }else{
+        } else {
             return response()->json(['status' => false, 'message' => 'Gateway Alias ' . $request->alias . ' is not found against any Profile.']);
         }
     }
@@ -187,16 +189,17 @@ class MidController extends Controller
         $data = $request->all();
         $alias = array_column($data, 'gateway_alias');
         $total_mids = count($alias);
-        if($request->group_name == ''){
+        if ($request->group_name == '') {
             DB::table('profiles')->whereIn('alias', $alias)->update(['global_fields->mid_group' => '']);
             return response()->json(['status' => true, 'message' => 'Unassigned group to ' . $total_mids . ' mids']);
-        } else{
-            DB::table('profiles')->whereIn('alias', $alias)->update(['global_fields->mid_group' => $request->group_name]);            
+        } else {
+            DB::table('profiles')->whereIn('alias', $alias)->update(['global_fields->mid_group' => $request->group_name]);
             return response()->json(['status' => true, 'message' => $request->group_name . ' Assigned as Mid-group to ' . $total_mids . ' mids ']);
         }
     }
 
-    public function remove_groups(Request $request){
+    public function remove_groups(Request $request)
+    {
         $data = $request->all();
         dd($data);
     }
@@ -216,4 +219,17 @@ class MidController extends Controller
         }
         return response()->json(['status' => true, 'data' => ['message' => "Mid Counts Refreshed Successfully."]]);
     }
+    public function refresh_decline_percentage()
+    {
+        $data = Mid::all();
+        foreach ($data as $mid) {
+            $declined_orders = Order::with('product')->where(['gateway_id' => $mid->gateway_id, 'prepaid_match' => 'NO', 'is_test_cc' => 0, 'order_status' => 7]);
+            $mid->decline_per = ($declined_orders->count()) / 100;
+            $products_data = $declined_orders->get()->pluck('product')->toArray();
+            // dd(json_encode($products_data));
+            $mid->decline_orders = $products_data; 
+            $mid->save();
+        }
+    }
+
 }

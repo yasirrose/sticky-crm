@@ -11,6 +11,9 @@ class Mid extends Model
     // public $timestamps = false;
     protected $guarded = [];
     protected $table = 'mids';
+    // protected $casts = [
+    //     'decline_orders' => 'array'
+    // ];
     protected $fillable = [
         'router_id',
         'router_name',
@@ -40,6 +43,8 @@ class Mid extends Model
         'gateway_descriptor',
         'customer_service_number',
         'gateway_currency',
+        'decline_per',
+        'decline_orders',
         'mid_group',
     ];
 }

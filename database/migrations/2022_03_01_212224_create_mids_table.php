@@ -31,6 +31,8 @@ class CreateMidsTable extends Migration
             $table->string('global_monthly_cap')->nullable()->default(null);
             $table->string('current_monthly_amount')->nullable()->default(null);
             $table->string('processing_percent')->nullable()->default(null);
+            $table->string('decline_per')->nullable()->default(0);
+            $table->json('decline_orders')->nullable()->default(null);
             $table->foreign('campaign_id')->references('campaign_id')->on('campaigns');
             $table->timestamps();
         });

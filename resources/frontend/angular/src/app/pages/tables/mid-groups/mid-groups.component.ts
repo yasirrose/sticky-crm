@@ -92,7 +92,7 @@ export class MidGroupsComponent implements OnInit, PipeTransform, AfterViewInit,
   @ViewChild(MatSort, { static: true }) sort: MatSort;
   @ViewChild(MidGroupsComponent, { static: true }) MidGroupComponent: MidGroupsComponent;
 
-  constructor(private dialog: MatDialog, private midGroupService: MidGroupsService, private apiService: ApiService) { 
+  constructor(private dialog: MatDialog, private midGroupService: MidGroupsService, private apiService: ApiService) {
     this.notyf.dismissAll();
   }
 
@@ -143,12 +143,12 @@ export class MidGroupsComponent implements OnInit, PipeTransform, AfterViewInit,
   //   this.getData();
   // }
 
-  async getData() {
+  getData() {
     this.isLoading = true;
-    if(this.range.get('start').value != null){
+    if (this.range.get('start').value != null) {
       this.start_date = formatDate(this.range.get('start').value, 'yyyy/MM/dd', 'en')
     }
-    if(this.range.get('end').value != null){
+    if (this.range.get('end').value != null) {
       this.end_date = formatDate(this.range.get('end').value, 'yyyy/MM/dd', 'en')
     }
     this.filters = {
@@ -156,7 +156,7 @@ export class MidGroupsComponent implements OnInit, PipeTransform, AfterViewInit,
       "end": this.end_date,
     }
 
-    await this.midGroupService.getMidGroups(this.filters)
+    this.midGroupService.getMidGroups(this.filters)
       .then(midGroups => {
         this.midGroups = midGroups.data;
         this.dataSource.data = midGroups.data;

@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, of } from 'rxjs';
-import { environment } from 'src/environments/environment';
 import { ApiService } from 'src/app/api.service';
 
 @Injectable({
