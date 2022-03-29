@@ -44,6 +44,7 @@ class Mid extends Model
         'customer_service_number',
         'gateway_currency',
         'decline_per',
+        'decline_id',
         'decline_orders',
         'mid_group',
     ];

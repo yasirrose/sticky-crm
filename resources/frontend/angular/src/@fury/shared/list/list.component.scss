@@ -10,6 +10,7 @@
     height: $card-header-height;
     border-top-left-radius: $border-radius;
     border-top-right-radius: $border-radius;
+    // max-width: 1260px;
 
     @include media-xs {
       height: auto;

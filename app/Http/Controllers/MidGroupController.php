@@ -19,7 +19,7 @@ class MidGroupController extends Controller
      */
     public function index(Request $request)
     {
-        $query = MidGroup::select('*');
+        $query = MidGroup::select('*')->whereNull('deleted_at');
         $start_date = $request->start_date;
         $end_date = $request->end_date;
         if ($start_date != null && $end_date != null){
@@ -34,7 +34,7 @@ class MidGroupController extends Controller
             $profiles = Profile::where('global_fields->mid_group', '=', $group['group_name']);
             $group['assigned_mids'] = $profiles->count();
             $group['assigned_mid_ids'] = $profiles->pluck('profile_id')->toArray();
-            $group['mids_data'] = Mid::whereIn('gateway_id', $group['assigned_mid_ids'])->get();
+            $group['mids_data'] = DB::table('mids')->whereIn('gateway_id', $group['assigned_mid_ids'])->get();
         }
         return response()->json(['status' => true, 'data' => $data]);
     }

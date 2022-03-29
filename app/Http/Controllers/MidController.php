@@ -5,9 +5,11 @@ namespace App\Http\Controllers;
 use App\Models\Mid;
 use App\Models\Profile;
 use App\Models\Order;
+use App\Models\Decline;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
+// use \stdClass;
 use DB;
 
 class MidController extends Controller
@@ -19,8 +21,6 @@ class MidController extends Controller
      */
     public function index(Request $request)
     {
-        // $data = Mid::where(['id'=>1])->get();
-        // dd(json_decode($data[0]->decline_orders));
         $query = Mid::select('*');
         $start_date = $request->start_date;
         $end_date = $request->end_date;
@@ -32,7 +32,8 @@ class MidController extends Controller
         $data = $query->get();
 
         foreach ($data as $mid) {
-            $mid->decline_orders = json_decode($mid->decline_orders);
+            // $mid->decline_orders = json_decode($mid->decline_orders);
+            $mid->decline_orders = Decline::where(['gateway_id'=> $mid->gateway_id])->first();
             $mid->global_fields = Profile::where(['alias' => $mid->gateway_alias])->pluck('global_fields')->first();
         }
         return response()->json(['status' => true, 'data' => $data]);
@@ -227,9 +228,37 @@ class MidController extends Controller
             $mid->decline_per = ($declined_orders->count()) / 100;
             $products_data = $declined_orders->get()->pluck('product')->toArray();
             // dd(json_encode($products_data));
-            $mid->decline_orders = $products_data; 
+            $mid->decline_orders = $products_data;
             $mid->save();
         }
+    }
+    public function get_mids_decline_data()
+    {
+        $data = Mid::all();
+        foreach ($data as $mid) {
+            $data = [];
+            $data['gateway_id'] = $mid->gateway_id;
+            $data['gateway_alias'] = $mid->gateway_alias;
+            $declined_orders = Order::with('product')->where(['gateway_id' => $mid->gateway_id, 'prepaid_match' => 'NO', 'is_test_cc' => 0, 'order_status' => 7]);
+            $total_orders = $declined_orders->count();
+            $data['decline_per'] = ($total_orders) / 100;
+            $product_names = $declined_orders->get()->countBy('product.name')->toArray();
+            foreach ($product_names as $name => $count) {
+                $decline_data[] = (object)array(
+                    'name' => $name,
+                    'count' => $count,
+                    'percentage' => round((($count / $total_orders) * 100), 2)
+                );
+            }
+            $decline_data['total'] = $total_orders;
+            $data['decline_data'] = $decline_data;
+            $data['total_declined'] = $total_orders;
+            $decline = Decline::create($data);
+            $mid->decline_id = $decline->id;
+            $mid->save();
+            $decline_data = null;
+        }
+        return response()->json(['status' => true]);
     }
 
 }

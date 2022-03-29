@@ -143,7 +143,7 @@ export class MidGroupsComponent implements OnInit, PipeTransform, AfterViewInit,
   //   this.getData();
   // }
 
-  getData() {
+  async getData() {
     this.isLoading = true;
     if (this.range.get('start').value != null) {
       this.start_date = formatDate(this.range.get('start').value, 'yyyy/MM/dd', 'en')
@@ -156,7 +156,7 @@ export class MidGroupsComponent implements OnInit, PipeTransform, AfterViewInit,
       "end": this.end_date,
     }
 
-    this.midGroupService.getMidGroups(this.filters)
+    await this.midGroupService.getMidGroups(this.filters)
       .then(midGroups => {
         this.midGroups = midGroups.data;
         this.dataSource.data = midGroups.data;

@@ -98,6 +98,13 @@
 .delete-link {
   color: #f62217;
 }
+.mat-column-current_monthly_amount {
+  text-align: right !important;
+  justify-content: flex-end !important;
+}
+td.mat-column-current_monthly_amount{
+  padding-right: 50px !important;
+}
 .sticky-columns {
   // display: flex;
   // flex-direction: column;
@@ -110,5 +117,13 @@
   white-space: pre-wrap;
   // font-size: 8px;
 }
-@media screen and (max-width: 992px) {
+:host ::ng-deep .mat-sort-header-container { 
+  display: flex;  
+  justify-content: center; 
 }
+
+th.mat-header-cell, td.mat-cell { 
+  text-align: center; 
+}
+
+
