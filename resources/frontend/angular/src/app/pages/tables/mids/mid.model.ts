@@ -1,5 +1,6 @@
 import { DatePipe } from '@angular/common'
 const datePipe: DatePipe = new DatePipe('en-US')
+let nf = new Intl.NumberFormat('en-US', { minimumFractionDigits: 2 });
 
 export class Mid {
     id: number;
@@ -40,11 +41,17 @@ export class Mid {
         this.campaign_id = mid.campaign_id;
         this.gateway_id = mid.gateway_id;
         this.gateway_alias = mid.gateway_alias;
-        this.global_monthly_cap = mid.global_monthly_cap;
+        this.global_monthly_cap = '$' + nf.format(mid.global_monthly_cap);
         this.current_monthly_amount = mid.current_monthly_amount;
-        this.processing_percent = mid.processing_percent.substring(0, mid.processing_percent.length - 3) + ' %';
-        this.decline_per = mid.decline_per + ' %';
+        this.processing_percent = mid.processing_percent + '%';
+        this.decline_per = mid.decline_orders.decline_per + '%';
         this.decline_orders = mid.decline_orders;
         this.checked = false;
     }
+
+    // numberWithCommas(x) {
+    //     var parts = x.toString().split(".");
+    //     parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    //     return parts.join(".");
+    // }
 }

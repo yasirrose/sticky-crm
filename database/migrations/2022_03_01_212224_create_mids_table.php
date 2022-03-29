@@ -26,13 +26,15 @@ class CreateMidsTable extends Migration
             $table->string('is_strict_preserve')->nullable()->default(null);
             $table->timestamp('created_on')->nullable()->default(null);
             $table->unsignedBigInteger('campaign_id')->nullable()->default(null);
-            $table->string('gateway_id')->nullable()->default(null);
+            $table->unsignedBigInteger('gateway_id')->unique();
             $table->string('gateway_alias')->nullable()->default(null);
             $table->string('global_monthly_cap')->nullable()->default(null);
             $table->string('current_monthly_amount')->nullable()->default(null);
             $table->string('processing_percent')->nullable()->default(null);
             $table->string('decline_per')->nullable()->default(0);
+            $table->unsignedBigInteger('decline_id')->nullable()->default(null);
             $table->json('decline_orders')->nullable()->default(null);
+            $table->foreign('decline_id')->references('id')->on('declines');
             $table->foreign('campaign_id')->references('campaign_id')->on('campaigns');
             $table->timestamps();
         });
