@@ -11,7 +11,7 @@
 ## Angular setup 10
 Now for angular setup navigate to
 * `cd resources/frontend/angular`
-* In resources/frontend/angular/src/environment and resources/frontend/angular/src/environment.prod set endpoint 
+* In `resources/frontend/angular/src/environment.ts` and `resources/frontend/angular/src/environment.prod.ts` set endpoint 
 * Run `npm i`
 * Run `npm run start` to run application in developement mode and visit http://localhost:4200/
 * Run `npm run build:prod` ton run application in development mode and visit http://your-endpoint-here/
