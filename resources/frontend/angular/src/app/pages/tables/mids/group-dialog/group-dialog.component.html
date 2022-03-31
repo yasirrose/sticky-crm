@@ -1,23 +1,30 @@
-<h4 mat-dialog-title>
-    {{title}}
-    <ng-container class="flex" *ngIf="rows.length != 0">
-        <h4 *ngFor="let row of rows, index as i">{{i+1}}. {{ row.gateway_alias}} </h4>
-    </ng-container>
-</h4>
+<div class="fixActionRow">
+    <h4 mat-dialog-title>
+        {{title}}
+    </h4>
 
-<div mat-dialog-content>
-    <h4>{{message}}</h4>
-    <mat-form-field class="text-center full-width" appearance="fill">
-        <mat-label>Select option to assign Mid Group</mat-label>
-        <mat-select [(value)]="selectedGroup" (selectionChange)="selection($event.value)">
-            <mat-option *ngFor="let group of groups" [value]="group">
-                {{group}}
-            </mat-option>
-        </mat-select>
-    </mat-form-field>
-</div>
+    <mat-dialog-content class="mat-typography">
+        <ng-container class="flex" *ngIf="rows.length != 0">
+            <h4 *ngFor="let row of rows, index as i">{{i+1}}. {{ row.gateway_alias}} </h4>
+        </ng-container>
 
-<div mat-dialog-actions fxLayoutAlign="end end">
-    <button mat-raised-button color="primary" (click)="onConfirm()">Assign</button>
-    <button mat-raised-button color="gray" (click)="onDismiss()">Cancel</button>
+    </mat-dialog-content>
+
+    <div mat-dialog-actions fxLayoutAlign="center center">
+        <div fxLayout="column" fxLayoutAlign="center center">
+            <h4>{{message}}</h4>
+            <mat-form-field class="text-center full-width" appearance="fill">
+                <mat-label>Select option to assign Mid Group</mat-label>
+                <mat-select [(value)]="selectedGroup" (selectionChange)="selection($event.value)">
+                    <mat-option *ngFor="let group of groups" [value]="group">
+                        {{group}}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+        </div>
+    </div>
+    <div mat-dialog-actions fxLayoutAlign="end end">
+        <button mat-raised-button color="primary" (click)="onConfirm()">Assign</button>
+        <button mat-raised-button color="gray" (click)="onDismiss()">Cancel</button>
+    </div>
 </div>

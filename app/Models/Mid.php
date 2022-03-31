@@ -4,15 +4,26 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Nicolaslopezj\Searchable\SearchableTrait;
 
 class Mid extends Model
 {
-    use HasFactory;
+    use HasFactory, SearchableTrait;
     // public $timestamps = false;
     protected $guarded = [];
     protected $table = 'mids';
     // protected $casts = [
     //     'decline_orders' => 'array'
+
+    protected $searchable = [
+        'columns' => [
+            'mids.gateway_alias' => 10,
+            // 'mids.mid_group' => 10,
+            'mids.global_monthly_cap' => 2,
+            'mids.current_monthly_amount' => 2,
+            'mids.processing_percent' => 1,
+        ],
+    ];
     // ];
     protected $fillable = [
         'router_id',

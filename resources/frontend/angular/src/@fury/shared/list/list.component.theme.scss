@@ -17,14 +17,20 @@ fury-list {
     .fury-filter-input {
       background: $theme-card;
       color: currentColor;
+      // max-width: 100px;
 
       ::placeholder {
         color: currentColor;
       }
     }
 
-    .fury-filter-input-icon, .fury-column-filter {
+    .fury-filter-input-icon,
+    .fury-column-filter {
       color: $theme-icon;
+    }
+
+    .fury-filter-input-icon:hover {
+      // color: yellow;
     }
 
     .fury-list-name {
@@ -32,7 +38,8 @@ fury-list {
     }
   }
 
-  .mat-header-row, .paginator {
+  .mat-header-row,
+  .paginator {
     background: $theme-app-bar;
   }
 
@@ -40,13 +47,15 @@ fury-list {
     background: $theme-background-hover;
   }
 
-  .mat-cell.actions-cell, .mat-header-cell.actions-cell {
+  .mat-cell.actions-cell,
+  .mat-header-cell.actions-cell {
     button {
       color: $theme-icon;
     }
   }
 
-  .mat-cell.image-cell, .mat-header-cell.image-cell {
+  .mat-cell.image-cell,
+  .mat-header-cell.image-cell {
     img {
       background: $theme-app-bar;
     }

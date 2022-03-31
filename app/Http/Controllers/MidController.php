@@ -2,14 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Support\Facades\Http;
+use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
 use App\Models\Mid;
 use App\Models\Profile;
 use App\Models\Order;
 use App\Models\Decline;
-use Illuminate\Support\Facades\Http;
-use Illuminate\Http\Request;
-use Illuminate\Support\Arr;
-// use \stdClass;
+use App\Models\MidCount;
 use DB;
 
 class MidController extends Controller
@@ -26,14 +26,24 @@ class MidController extends Controller
         $end_date = $request->end_date;
         if ($start_date != null && $end_date != null) {
             $start_date = date('Y-m-d', strtotime($request->start_date));
-            $end_date = date('Y-m-d', strtotime($request->start_date));
-            $query->whereBetween('created_on', [$start_date . ' 00:00:00', $end_date . ' 23:59:59']);
+            $end_date = date('Y-m-d', strtotime($request->end_date));
+            // $query->whereBetween('created_on', [$start_date . ' 00:00:00', $end_date . ' 23:59:59']);
+        }
+        if (isset($request->search) && $request->search != '') {
+            $query = $query->search($request->search, null, true, true);
         }
         $data = $query->get();
 
         foreach ($data as $mid) {
+            if ($start_date && $end_date) {
+                $mid->current_monthly_amount = Order::whereBetween('acquisition_date', [$start_date . ' 00:00:00', $end_date . ' 23:59:59'])->where(['order_status' => 2, 'gateway_id' => $mid->gateway_id])->sum('order_total');
+                // $mid->current_monthly_amount = DB::table('orders')->whereBetween(DB::raw('DATE(acquisition_date)'), [$start_date, $end_date])->where(['order_status' => 2, 'gateway_id'=>$mid->gateway_id])->sum('order_total');
+                // $mid->current_monthly_amount = DB::table('orders')->whereDate('acquisition_date', '>=', $start_date)->whereDate('acquisition_date', '<=', $end_date)->count();
+            }
+            // dd($mid->current_monthly_amount);
             // $mid->decline_orders = json_decode($mid->decline_orders);
-            $mid->decline_orders = Decline::where(['gateway_id'=> $mid->gateway_id])->first();
+            $mid->decline_orders = Decline::where(['gateway_id' => $mid->gateway_id])->first();
+            $mid->mid_count = MidCount::where(['gateway_id' => $mid->gateway_id])->first();
             $mid->global_fields = Profile::where(['alias' => $mid->gateway_alias])->pluck('global_fields')->first();
         }
         return response()->json(['status' => true, 'data' => $data]);
@@ -261,4 +271,31 @@ class MidController extends Controller
         return response()->json(['status' => true]);
     }
 
+    public function get_mids_count_data()
+    {
+        $data = Mid::all();
+        foreach ($data as $mid) {
+            $data = [];
+            $data['gateway_id'] = $mid->gateway_id;
+            $data['gateway_alias'] = $mid->gateway_alias;
+            $declined_orders = Order::with('product')->where(['gateway_id' => $mid->gateway_id, 'prepaid_match' => 'NO', 'is_test_cc' => 0]);
+            $mid_count = $declined_orders->count();
+            // $data['decline_per'] = ($total_orders) / 100;
+            $product_names = $declined_orders->get()->countBy('product.name')->toArray();
+            foreach ($product_names as $name => $count) {
+                $mid_count_data[] = array(
+                    'name' => $name,
+                    'count' => $count,
+                    'percentage' => round((($count / $mid_count) * 100), 2)
+                );
+            }
+            $data['mid_count_data'] = $mid_count_data;
+            $data['mid_count'] = $mid_count;
+            $model = MidCount::create($data);
+            $mid->mid_count_id = $model->id;
+            $mid->save();
+            $mid_count_data = null;
+        }
+        return response()->json(['status' => true]);
+    }
 }

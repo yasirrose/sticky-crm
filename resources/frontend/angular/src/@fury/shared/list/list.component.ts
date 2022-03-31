@@ -18,6 +18,7 @@ export class ListComponent implements AfterViewInit {
   @ViewChild('filter') filter: ElementRef;
   @Output() filterChange = new EventEmitter<string>();
   @Output() refresh = new EventEmitter<string>();
+  @Output() enableLoading = new EventEmitter<string>();
 
   @Input() hideHeader: boolean;
 
@@ -35,6 +36,18 @@ export class ListComponent implements AfterViewInit {
     }
   }
 
+  async changeFilterValue(value) {
+    if (this.filter.nativeElement.value != '') {
+      this.filter.nativeElement.value = value;
+      await this.recordSearch();
+    }
+  }
+
+  async clearSearch(){
+    this.filter.nativeElement.value = '';
+    await this.recordSearch();
+  }
+
   async toggleColumnVisibility(column, event) {
     event.stopPropagation();
     event.stopImmediatePropagation();
@@ -44,9 +57,18 @@ export class ListComponent implements AfterViewInit {
     });
   }
 
-  async changeVisibility(column, event: any){
+  async changeVisibility(column, event: any) {
     await this.listService.changeColumn(this.name, column, event.checked).then(data => {
       // this.refresh.next('');
     });
+  }
+
+  async recordSearch() {
+    let keyword = this.filter.nativeElement.value;
+    if (this.name == 'Mids') {
+      this.enableLoading.emit(null);
+      await this.listService.search(this.name.toLowerCase(), keyword).then(data => {
+      });
+    }
   }
 }
