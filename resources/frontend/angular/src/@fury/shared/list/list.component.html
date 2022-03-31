@@ -1,15 +1,13 @@
 <div class="fury-list-table">
-  <div class="fury-list-header"
-       *ngIf="!hideHeader"
-       fxLayout="row"
-       fxLayoutAlign="start center"
-       fxLayoutGap="8px"
-       fxLayoutGap.gt-xs="24px">
+  <div class="fury-list-header" *ngIf="!hideHeader" fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="8px"
+    fxLayoutGap.gt-xs="24px">
     <div class="fury-list-name">{{ name }}</div>
 
     <div fxLayout="row" fxLayoutAlign="start center" fxFlex>
-      <mat-icon class="fury-filter-input-icon">search</mat-icon>
-      <input fxFlex class="fury-filter-input" #filter placeholder="Search&hellip;">
+      <input fxFlex class="fury-filter-input" (keydown.enter)="recordSearch()" (keydown.escape)="changeFilterValue('')"
+        #filter placeholder="Search&hellip;">
+      <mat-icon class="fury-filter-input-icon" *ngIf="name == 'Mids'" matTooltip="search" (click)="recordSearch()">search</mat-icon>
+      <mat-icon class="fury-filter-input-icon" *ngIf="name == 'Mids'" matTooltip="clear" (click)="clearSearch()">replay</mat-icon>
     </div>
 
     <button class="fury-column-filter" type="button" mat-icon-button [matMenuTriggerFor]="columnFilter">
@@ -19,9 +17,9 @@
   </div>
 
   <mat-menu #columnFilter="matMenu" yPosition="below" xPosition="before">
-    <button class="checkbox-item mat-menu-item" *ngFor="let column of columns"
-            (click)="toggleColumnVisibility(column, $event)">
-      <mat-checkbox [(ngModel)]="column.visible" class="checkbox" #checkbox (change)="changeVisibility(column, $event)" (click)="$event.stopPropagation()">
+    <button class="checkbox-item mat-menu-item" *ngFor="let column of columns" (click)="toggleColumnVisibility(column, $event)">
+      <mat-checkbox [(ngModel)]="column.visible" class="checkbox" #checkbox (change)="changeVisibility(column, $event)"
+        (click)="$event.stopPropagation()">
         {{ column.name }}
       </mat-checkbox>
     </button>

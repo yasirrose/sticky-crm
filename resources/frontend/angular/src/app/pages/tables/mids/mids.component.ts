@@ -8,7 +8,6 @@ import { formatDate } from '@angular/common';
 import { FormGroup, FormControl } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSort } from '@angular/material/sort';
-import { ListColumn } from '../../../../@fury/shared/list/list-column.model';
 import { fadeInRightAnimation } from '../../../../@fury/animations/fade-in-right.animation';
 import { fadeInUpAnimation } from '../../../../@fury/animations/fade-in-up.animation';
 import { ConfirmationDialogComponent } from '../../confirmation-dialog/confirmation-dialog.component';
@@ -22,6 +21,8 @@ import { ApiService } from 'src/app/api.service';
 import { MidsService } from './mids.service';
 import { Mid } from './mid.model';
 import { Notyf } from 'notyf';
+import { ListService } from 'src/@fury/shared/list/list.service';
+import { ListComponent } from 'src/@fury/shared/list/list.component';
 
 @Pipe({ name: 'tooltipList' })
 export class TooltipListPipe implements PipeTransform {
@@ -46,6 +47,7 @@ export class MidsComponent implements OnInit, AfterViewInit, OnDestroy {
   subject$: ReplaySubject<Mid[]> = new ReplaySubject<Mid[]>(1);
   data$: Observable<Mid[]> = this.subject$.asObservable();
   mids: Mid[];
+  savedMids: Mid[];
 
   range = new FormGroup({
     start: new FormControl(),
@@ -57,6 +59,7 @@ export class MidsComponent implements OnInit, AfterViewInit, OnDestroy {
   unAssignSubscription: Subscription;
   bulkUpdateSubscription: Subscription;
   columnsSubscription: Subscription;
+  searchSubscription: Subscription;
   isLoading = false;
   totalRows = 0;
   pageSize = 25;
@@ -80,42 +83,16 @@ export class MidsComponent implements OnInit, AfterViewInit, OnDestroy {
   isBulkUpdate: boolean = false;
   columns: any = [];
   notyf = new Notyf({ types: [{ type: 'info', background: '#6495ED', icon: '<i class="fa-solid fa-clock"></i>' }] });
-  toolTipMids = [];
-
-  // @Input()
-
-  // columns: ListColumn[] = [
-  // { name: 'Checkbox', property: 'checkbox', visible: true },
-  // { name: 'Id', property: 'id', visible: false, isModelProperty: false },
-  // // { name: 'router_id', property: 'router_id', visible: true, isModelProperty: true },
-  // { name: 'Gateway Id', property: 'gateway_id', visible: true, isModelProperty: true },
-  // { name: 'Gateway Alias', property: 'gateway_alias', visible: true, isModelProperty: true },
-  // { name: 'Group Name', property: 'mid_group_name', visible: true, isModelProperty: false },
-  // { name: 'Mid Count', property: 'mid_count', visible: true, isModelProperty: false },
-  // { name: 'Router Date In', property: 'router_date_in', visible: false, isModelProperty: true },
-  // { name: 'Router Desc', property: 'router_desc', visible: false, isModelProperty: true },
-  // { name: 'Mid Group Setting Id', property: 'mid_group_setting_id', visible: false, isModelProperty: true },
-  // { name: 'Mid Group Setting', property: 'mid_group_setting', visible: false, isModelProperty: true },
-  // { name: 'Strict Preserve', property: 'is_strict_preserve', visible: false, isModelProperty: true },
-  // { name: 'Campaign Id', property: 'campaign_id', visible: false, isModelProperty: true },
-  // { name: 'Global Monthly Cap', property: 'global_monthly_cap', visible: true, isModelProperty: true },
-  // { name: 'Current Monthly Amount', property: 'current_monthly_amount', visible: true, isModelProperty: false },
-  // { name: 'Processing Percent', property: 'processing_percent', visible: true, isModelProperty: true },
-  // { name: '3d Routed', property: 'is_three_d_routed', visible: false, isModelProperty: true },
-  // { name: 'Created On', property: 'created_on', visible: true, isModelProperty: true },
-  // { name: 'Actions', property: 'actions', visible: true },
-
-  // ] as ListColumn[];
+  toolTipDeclines = [];
+  toolTipMidCount = [];
   // pageSize = 20000;
   dataSource: MatTableDataSource<Mid> | null;
 
   @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
   @ViewChild(MatSort, { static: true }) sort: MatSort;
-  // @ViewChild(MidGroupsComponent) MidGroupsComponent: MidGroupsComponent;
+  @ViewChild(ListComponent, { static: true }) ListComponent: ListComponent;
 
-  // @ViewChild(MidGroupsComponent, { static: true }) MidGroupComponent: MidGroupsComponent;
-
-  constructor(private dialog: MatDialog, private midsService: MidsService, private apiService: ApiService, private router: Router, public midGroupComponent: MidGroupsComponent) {
+  constructor(private dialog: MatDialog, private midsService: MidsService, private apiService: ApiService, private router: Router, public midGroupComponent: MidGroupsComponent, private listService: ListService) {
     this.endPoint = environment.endpoint;
     this.notyf.dismissAll();
   }
@@ -126,7 +103,7 @@ export class MidsComponent implements OnInit, AfterViewInit, OnDestroy {
     this.assignSubscription = this.midsService.assignGroupResponse$.subscribe(data => this.manageAssignResponse(data))
     this.unAssignSubscription = this.midsService.unAssignGroupResponse$.subscribe(data => this.manageUnassignResponse(data))
     this.bulkUpdateSubscription = this.midsService.assignBulkGroupResponse$.subscribe(data => this.manageBulkGroupResponse(data))
-    // this.columnsSubscription = this.midsService.columnsResponse$.subscribe(data => this.manageColumnsResponse(data))
+    this.searchSubscription = this.listService.searchResponse$.subscribe(data => this.manageSearchResponse(data))
 
     this.getData();
     this.dataSource = new MatTableDataSource();
@@ -174,6 +151,7 @@ export class MidsComponent implements OnInit, AfterViewInit, OnDestroy {
     });
     await this.midsService.getMids(this.filters).then(mids => {
       this.mids = mids.data
+      this.savedMids = mids.data;
       this.totalMids = mids.data.length
       this.mapData().subscribe(mids => {
         this.subject$.next(mids);
@@ -183,32 +161,61 @@ export class MidsComponent implements OnInit, AfterViewInit, OnDestroy {
       this.selectAll = false;
       this.isBulkUpdate = false;
       this.selectedRows = [];
-
+      this.ListComponent.filter.nativeElement.value = '';
     }, error => {
       this.skeletonLoader = false;
       this.isLoading = false;
     });
     this.countContent();
     for (let i = 0; i < this.mids.length; i++) {
-      this.toolTipMids[i] = this.getAssignedMids(this.mids[i]);
+      this.toolTipDeclines[i] = this.getTooltipDeclines(this.mids[i]);
+      this.toolTipMidCount[i] = this.getTooltipMidCounts(this.mids[i]);
     }
   }
 
-  getAssignedMids(mid) {
+  getTooltipDeclines(mid) {
     var productNames = [];
-    let data = mid.decline_orders.decline_data;
+    let data = [];
+    if (mid.decline_orders.decline_data) {
+      data = mid.decline_orders.decline_data;
+    }
     let totalDeclinedOrders = mid.decline_orders.total_declined;
-    Object.values(data).forEach(v => {
-      if(v['name'] != undefined){
-        let list = '';
-        list += v['name'] + '\xa0\xa0\xa0 | \xa0\xa0\xa0' + v['count'] + '\xa0\xa0\xa0 | \xa0\xa0\xa0' + v['percentage'] + '%';
-        if (!productNames.includes(list)) {
-          productNames.push(list);
+    if (totalDeclinedOrders != 0) {
+      Object.values(data).forEach(v => {
+        if (v['name'] != undefined) {
+          let list = '';
+          list += v['name'] + '\xa0\xa0\xa0 | \xa0\xa0\xa0' + v['count'] + '\xa0\xa0\xa0 | \xa0\xa0\xa0' + v['percentage'] + '%';
+          if (!productNames.includes(list)) {
+            productNames.push(list);
+          }
         }
-      }
-    });
-    productNames.push('Total: ' + '\xa0\xa0\xa0 | \xa0\xa0\xa0' + totalDeclinedOrders + '\xa0\xa0\xa0 | \xa0\xa0\xa0' + (totalDeclinedOrders / 100).toFixed(2)) + '%';
+      });
+      productNames.push('Total: ' + '\xa0\xa0\xa0 | \xa0\xa0\xa0' + totalDeclinedOrders + '\xa0\xa0\xa0 | \xa0\xa0\xa0' + (totalDeclinedOrders / 100).toFixed(2) + '%');
+    }
     return productNames;
+  }
+
+  getTooltipMidCounts(mid) {
+    var midCountArray = [];
+    let data = [];
+    if (mid.mid_count.mid_count_data) {
+      data = mid.mid_count.mid_count_data.sort((a, b) => (a.name > b.name) ? 1 : -1);
+      console.log('data :', data);
+    }
+    let totalMids = mid.mid_count.mid_count;
+    if (totalMids != 0) {
+      data.forEach(function (v) {
+        if (v.name != undefined) {
+          let list = '';
+          list += v.name + '\xa0\xa0\xa0 | \xa0\xa0\xa0' + v.count + '\xa0\xa0\xa0 | \xa0\xa0\xa0' + v.percentage + '%';
+          if (!midCountArray.includes(list)) {
+            midCountArray.push(list);
+          }
+        }
+      });
+      midCountArray.push('Total: ' + '\xa0\xa0\xa0 | \xa0\xa0\xa0' + totalMids + '\xa0\xa0\xa0 | \xa0\xa0\xa0' + (totalMids / 100).toFixed(2) + '%');
+    }
+    return midCountArray;
   }
 
   countContent() {
@@ -235,15 +242,15 @@ export class MidsComponent implements OnInit, AfterViewInit, OnDestroy {
       });
   }
 
-  manageGetResponse(mids) {
-    if (mids.status) {
-      this.mids = mids.data;
-      this.dataSource.data = mids.data;
-      this.isLoading = false;
-    } else {
-      this.isLoading = false;
-    }
-  }
+  // manageGetResponse(mids) {
+  //   if (mids.status) {
+  //     this.mids = mids.data;
+  //     this.dataSource.data = mids.data;
+  //     this.isLoading = false;
+  //   } else {
+  //     this.isLoading = false;
+  //   }
+  // }
 
   async manageAssignResponse(data) {
     if (Object.keys(data).length) {
@@ -276,11 +283,28 @@ export class MidsComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
-  // manageColumnsResponse(data) {
-  //   if (data.status) {
-  //     this.columns = data.data;
-  //   }
-  // }
+  manageSearchResponse(mids) {
+    if (mids.status) {
+      this.mids = mids.data
+      this.totalMids = mids.data.length
+      this.mapData().subscribe(mids => {
+        this.subject$.next(mids);
+      });
+      this.skeletonLoader = false;
+      this.isLoading = false;
+      this.selectAll = false;
+      this.isBulkUpdate = false;
+      this.selectedRows = [];
+
+      this.countContent();
+      for (let i = 0; i < this.mids.length; i++) {
+        this.toolTipDeclines[i] = this.getTooltipDeclines(this.mids[i]);
+        this.toolTipMidCount[i] = this.getTooltipMidCounts(this.mids[i]);
+      }
+    }
+    console.log('search data :', mids);
+
+  }
 
   async manageRefreshResponse(data) {
     if (data.status) {
@@ -324,6 +348,7 @@ export class MidsComponent implements OnInit, AfterViewInit, OnDestroy {
       }
     });
   }
+
   selectDate(param) {
     var startDate = new Date();
     var endDate = new Date();
@@ -332,10 +357,10 @@ export class MidsComponent implements OnInit, AfterViewInit, OnDestroy {
       this.range.get('end').setValue(new Date());
     } else if (param == 'yesterday') {
       this.range.get('start').setValue(new Date(startDate.setDate(startDate.getDate() - 1)));
-      this.range.get('end').setValue(new Date());
+      this.range.get('end').setValue(new Date(endDate.setDate(endDate.getDate() - 1)));
     } else if (param == 'thisMonth') {
-      this.range.get('start').setValue(new Date(startDate.setMonth(startDate.getMonth() - 1)));
-      this.range.get('end').setValue(new Date());
+      this.range.get('start').setValue(new Date(startDate.getFullYear(), startDate.getMonth(), 1));
+      this.range.get('end').setValue(new Date(endDate.getFullYear(), endDate.getMonth() + 1, 0));
     } else if (param == 'pastWeek') {
       this.range.get('start').setValue(new Date(startDate.setDate(startDate.getDate() - 7)));
       this.range.get('end').setValue(new Date());
@@ -343,14 +368,14 @@ export class MidsComponent implements OnInit, AfterViewInit, OnDestroy {
       this.range.get('start').setValue(new Date(startDate.setDate(startDate.getDate() - 14)));
       this.range.get('end').setValue(new Date());
     } else if (param == 'lastMonth') {
-      this.range.get('start').setValue(new Date(startDate.setMonth(startDate.getMonth() - 2)));
-      this.range.get('end').setValue(new Date(endDate.setMonth(endDate.getMonth() - 1)));
+      this.range.get('start').setValue(new Date(startDate.getFullYear(), startDate.getMonth() - 1, 1));
+      this.range.get('end').setValue(new Date(endDate.getFullYear(), endDate.getMonth(), 0));
     } else if (param == 'lastThreeMonths') {
-      this.range.get('start').setValue(new Date(startDate.setMonth(startDate.getMonth() - 4)));
-      this.range.get('end').setValue(new Date(endDate.setMonth(endDate.getMonth() - 1)));
+      this.range.get('start').setValue(new Date(startDate.getFullYear(), startDate.getMonth() - 3, 1));
+      this.range.get('end').setValue(new Date(endDate.getFullYear(), endDate.getMonth(), 0));
     } else if (param == 'lastSixMonths') {
-      this.range.get('start').setValue(new Date(startDate.setMonth(startDate.getMonth() - 7)));
-      this.range.get('end').setValue(new Date(endDate.setMonth(endDate.getMonth() - 1)));
+      this.range.get('start').setValue(new Date(startDate.getFullYear(), startDate.getMonth() - 6, 1));
+      this.range.get('end').setValue(new Date(endDate.getFullYear(), endDate.getMonth(), 0));
     }
   }
 
@@ -405,6 +430,7 @@ export class MidsComponent implements OnInit, AfterViewInit, OnDestroy {
   assignBulkGroup() {
     const dialogData = new GroupDialogModel('Assign New Group to: ', 'Please select Mid-Group from the following options.', this.selectedRows);
     const dialogRef = this.dialog.open(GroupDialogComponent, {
+      // maxHeight: '650px',
       maxWidth: '500px',
       closeOnNavigation: true,
       data: dialogData
@@ -431,9 +457,6 @@ export class MidsComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
-  displayChange(event: any, row) {
-
-  }
   async refreshColumns() {
     await this.midsService.getColumns().then(columns => {
       this.columns = columns.data;
@@ -457,6 +480,10 @@ export class MidsComponent implements OnInit, AfterViewInit, OnDestroy {
     if (this.unAssignSubscription) {
       this.midsService.unAssignGroupResponse.next({});
       this.unAssignSubscription.unsubscribe();
+    }
+    if (this.searchSubscription) {
+      this.listService.searchResponse.next([]);
+      this.searchSubscription.unsubscribe();
     }
   }
 }

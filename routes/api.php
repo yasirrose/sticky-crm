@@ -98,3 +98,4 @@ Route::post('delete_prospects', [ProspectController::class, 'delete_prospects'])
 Route::get('pull_affiliates', [AffiliateController::class, 'pull_affiliates']);
 Route::get('refresh_decline_percentage', [MidController::class, 'refresh_decline_percentage']);
 Route::get('get_mids_decline_data', [MidController::class, 'get_mids_decline_data']);
+Route::get('get_mids_count_data', [MidController::class, 'get_mids_count_data']);

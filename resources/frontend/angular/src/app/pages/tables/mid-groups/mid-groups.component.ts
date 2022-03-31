@@ -19,13 +19,14 @@ import { MidsDetailComponent } from './mids-detail/mids-detail.component';
 import { ActionDialogComponent } from './action-dialog/action-dialog.component';
 import { Pipe, PipeTransform } from '@angular/core';
 import { Notyf } from 'notyf';
+import { ListService } from 'src/@fury/shared/list/list.service';
+import { ListComponent } from 'src/@fury/shared/list/list.component';
 
 @Pipe({ name: 'tooltipList' })
 export class TooltipListPipe implements PipeTransform {
 
   transform(lines: string[]): string {
     let list: string = '  ';
-    // list += '  Mids' + '&nbsp &nbsp ' + 'Amount' + '     ' + 'Per' + '\n';
     lines.forEach(line => {
       list += '• ' + line + '\n';
     });
@@ -50,6 +51,7 @@ export class MidGroupsComponent implements OnInit, PipeTransform, AfterViewInit,
   addGroupSubscription: Subscription;
   deleteGroupSubscription: Subscription;
   updateGroupSubscription: Subscription;
+  searchSubscription: Subscription;
   isLoading = false;
   totalRows = 0;
   pageSize = 25;
@@ -92,7 +94,7 @@ export class MidGroupsComponent implements OnInit, PipeTransform, AfterViewInit,
   @ViewChild(MatSort, { static: true }) sort: MatSort;
   @ViewChild(MidGroupsComponent, { static: true }) MidGroupComponent: MidGroupsComponent;
 
-  constructor(private dialog: MatDialog, private midGroupService: MidGroupsService, private apiService: ApiService) {
+  constructor(private dialog: MatDialog, private midGroupService: MidGroupsService, private apiService: ApiService, private listService: ListService) {
     this.notyf.dismissAll();
   }
 
@@ -268,6 +270,21 @@ export class MidGroupsComponent implements OnInit, PipeTransform, AfterViewInit,
       }
     }
   }
+
+  // manageSearchResponse(midGroups) {
+  //   if (midGroups.status) {
+  //     this.midGroups = midGroups.data;
+  //     this.dataSource.data = midGroups.data;
+  //     this.mapData().subscribe(midGroups => {
+  //       this.subject$.next(midGroups);
+  //     });
+  //     this.skeletonloader = false;
+  //     this.isLoading = false;
+  //   }
+  //   for (let i = 0; i < this.midGroups.length; i++) {
+  //     this.toolTipMids[i] = this.getAssignedMids(this.midGroups[i]);
+  //   }
+  // }
 
   onFilterChange(value) {
     if (!this.dataSource) {
