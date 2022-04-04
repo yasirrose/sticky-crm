@@ -19,6 +19,7 @@ use App\Http\Controllers\MidGroupController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ColumnController;
 use App\Http\Controllers\AffiliateController;
+use App\Http\Controllers\NetworkController;
 
 /*
 |--------------------------------------------------------------------------
@@ -53,6 +54,7 @@ Route::resource('mid-groups', MidGroupController::class);
 Route::resource('profiles', ProfileController::class);
 Route::resource('columns', ColumnController::class);
 Route::resource('affiliates', AffiliateController::class);
+Route::resource('networks', NetworkController::class);
 Route::get('golden-ticket/create/{month}/{year}', [GoldenTicketController::class, 'create']);
 Route::get('get_campaigns', [CampaignsController::class, 'get_campaigns']);
 Route::get('get_campaign_columns/{campaign_name}', [CampaignsController::class, 'get_campaign_columns']);
@@ -96,6 +98,8 @@ Route::post('remove_groups', [MidController::class, 'remove_groups']);
 Route::post('change_column', [ColumnController::class, 'change_column']);
 Route::post('delete_prospects', [ProspectController::class, 'delete_prospects']);
 Route::get('pull_affiliates', [AffiliateController::class, 'pull_affiliates']);
+Route::get('pull_networks', [NetworkController::class, 'pull_networks']);
 Route::get('refresh_decline_percentage', [MidController::class, 'refresh_decline_percentage']);
 Route::get('get_mids_decline_data', [MidController::class, 'get_mids_decline_data']);
 Route::get('get_mids_count_data', [MidController::class, 'get_mids_count_data']);
+Route::get('mids_order_total/{id}', [MidController::class, 'mids_order_total']);

@@ -51,23 +51,24 @@ export class AffiliatesComponent implements OnInit {
 
   @Input()
   columns: ListColumn[] = [
+    { name: 'Checkbox', property: 'checkbox', visible: true },
     { name: 'Network Affiliate Id', property: 'network_affiliate_id', visible: true, isModelProperty: true },
     { name: 'Network Id', property: 'network_id', visible: true, isModelProperty: true },
     { name: 'Name', property: 'name', visible: true, isModelProperty: true },
     { name: 'Account Status', property: 'account_status', visible: true, isModelProperty: true },
     { name: 'Network Employee Id', property: 'network_employee_id', visible: true, isModelProperty: true },
-    { name: 'Internal Notes', property: 'internal_notes', visible: true, isModelProperty: true },
-    { name: 'Has Notifications', property: 'has_notifications', visible: true, isModelProperty: true },
-    { name: 'Network Traffic Source Id', property: 'network_traffic_source_id', visible: true, isModelProperty: true },
-    { name: 'Account Executive Id', property: 'account_executive_id', visible: true, isModelProperty: true },
-    { name: 'Adress Id', property: 'adress_id', visible: true, isModelProperty: true },
+    { name: 'Internal Notes', property: 'internal_notes', visible: false, isModelProperty: true },
+    { name: 'Has Notifications', property: 'has_notifications', visible: false, isModelProperty: true },
+    { name: 'Network Traffic Source Id', property: 'network_traffic_source_id', visible: false, isModelProperty: true },
+    { name: 'Account Executive Id', property: 'account_executive_id', visible: false, isModelProperty: true },
+    { name: 'Adress Id', property: 'adress_id', visible: false, isModelProperty: true },
     { name: 'Default Currency Id', property: 'default_currency_id', visible: true, isModelProperty: true },
-    { name: 'Is Contact Address Enabled', property: 'is_contact_address_enabled', visible: true, isModelProperty: true },
-    { name: 'Enable Media Cost Tracking Links', property: 'enable_media_cost_tracking_links', visible: true, isModelProperty: true },
-    { name: 'Time Created', property: 'time_created', visible: true, isModelProperty: true },
-    { name: 'Time Saved', property: 'time_saved', visible: true, isModelProperty: true },
-    { name: 'Relationship', property: 'relationship', visible: true, isModelProperty: true },
-    { name: 'Referrer Id', property: 'referrer_id', visible: true, isModelProperty: true },
+    { name: 'Is Contact Address Enabled', property: 'is_contact_address_enabled', visible: false, isModelProperty: true },
+    { name: 'Enable Media Cost Tracking Links', property: 'enable_media_cost_tracking_links', visible: false, isModelProperty: true },
+    { name: 'Time Created', property: 'time_created', visible: false, isModelProperty: true },
+    { name: 'Time Saved', property: 'time_saved', visible: false, isModelProperty: true },
+    { name: 'Relationship', property: 'relationship', visible: false, isModelProperty: true },
+    { name: 'Referrer Id', property: 'referrer_id', visible: false, isModelProperty: true },
     { name: 'Actions', property: 'actions', visible: true },
 
   ] as ListColumn[];
@@ -145,6 +146,14 @@ export class AffiliatesComponent implements OnInit {
     value = value.trim();
     value = value.toLowerCase();
     this.dataSource.filter = value;
+  }
+
+  viewDetails(id){
+    console.log(id);
+  }
+
+  handleDeleteAction(id){
+    console.log(id);
   }
 
   ngOnDestroy(): void {

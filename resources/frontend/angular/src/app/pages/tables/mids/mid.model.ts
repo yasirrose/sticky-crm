@@ -6,7 +6,7 @@ export class Mid {
     id: number;
     router_id: number;
     mid_group_name: string;
-    mid_count: string;
+    mid_count: number;
     router_date_in: string;
     router_desc: string;
     mid_group_setting_id: number;
@@ -23,6 +23,7 @@ export class Mid {
     decline_per: string;
     decline_orders: [];
     checked: boolean;
+    // mid_count: number;
 
     constructor(mid) {
         this.id = mid.id;
@@ -44,7 +45,9 @@ export class Mid {
         this.global_monthly_cap = '$' + nf.format(mid.global_monthly_cap);
         this.current_monthly_amount = mid.current_monthly_amount;
         this.processing_percent = mid.processing_percent + '%';
-        this.decline_per = mid.decline_orders.decline_per + '%';
+        // if(mid.decline_orders.decline_per){
+        //     this.decline_per = mid.decline_orders.decline_per + '%';
+        // }
         this.decline_orders = mid.decline_orders;
         this.checked = false;
     }

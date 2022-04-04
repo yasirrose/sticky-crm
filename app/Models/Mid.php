@@ -8,6 +8,9 @@ use Nicolaslopezj\Searchable\SearchableTrait;
 
 class Mid extends Model
 {
+    public $from; 
+    public $to;
+    public $order_status;
     use HasFactory, SearchableTrait;
     // public $timestamps = false;
     protected $guarded = [];
@@ -59,4 +62,23 @@ class Mid extends Model
         'decline_orders',
         'mid_group',
     ];
+
+    // function orders()
+    // {
+    //     dd($this->from);
+    //     return $this->hasMany(Order::class, 'gateway_id', 'gateway_id')
+    //         ->whereBetween('acquisition_date', [$this->from, $this->to])
+    //         ->where('order_status', $this->order_status);
+    // }
+
+    // function orders($from, $to, $order_status)
+    // {
+    //     return $this->hasMany(Order::class, 'gateway_id', 'gateway_id')
+    //         ->whereBetween('acquisition', [$from, $to])
+    //         ->where('order_status', $order_status);
+    // }
+
+    function getOrders($from, $to, $order_status){
+        return $this->orders($from, $to, $order_status);
+    }
 }

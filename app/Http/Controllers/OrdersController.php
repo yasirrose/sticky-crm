@@ -729,7 +729,6 @@ class OrdersController extends Controller
                 $results = $order_views->data;
                 foreach ($results as $result) {
 
-                    $order = new Order();
                     $month = Carbon::parse($result->acquisition_date)->format('F');
                     $year = Carbon::parse($result->acquisition_date)->format('Y');
                     $result->acquisition_month = $month;
@@ -753,16 +752,14 @@ class OrdersController extends Controller
                         $db_order = Order::where(['order_id' => $result->order_id])->first();
                         $db_order->update((array)$result);
                         
-                        $order_product = OrderProduct::where(['order_id' => $db_order->order_id])->first();
                         $mass_assignment = $this->get_order_product_mass($result);
-                        $order_product->update($mass_assignment);
+                        $order_product = OrderProduct::where(['order_id' => $db_order->order_id])->update($mass_assignment);
 
                     } else {
                         $new_orders++;
-                        $order->create((array)$result);
-                        $order_product = new OrderProduct();
+                        Order::create((array)$result);
                         $mass_assignment = $this->get_order_product_mass($result);
-                        $order_product->create($mass_assignment);
+                        OrderProduct::create($mass_assignment);
                     }
                 }
                 $data = null;

@@ -47,15 +47,27 @@ export class AffiliatesNetworkComponent implements OnInit {
   isChecked = false;
 
   @Input()
-  // @Input() public customerId;
   columns: ListColumn[] = [
     { name: 'Checkbox', property: 'checkbox', visible: true },
-    { name: 'Network Id', property: 'id', visible: true, isModelProperty: true },
-    { name: 'Email', property: 'email', visible: true, isModelProperty: true },
-    { name: 'First Name', property: 'first_name', visible: true, isModelProperty: true },
-    { name: 'Last Name', property: 'last_name', visible: true, isModelProperty: true },
-    { name: 'Phone', property: 'phone', visible: true, isModelProperty: true },
+    { name: 'Network Id', property: 'network_id', visible: true, isModelProperty: true },
+    { name: 'Customer Id', property: 'customer_id', visible: true, isModelProperty: true },
+    { name: 'Name', property: 'name', visible: true, isModelProperty: true },
+    { name: 'identifier', property: 'identifier', visible: true, isModelProperty: true },
+    { name: 'account_status', property: 'account_status', visible: true, isModelProperty: true },
+    { name: 'displayed_name', property: 'displayed_name', visible: true, isModelProperty: true },
+    { name: 'is_show_name', property: 'is_show_name', visible: true, isModelProperty: true },
+    { name: 'timezone_id', property: 'timezone_id', visible: true, isModelProperty: true },
+    { name: 'language_id', property: 'language_id', visible: true, isModelProperty: true },
+    { name: 'currency_id', property: 'currency_id', visible: true, isModelProperty: true },
+    { name: 'logo_image_url', property: 'logo_image_url', visible: true, isModelProperty: true },
+    { name: 'favicon_image_url', property: 'favicon_image_url', visible: true, isModelProperty: true },
+    { name: 'support_email', property: 'support_email', visible: true, isModelProperty: true },
+    { name: 'email_background_logo_color', property: 'email_background_logo_color', visible: true, isModelProperty: true },
+    { name: 'time_created', property: 'time_created', visible: true, isModelProperty: true },
+    { name: 'time_saved', property: 'time_saved', visible: true, isModelProperty: true },
+    { name: 'relationships', property: 'relationships', visible: true, isModelProperty: true },
     { name: 'Actions', property: 'actions', visible: true },
+
   ] as ListColumn[];
   dataSource: MatTableDataSource<Network>;
   selection = new SelectionModel<Network>(true, []);
@@ -119,8 +131,16 @@ export class AffiliatesNetworkComponent implements OnInit {
     this.dataSource.filter = value;
   }
 
+  viewDetails(id) {
+    console.log(id);
+  }
+
+  handleDeleteAction(id) {
+    console.log(id);
+  }
+
   ngOnDestroy(): void {
-    if(this.deleteSubscription){
+    if (this.deleteSubscription) {
       // this.networkService.deleteResponse.next([]);
       // this.deleteSubscription.unsubscribe();
     }

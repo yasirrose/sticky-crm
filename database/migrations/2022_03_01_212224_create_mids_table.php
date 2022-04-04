@@ -26,7 +26,7 @@ class CreateMidsTable extends Migration
             $table->string('is_strict_preserve')->nullable()->default(null);
             $table->timestamp('created_on')->nullable()->default(null);
             $table->unsignedBigInteger('campaign_id')->nullable()->default(null);
-            $table->unsignedBigInteger('gateway_id')->unique();
+            $table->unsignedBigInteger('gateway_id')->index();
             $table->string('gateway_alias')->nullable()->default(null);
             $table->string('global_monthly_cap')->nullable()->default(null);
             $table->string('current_monthly_amount')->nullable()->default(null);
