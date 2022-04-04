@@ -15,21 +15,19 @@ import { MatRadioModule } from '@angular/material/radio';
 import { MatSelectModule } from '@angular/material/select';
 import { MatTableModule } from '@angular/material/table';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
-import { FurySharedModule } from '../../../../@fury/fury-shared.module';
-import { BreadcrumbsModule } from '../../../../@fury/shared/breadcrumbs/breadcrumbs.module';
-import { ListModule } from '../../../../@fury/shared/list/list.module';
-import { MaterialModule } from '../../../../@fury/shared/material-components.module';
-import { MidsRoutingModule } from './mids-routing.module';
-import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
-import { MidsComponent, TooltipListPipe } from './mids.component';
-import { GroupDialogComponent } from './group-dialog/group-dialog.component';
-import { RevenueDialogComponent } from './revenue-dialog/revenue-dialog.component';
+import { FurySharedModule } from 'src/@fury/fury-shared.module';
+import { BreadcrumbsModule } from 'src/@fury/shared/breadcrumbs/breadcrumbs.module';
+import { ListModule } from 'src/@fury/shared/list/list.module';
+import { MaterialModule } from 'src/@fury/shared/material-components.module';
+import { HttpClientModule } from '@angular/common/http'; 
+import { RevenueDialogComponent } from './revenue-dialog.component';
 
 
 @NgModule({
+  declarations: [RevenueDialogComponent],
   imports: [
     CommonModule,
-    MidsRoutingModule,
+    // MidsRoutingModule,
     FormsModule,
     ReactiveFormsModule,
     MaterialModule,
@@ -50,10 +48,7 @@ import { RevenueDialogComponent } from './revenue-dialog/revenue-dialog.componen
     MatTableModule,
     MatPaginatorModule,
     MatProgressBarModule,
-    NgxSkeletonLoaderModule,
-  ],
-  declarations: [MidsComponent, GroupDialogComponent, TooltipListPipe, RevenueDialogComponent],
-  exports: [MidsComponent],
-
+    HttpClientModule,
+  ]
 })
-export class MidsModule { }
+export class RevenueDialogModule { }

@@ -22,17 +22,15 @@ export class AffiliatesNetworkService {
   constructor(private apiService: ApiService) { }
 
   async getNetworks(): Promise<any> {
-    await this.apiService.getData(`networks`)
-      .then(res => res.json()).then((data) => {
-        this.networks = data;
-        // this.customersGetResponse.next(data);
-      });
+    await this.apiService.getData(`networks`).then(res => res.json()).then((data) => {
+      this.networks = data;
+      // this.customersGetResponse.next(data);
+    });
     return this.networks;
   }
   async deleteData(id): Promise<any> {
-    await this.apiService.getData(`destroy_customers?id=${id}`)
-      .then(res => res.json()).then((data) => {
-        this.deleteResponse.next(data);
-      });
+    await this.apiService.getData(`destroy_customers?id=${id}`).then(res => res.json()).then((data) => {
+      this.deleteResponse.next(data);
+    });
   }
 }

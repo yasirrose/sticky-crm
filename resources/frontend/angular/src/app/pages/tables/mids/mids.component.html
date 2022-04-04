@@ -5,13 +5,16 @@
 
     <fury-page-layout-content class="no-bottom-padding" fxLayoutAlign="start start" fxFlexFill>
         <div class="content" layout="column" class="full-width">
+            <!-- 
+                ?Add [expanded]="0" in below line to to show filters
+             -->
             <mat-expansion-panel [expanded]="0" hideToggle>
                 <div fxLayoutGap="50px">
                     <div fxLayout="column">
                         <div>
                             <h3>Date Filter</h3>
                         </div>
-                    <!-- *ngIf="!skeletonLoader" -->
+                        <!-- *ngIf="!skeletonLoader" -->
                         <div fxLayout="column" layout-wrap fxLayoutGap="10px">
                             <div fxLayout="row" layout-wrap fxLayoutGap="10px">
                                 <div><button mat-raised-button color="warn" (click)="selectDate('today')">Today</button></div>
@@ -132,6 +135,14 @@
                     </ng-container>
 
                     <!-- Group name column -->
+                    <ng-container matColumnDef="gateway_alias">
+                        <th *matHeaderCellDef mat-header-cell mat-sort-header>Gateway Alias</th>
+                        <td *matCellDef="let row" (click)="openRevenueDialog(row)" mat-cell>
+                            {{ row.gateway_alias }}
+                        </td>
+                    </ng-container>
+
+                    <!-- Group name column -->
                     <ng-container matColumnDef="mid_group_name">
                         <th *matHeaderCellDef mat-header-cell mat-sort-header>Group Name</th>
                         <td *matCellDef="let row" (click)="openAssignDialog(row.gateway_alias)" mat-cell [ngClass]="{'highlight-group': !row.mid_group_name}">
@@ -144,7 +155,7 @@
                         <th *matHeaderCellDef mat-header-cell>Mid Count</th>
                         <td *matCellDef="let row, index as i" [matTooltip]="toolTipMidCount[i] | tooltipList"
                             matTooltipClass="tooltip-list" mat-cell #tooltip="matTooltip" matTooltipPosition="below">
-                            <a routerLink="#">{{ row.mid_count.mid_count | number }}</a>
+                            <a routerLink="#">{{ row.mid_count | number }}</a>
                         </td>
                     </ng-container>
 

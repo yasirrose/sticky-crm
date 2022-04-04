@@ -23,6 +23,8 @@ import { Mid } from './mid.model';
 import { Notyf } from 'notyf';
 import { ListService } from 'src/@fury/shared/list/list.service';
 import { ListComponent } from 'src/@fury/shared/list/list.component';
+import { RevenueDialogModel } from './revenue-dialog/revenue-dialog.model';
+import { RevenueDialogComponent } from './revenue-dialog/revenue-dialog.component';
 
 @Pipe({ name: 'tooltipList' })
 export class TooltipListPipe implements PipeTransform {
@@ -168,14 +170,14 @@ export class MidsComponent implements OnInit, AfterViewInit, OnDestroy {
     });
     this.countContent();
     for (let i = 0; i < this.mids.length; i++) {
-      this.toolTipDeclines[i] = this.getTooltipDeclines(this.mids[i]);
+      // this.toolTipDeclines[i] = this.getTooltipDeclines(this.mids[i]);
       this.toolTipMidCount[i] = this.getTooltipMidCounts(this.mids[i]);
     }
   }
 
   getTooltipDeclines(mid) {
     var productNames = [];
-    let data = [];
+    let data = {};
     if (mid.decline_orders.decline_data) {
       data = mid.decline_orders.decline_data;
     }
@@ -405,6 +407,19 @@ export class MidsComponent implements OnInit, AfterViewInit, OnDestroy {
       if (groupName) {
         this.midsService.assignGroup(alias, groupName);
       }
+    });
+  }
+  openRevenueDialog(mid) {
+    const dialogData = new RevenueDialogModel('Revenue Details: ' + mid.gateway_alias, '', mid);
+    const dialogRef = this.dialog.open(RevenueDialogComponent, {
+      maxWidth: '500px',
+      closeOnNavigation: true,
+      data: dialogData
+    })
+    dialogRef.afterClosed().subscribe(groupName => {
+      // if (groupName) {
+      //   this.midsService.assignGroup(alias, groupName);
+      // }
     });
   }
 

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Support\Facades\Http;
 use App\Models\Network;
 use Illuminate\Http\Request;
 
@@ -14,7 +15,8 @@ class NetworkController extends Controller
      */
     public function index()
     {
-        //
+        $data = Network::all();
+        return response()->json(['status' => true, 'data' => $data]);
     }
 
     /**
@@ -44,9 +46,10 @@ class NetworkController extends Controller
      * @param  \App\Models\Network  $network
      * @return \Illuminate\Http\Response
      */
-    public function show(Network $network)
+    public function show($id)
     {
-        //
+        $network = Network::where(['network_id' => $id])->first();
+        return response()->json(['status' => true, 'data' => $network]);
     }
 
     /**
@@ -81,5 +84,42 @@ class NetworkController extends Controller
     public function destroy(Network $network)
     {
         //
+    }
+
+    public function pull_networks()
+    {
+        $new_networks = 0;
+        $updated_networks = 0;
+        $db_network_ids = Network::all()->pluck('network_id')->toArray();
+        $key = "X-Eflow-API-Key";
+        $value = "nH43mlvTSCuYUOgOXrRA";
+        $url = 'https://api.eflow.team/v1/networks';
+        // !needs code to be changed when more network (currently there is only one network in API response)
+        $network = json_decode(Http::withHeaders([$key => $value])->accept('application/json')->get($url)->body());
+        // dd($api_data);
+        // $networks = $api_data->networks;
+        // $paging = $api_data->paging;
+
+        if ($network) {
+            // foreach ($networks as $network) {
+            if (in_array($network->network_id, $db_network_ids)) {
+                $update = network::where(['network_id' => $network->network_id])->first();
+                $update->update((array)$network);
+                $updated_networks++;
+            } else {
+                network::create((array)$network);
+                $new_networks++;
+            }
+            // }
+            return response()->json(
+                [
+                    'status' => true,
+                    'data' => [
+                        'New Networks: ' => $new_networks,
+                        'Updates Networks: ' => $updated_networks
+                    ]
+                ]
+            );
+        }
     }
 }

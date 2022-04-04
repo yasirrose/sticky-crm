@@ -1,9 +1,5 @@
-import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { ChartData } from 'chart.js';
 import { BehaviorSubject, of } from 'rxjs';
-import { map } from 'rxjs/operators';
-import { environment } from 'src/environments/environment';
 import { ApiService } from 'src/app/api.service';
 
 @Injectable({
@@ -11,25 +7,25 @@ import { ApiService } from 'src/app/api.service';
 })
 export class AffiliatesService {
 
-  networks: any;
+  affiliates: any;
   gateway: any;
-  public customersGetResponse = new BehaviorSubject([]);
+  public affiliatesGetResponse = new BehaviorSubject([]);
   public deleteResponse = new BehaviorSubject([]);
 
-  customersGetResponse$ = this.customersGetResponse.asObservable();
+  affiliatesGetResponse$ = this.affiliatesGetResponse.asObservable();
   deleteResponse$ = this.deleteResponse.asObservable();
 
   constructor(private apiService: ApiService) { }
 
   async getAffiliates(): Promise<any> {
     await this.apiService.getData(`affiliates`).then(res => res.json()).then((data) => {
-      this.networks = data;
-      // this.customersGetResponse.next(data);
+      this.affiliates = data;
+      // this.affiliatesGetResponse.next(data);
     });
-    // return this.networks;
+    return this.affiliates;
   }
   async deleteData(id): Promise<any> {
-    await this.apiService.getData(`destroy_customers?id=${id}`).then(res => res.json()).then((data) => {
+    await this.apiService.getData(`destroy_affiliates?id=${id}`).then(res => res.json()).then((data) => {
       this.deleteResponse.next(data);
     });
   }

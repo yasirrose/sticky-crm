@@ -10,6 +10,7 @@ use App\Models\Profile;
 use App\Models\Order;
 use App\Models\Decline;
 use App\Models\MidCount;
+use Carbon\Carbon;
 use DB;
 
 class MidController extends Controller
@@ -21,29 +22,49 @@ class MidController extends Controller
      */
     public function index(Request $request)
     {
-        $query = Mid::select('*');
         $start_date = $request->start_date;
         $end_date = $request->end_date;
         if ($start_date != null && $end_date != null) {
-            $start_date = date('Y-m-d', strtotime($request->start_date));
-            $end_date = date('Y-m-d', strtotime($request->end_date));
-            // $query->whereBetween('created_on', [$start_date . ' 00:00:00', $end_date . ' 23:59:59']);
+            $start_date = Carbon::parse($start_date)->startOfDay();
+            $end_date = Carbon::parse($end_date)->endOfDay();
         }
+        // $model = new Mid();
+        // $model->to = $start_date;
+        // $model->from = $end_date;
+        // $model->order_status = 2;
+        // $query = Mid::take(1);
+        // dd($query->get());
+        // DD($start_date);
         if (isset($request->search) && $request->search != '') {
             $query = $query->search($request->search, null, true, true);
         }
-        $data = $query->get();
+        $data = DB::table('mids')->join('orders', 'orders.gateway_id', '=', 'mids.gateway_id')
+        ->where('orders.acquisition_date', '>=', $start_date)
+        ->where('orders.acquisition_date', '<=', $end_date)
+        ->where(['orders.order_status' => 2])
+        ->select('mids.*', DB::raw('SUM(orders.order_total) as sum'), DB::raw('COUNT(orders.id)  as mid_count'))
+        ->groupBy('mids.id')->get();
 
+        dd($data);
         foreach ($data as $mid) {
-            if ($start_date && $end_date) {
-                $mid->current_monthly_amount = Order::whereBetween('acquisition_date', [$start_date . ' 00:00:00', $end_date . ' 23:59:59'])->where(['order_status' => 2, 'gateway_id' => $mid->gateway_id])->sum('order_total');
-                // $mid->current_monthly_amount = DB::table('orders')->whereBetween(DB::raw('DATE(acquisition_date)'), [$start_date, $end_date])->where(['order_status' => 2, 'gateway_id'=>$mid->gateway_id])->sum('order_total');
-                // $mid->current_monthly_amount = DB::table('orders')->whereDate('acquisition_date', '>=', $start_date)->whereDate('acquisition_date', '<=', $end_date)->count();
+            if ($start_date != null && $end_date != null) {
+                $approved = DB::table('orders')->where('acquisition_date', '>=', $start_date)->where('acquisition_date', '<=', $end_date)->where(['order_status' => 2, 'gateway_id' => $mid->gateway_id]);
+                // $approved = $orders->where(['order_status' => 2]);
+                // $declined = $orders->where(['order_status' => 7]);
+                // dd($orders->count());
+                // $approved_orders = $orders->where(['order_status' => 2]);
+                // dd($approved_orders->count());
+                // $declined_orders = $orders->where(['order_status' => 7]);
+                $mid->current_monthly_amount = $approved->sum('order_total');
+                $mid->mid_count = $approved->count();
+                // $mid->declined_orders = $declined->count();
+                // $mid->decline_orders->decline_data
             }
-            // dd($mid->current_monthly_amount);
-            // $mid->decline_orders = json_decode($mid->decline_orders);
-            $mid->decline_orders = Decline::where(['gateway_id' => $mid->gateway_id])->first();
-            $mid->mid_count = MidCount::where(['gateway_id' => $mid->gateway_id])->first();
+            // $mid->decline_orders = Decline::where(['gateway_alias' => $mid->gateway_alias])->first();
+            // $mid->mid_count = MidCount::where(['gateway_alias' => $mid->gateway_alias])->first();
+            // $mid->global_fields = Profile::where(['alias' => $mid->gateway_alias])->pluck('global_fields')->first();
+
+            // $mid->decline_orders = ['decline_per' => 0];
             $mid->global_fields = Profile::where(['alias' => $mid->gateway_alias])->pluck('global_fields')->first();
         }
         return response()->json(['status' => true, 'data' => $data]);
@@ -80,6 +101,27 @@ class MidController extends Controller
     {
         $data = Profile::where(['alias' => $alias])->first();
         return response()->json(['status' => true, 'data' => $data]);
+    }
+
+    public function mids_order_total($id)
+    {
+        // DB::enableQueryLog();
+
+        $mid = Mid::where(['id' => $id])->first();
+        // date for 03/29/22 records
+        $start_date = Carbon::now()->subDays(4)->startOfDay();
+        $end_date = Carbon::now()->subDays(4)->endOfDay();
+        // $daily_revenue = DB::table('orders')->whereBetween('acquisition_date', [$start_date, $end_date])->where(['order_status' => 2, 'gateway_id' => $mid->gateway_id])->sum('order_total');
+        // $mid->daily_revenue = Order::whereBetween(DB::raw('DATE(acquisition_date)'), [$start_date, $end_date])->where(['order_status' => 2, 'gateway_id' => $mid->gateway_id])->select(
+        //     DB::raw('sum(order_total) as order_total')
+        // )->first();
+        // $daily_revenue = DB::table('orders')->whereDate('acquisition_date', '>=', $start_date)->whereDate('acquisition_date', '<=', $end_date)->where(['order_status' => 2, 'gateway_id'=>$mid->gateway_id])->sum('order_total');
+        // $daily_revenue = DB::table('orders')->whereBetween(DB::raw('DATE(acquisition_date)'), [$start_date, $end_date])->where(['order_status' => 2, 'gateway_id'=>$mid->gateway_id])->sum('order_total');
+        $daily_revenue = DB::table('orders')->where('acquisition_date', '>=', $start_date)->where('acquisition_date', '<=', $end_date)->where(['order_status' => 2, 'gateway_id' => $mid->gateway_id])->sum('order_total');
+        // dd(DB::getQueryLog());
+        // return $daily_revenue;
+        $mid->daily_revenue = round($daily_revenue, 2);
+        return response()->json(['status' => true, 'data' => $mid]);
     }
 
     /**
@@ -278,7 +320,7 @@ class MidController extends Controller
             $data = [];
             $data['gateway_id'] = $mid->gateway_id;
             $data['gateway_alias'] = $mid->gateway_alias;
-            $declined_orders = Order::with('product')->where(['gateway_id' => $mid->gateway_id, 'prepaid_match' => 'NO', 'is_test_cc' => 0]);
+            $declined_orders = Order::with('product')->where(['gateway_id' => $mid->gateway_id, 'order_status' => 2]);
             $mid_count = $declined_orders->count();
             // $data['decline_per'] = ($total_orders) / 100;
             $product_names = $declined_orders->get()->countBy('product.name')->toArray();
