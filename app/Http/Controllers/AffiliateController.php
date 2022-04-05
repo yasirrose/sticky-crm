@@ -4,8 +4,10 @@ namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\Http;
 use App\Models\Affiliate;
+use App\Models\Network;
 use Illuminate\Http\Request;
 use GuzzleHttp\Client;
+use DB;
 
 class AffiliateController extends Controller
 {
@@ -14,9 +16,26 @@ class AffiliateController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        $data = Affiliate::all();
+        $start_date = $request->start_date;
+        $end_date = $request->end_date;
+        $query = Affiliate::select('*');
+        if ($start_date != null && $end_date != null){
+            $query->where('time_created', '>', strtotime($request->start_date));
+            $query->where('time_created', '<', strtotime($request->end_date));
+        }
+        if ($request->fields != null) {
+            $field_array = explode(',', $request->fields);
+            $value_array = explode(',', $request->values);
+            for ($i = 0; $i < count($value_array); $i++) {
+                if($value_array[$i] != ''){
+                    $query->where($field_array[$i], $value_array[$i]);
+                }
+            }
+        }
+        $data['affiliates'] = $query->get();
+        $data['networks'] = Network::all();
         return response()->json(['status' => true, 'data' => $data]);
     }
 
@@ -82,9 +101,14 @@ class AffiliateController extends Controller
      * @param  \App\Models\Affiliate  $affiliate
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Affiliate $affiliate)
+    public function destroy_affiliates(Request $request)
     {
-        //
+        $id = $request->all();
+        // $is_true = DB::table('affiliates')->where('id', $id)->delete();
+        $is_true = Affiliate::where('id', $id)->delete();
+        if ($is_true) {
+            return response()->json(['status' => true, 'message' => '<b>1</b> Affiliate Deleted Successfully']);
+        }
     }
     public function pull_affiliates()
     {
