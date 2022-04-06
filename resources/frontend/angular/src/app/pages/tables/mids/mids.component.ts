@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 import { Observable, of, ReplaySubject, Subscription } from 'rxjs';
 import { filter } from 'rxjs/operators';
@@ -11,6 +11,7 @@ import { MatSort } from '@angular/material/sort';
 import { fadeInRightAnimation } from '../../../../@fury/animations/fade-in-right.animation';
 import { fadeInUpAnimation } from '../../../../@fury/animations/fade-in-up.animation';
 import { ConfirmationDialogComponent } from '../../confirmation-dialog/confirmation-dialog.component';
+import { MidDetailDialogComponent } from '../../mid-detail-dialog/mid-detail-dialog.component';
 import { ConfirmationDialogModel } from '../../confirmation-dialog/confirmation-dialog';
 import { GroupDialogComponent } from './group-dialog/group-dialog.component';
 import { GroupDialogModel } from './group-dialog/group-dialog';
@@ -106,7 +107,7 @@ export class MidsComponent implements OnInit, AfterViewInit, OnDestroy {
     this.unAssignSubscription = this.midsService.unAssignGroupResponse$.subscribe(data => this.manageUnassignResponse(data))
     this.bulkUpdateSubscription = this.midsService.assignBulkGroupResponse$.subscribe(data => this.manageBulkGroupResponse(data))
     this.searchSubscription = this.listService.searchResponse$.subscribe(data => this.manageSearchResponse(data))
-
+    this.selectDate('lastThreeMonths');
     this.getData();
     this.dataSource = new MatTableDataSource();
     this.data$.pipe(
@@ -218,6 +219,12 @@ export class MidsComponent implements OnInit, AfterViewInit, OnDestroy {
       midCountArray.push('Total: ' + '\xa0\xa0\xa0 | \xa0\xa0\xa0' + totalMids + '\xa0\xa0\xa0 | \xa0\xa0\xa0' + (totalMids / 100).toFixed(2) + '%');
     }
     return midCountArray;
+  }
+  openDialog(id, evt: MouseEvent){
+    const target = new ElementRef(evt.currentTarget);
+    const dialogRef = this.dialog.open(MidDetailDialogComponent, {
+      data: { trigger: target, id: id }
+    });    
   }
 
   countContent() {

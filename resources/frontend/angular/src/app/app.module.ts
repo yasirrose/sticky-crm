@@ -12,6 +12,7 @@ import { OrdersService } from './pages/tables/orders/orders.service';
 import { CustomersService } from './pages/customers/customers.service';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { MidGroupsRoutingModule } from './pages/tables/mid-groups/mid-groups-routing.module';
+import { MidDetailDialogComponent } from './pages/mid-detail-dialog/mid-detail-dialog.component';
 
 
 @NgModule({
@@ -25,7 +26,7 @@ import { MidGroupsRoutingModule } from './pages/tables/mid-groups/mid-groups-rou
     PendingInterceptorModule,
     NgbModule,
   ],
-  declarations: [AppComponent],
+  declarations: [AppComponent, MidDetailDialogComponent],
   bootstrap: [AppComponent],
   providers: [
     {

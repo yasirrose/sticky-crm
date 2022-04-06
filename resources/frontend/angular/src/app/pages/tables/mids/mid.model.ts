@@ -20,7 +20,7 @@ export class Mid {
     global_monthly_cap: string;
     current_monthly_amount: string;
     processing_percent: string;
-    decline_per: string;
+    decline_per: number;
     decline_orders: [];
     checked: boolean;
     // mid_count: number;
@@ -45,9 +45,7 @@ export class Mid {
         this.global_monthly_cap = '$' + nf.format(mid.global_monthly_cap);
         this.current_monthly_amount = mid.current_monthly_amount;
         this.processing_percent = mid.processing_percent + '%';
-        // if(mid.decline_orders.decline_per){
-        //     this.decline_per = mid.decline_orders.decline_per + '%';
-        // }
+        this.decline_per = (mid.total_count / mid.decline_per)*100;
         this.decline_orders = mid.decline_orders;
         this.checked = false;
     }
