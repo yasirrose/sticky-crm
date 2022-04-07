@@ -31,7 +31,9 @@ export class Mid {
         if (mid.global_fields) {
             this.mid_group_name = mid.global_fields.mid_group;
         }
-        this.mid_count = mid.mid_count;
+        if (mid.approved_orders) {
+            this.mid_count = mid.approved_orders.length;
+        }
         this.router_date_in = datePipe.transform(mid.router_date_in, 'MM-dd-yyyy');
         this.router_desc = mid.router_desc;
         this.mid_group_setting_id = mid.mid_group_setting_id;
