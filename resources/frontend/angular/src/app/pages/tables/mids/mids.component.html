@@ -110,14 +110,14 @@
           <button class="create" (click)="createCustomer()" type="button" mat-mini-fab color="primary">
             <mat-icon>add</mat-icon>
           </button>
-        </div> -->
+        </div> --> 
             <mat-progress-bar mode="indeterminate" *ngIf="isLoading"></mat-progress-bar>
             <div class="sticky-columns">
                 <table [dataSource]="dataSource" mat-table matSort>
 
                     <!-- Checkbox Column -->
-                    <ng-container matColumnDef="checkbox">
-                        <th *matHeaderCellDef class="actions-cell" mat-header-cell>
+                    <ng-container matColumnDef="checkbox" >
+                        <th *matHeaderCellDef class="actions-cell" mat-header-cell >
                             <mat-checkbox (change)="updateCheck()" [(ngModel)]="selectAll" color="accent" (click)="$event.stopPropagation()"></mat-checkbox>
                         </th>
                         <td *matCellDef="let row" class="actions-cell" mat-cell>
@@ -153,8 +153,7 @@
                     <!-- mid_count column  -->
                     <ng-container matColumnDef="mid_count">
                         <th *matHeaderCellDef mat-header-cell>Mid Count</th>
-                        <td *matCellDef="let row, index as i" [matTooltip]="toolTipMidCount[i] | tooltipList"
-                            matTooltipClass="tooltip-list" mat-cell #tooltip="matTooltip" matTooltipPosition="below">
+                        <td *matCellDef="let row" (click)="openDialog(row.id, row.gateway_id, $event)">
                             <a routerLink="#">{{ row.mid_count | number }}</a>
                         </td>
                     </ng-container>
@@ -166,15 +165,22 @@
                             ${{ row.current_monthly_amount | number : '1.2-2' }}
                         </td>
                     </ng-container>
+                    
+                    <ng-container matColumnDef="decline_per">
+                        <th *matHeaderCellDef mat-header-cell mat-sort-header>Decline %</th>
+                        <td *matCellDef="let row" mat-cell>
+                            {{ row.decline_per | number }} %
+                        </td>
+                    </ng-container>
 
                     <!-- Decline % -->
-                    <ng-container matColumnDef="decline_per">
+                    <!-- <ng-container matColumnDef="decline_per">
                         <th *matHeaderCellDef mat-header-cell mat-sort-header>Decline %</th>
                         <td *matCellDef="let row, index as i" [matTooltip]="toolTipDeclines[i] | tooltipList"
                             matTooltipClass="tooltip-list" mat-cell #tooltip="matTooltip" matTooltipPosition="below">
-                            <a routerLink="#">{{ row.decline_per }}</a>
+                            {{ row.decline_per | number }}
                         </td>
-                    </ng-container>
+                    </ng-container> -->
 
                     <ng-container matColumnDef="actions">
                         <th mat-header-cell *matHeaderCellDef> Actions </th>
@@ -191,7 +197,7 @@
                 </table>
             </div>
 
-
+ 
             <!-- <mat-paginator #paginator [length]="totalRows" [pageIndex]="currentPage" [pageSize]="pageSize"
                 [pageSizeOptions]="pageSizeOptions" (page)="pageChanged($event)" aria-label="Select page">
             </mat-paginator> -->
