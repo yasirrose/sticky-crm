@@ -67,16 +67,16 @@ const routes: Routes = [
         loadChildren: () => import('./pages/campaigns/golden-ticket/golden-ticket.module').then(m => m.GoldenTicketModule),
       },
       {
-        path: 'campaigns/sticket-daily',
-        loadChildren: () => import('./pages/campaigns/sticket-daily/sticket-daily.module').then(m => m.SticketDailyModule),
+        path: 'campaigns/ticket-daily',
+        loadChildren: () => import('./pages/campaigns/ticket-daily/ticket-daily.module').then(m => m.TicketDailyModule),
       },
       {
-        path: 'campaigns/sticket-weekly',
-        loadChildren: () => import('./pages/campaigns/sticket-weekly/sticket-weekly.module').then(m => m.SticketWeeklyModule),
+        path: 'campaigns/ticket-weekly',
+        loadChildren: () => import('./pages/campaigns/ticket-weekly/ticket-weekly.module').then(m => m.TicketWeeklyModule),
       },
       {
-        path: 'campaigns/sticket-monthly',
-        loadChildren: () => import('./pages/campaigns/sticket-monthly/sticket-monthly.module').then(m => m.SticketMonthlyModule),
+        path: 'campaigns/ticket-monthly',
+        loadChildren: () => import('./pages/campaigns/ticket-monthly/ticket-monthly.module').then(m => m.TicketMonthlyModule),
       },
 
     ]
