@@ -66,6 +66,13 @@ export class CampaignService {
     });
     return this.data;
   }
+  async refreshGoldenTicket(): Promise<any> {
+    await this.apiService.getData(`refresh-golden-ticket`).then(res => res.json()).then((data) => {
+      this.data = data;
+      this.ticketDailyResponse.next(data);
+    });
+    return this.data;
+  }
   async refreshDailyTicket(): Promise<any> {
     await this.apiService.getData(`refresh-daily`).then(res => res.json()).then((data) => {
       this.data = data;

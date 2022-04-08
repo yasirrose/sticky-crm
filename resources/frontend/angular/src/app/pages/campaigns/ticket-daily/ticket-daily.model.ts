@@ -27,7 +27,7 @@ export class TicketDaily {
     let decline_percentage = '';
 
     if (this.decline_per) {
-      decline_percentage = (this.decline_per * 100).toFixed(2) + '%';
+      decline_percentage = this.decline_per + '%';
     }
 
     return decline_percentage;
