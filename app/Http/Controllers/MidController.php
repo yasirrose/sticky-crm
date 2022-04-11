@@ -95,89 +95,40 @@ class MidController extends Controller
             $query = $query->search($request->search, null, true, true);
         }
 
-        // $data = DB::table('mids')->join('orders', 'orders.gateway_id', '=', 'mids.gateway_id')
-        // ->where('orders.acquisition_date', '>=', $start_date)
-        // ->where('orders.acquisition_date', '<=', $end_date)
-        // ->select(DB::raw('mids.*'))
-        // ->addSelect(DB::raw('COUNT(orders.id) as total_count'))
-        // ->addSelect(DB::raw('SUM(orders.order_total) as sum'))
-        // ->addSelect(DB::raw('sum(case when orders.order_status = "2" then 1 else 0 end) as mid_count'))
-        // ->addSelect(DB::raw('sum(case when orders.order_status = "7" then 1 else 0 end) as decline_per'))
-        // ->groupBy('mids.id')->get();
+        $data = DB::table('mids')->join('orders', 'orders.gateway_id', '=', 'mids.gateway_id')
+        ->where('orders.time_stamp', '>=', $start_date)
+        ->where('orders.time_stamp', '<=', $end_date)
+        ->select(DB::raw('mids.*'))
+        ->addSelect(DB::raw('COUNT(orders.id) as total_count'))
+        ->addSelect(DB::raw('SUM(orders.order_total) as sum'))
+        ->selectRaw("count(case when orders.order_status = '2' then 1 end) as mid_count")
+        ->selectRaw("count(case when orders.order_status = '7' then 1 end) as decline_per")
+        ->groupBy('mids.id')->get();
 
-        $data = Mid::get();
+        // $data = Mid::get();
         return response()->json(['status' => true, 'data' => $data]);
     }
     public function get_mid_count_detail(Request $request){
         $start_date = $request->start_date;
         $end_date = $request->end_date;
         $gateway_id = $request->gateway_id;
-
-        $data = DB::table('orders')
+        $array = [];
+        $details = DB::table('orders')
         ->where('orders.gateway_id', $gateway_id)
         ->where('orders.acquisition_date', '>=', $start_date)
         ->where('orders.acquisition_date', '<=', $end_date)
+        ->where('orders.order_status', 2)
         ->join('order_products', 'orders.order_id', '=', 'order_products.order_id')
         ->select('order_products.name as name')
         ->addSelect(DB::raw('COUNT(order_products.name) as total_count'))
-        // ->addSelect(DB::raw('sum(case when orders.order_status = "2" then 1 else 0 end) as mid_count'))
-        // ->addSelect(DB::raw('sum(case when orders.order_status = "7" then 1 else 0 end) as decline_per'))
         ->groupby('order_products.name')->distinct()->get();
-       
-        // $order_id = DB::table('orders')
-        // ->where('acquisition_date', '>=', $start_date)
-        // ->where('acquisition_date', '<=', $end_date)
-        // ->where('gateway_id',$gateway_id)->get('order_id');
-        // $details = [];
-        // for($i = 0; $i < count($order_id); $i++){
-        //     $detail = DB::table('order_products')->where('order_id',$order_id[$i]->order_id)->first();
-        //     array_push($details, $detail);
-        // }
-        // $data['details'] = $details;
-
-        // $declined_orders = Order::with('product')
-        // ->where('acquisition_date', '>=', $start_date)
-        // ->where('acquisition_date', '<=', $end_date)
-        // ->where(['gateway_id' => $gateway_id, 'order_status' => 2]);
-        // $product_names = $declined_orders->get();
-        // dd($product_names[0]);
-        // $mid_count = $declined_orders->count();
-        // foreach($product_names as $name => $count) {
-        //     $mid_count_data[] = array(
-        //         'name' => $name,
-        //         'count' => $count,
-        //         'percentage' => round((($count / $mid_count) * 100), 2)
-        //     );
-        // }
-        // $data['mid_count_data'] = $mid_count_data;
-        // $data['mid_count'] = $mid_count;
-
-        // $data['details'] = DB::table('order_products')->where('product_id')
-
-        // dd($data[0]);
-        // foreach ($data as $mid) {
-        //     if ($start_date != null && $end_date != null) {
-        //         $approved = DB::table('orders')->where('acquisition_date', '>=', $start_date)->where('acquisition_date', '<=', $end_date)->where(['order_status' => 2, 'gateway_id' => $mid->gateway_id]);
-        //         $declined = DB::table('orders')->where('acquisition_date', '>=', $start_date)->where('acquisition_date', '<=', $end_date)->where(['order_status' => 7, 'gateway_id' => $mid->gateway_id]);
-                // $approved = $orders->where(['order_status' => 2]);
-                // $declined = $orders->where(['order_status' => 7]);
-                // dd($orders->count());
-                // $approved_orders = $orders->where(['order_status' => 2]);
-                // dd($approved_orders->count());
-                // $declined_orders = $orders->where(['order_status' => 7]);
-                // $mid->current_monthly_amount = $approved->sum('order_total');
-                // $mid->mid_count = $approved->count();
-                // $mid->declined_orders = $declined->count();
-                // $mid->decline_orders->decline_data
-            // }
-            // $mid->decline_orders = Decline::where(['gateway_alias' => $mid->gateway_alias])->first();
-            // $mid->mid_count = MidCount::where(['gateway_alias' => $mid->gateway_alias])->first();
-            // $mid->global_fields = Profile::where(['alias' => $mid->gateway_alias])->pluck('global_fields')->first();
-
-            // $mid->decline_orders = ['decline_per' => 0];
-            // $mid->global_fields = Profile::where(['alias' => $mid->gateway_alias])->pluck('global_fields')->first();
-        // }
-        return response()->json(['status' => true, 'data' => $data]);
+        foreach($details as $detail){
+            $data['name'] = $detail->name;
+            $data['total_count'] = $detail->total_count;
+            $data['percentage'] = round(($detail->total_count / $request->mid_count)*100, 2);
+            array_push($array,$data);
+        }
+        return response()->json(['status' => true, 'data' => $array]);
     }
 
     public function create()

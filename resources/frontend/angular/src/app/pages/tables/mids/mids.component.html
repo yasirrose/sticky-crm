@@ -153,7 +153,7 @@
                     <!-- mid_count column  -->
                     <ng-container matColumnDef="mid_count">
                         <th *matHeaderCellDef mat-header-cell>Mid Count</th>
-                        <td *matCellDef="let row" (click)="openDialog(row.id, row.gateway_id, $event)">
+                        <td *matCellDef="let row" (click)="openDialog(row.id, row.gateway_id, $event, row.mid_count)">
                             <a routerLink="#">{{ row.mid_count | number }}</a>
                         </td>
                     </ng-container>
