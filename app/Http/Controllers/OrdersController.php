@@ -23,16 +23,16 @@ class OrdersController extends Controller
         $end_date = $request->end_date;
         $pageno = isset($request->pageno) ? $request->pageno : 0;
         $no_of_records_per_page = isset($request->per_page) ? $request->per_page : 25;
-        
-        $query = DB::table('orders')->select('id','order_id','created_by_employee_name','billing_first_name', 'billing_last_name', 'billing_street_address', 'order_total', 'acquisition_month', 'acquisition_year', 'c1', 'affid', 'trx_month', 'order_sales_tax_amount', 'decline_reason','is_cascaded','decline_reason_details','is_fraud','is_chargeback','chargeback_date','is_rma','rma_number','rma_reason','is_recurring','is_void','void_amount','void_date','is_refund','refund_amount','refund_date','order_confirmed','order_confirmed_date','acquisition_date','is_blacklisted','coupon_id','created_by_user_name','order_sales_tax','order_status','promo_code','recurring_date','response_code','return_reason');
+
+        $query = DB::table('orders')->select('id', 'order_id', 'created_by_employee_name', 'billing_first_name', 'billing_last_name', 'billing_street_address', 'order_total', 'acquisition_month', 'acquisition_year', 'c1', 'affid', 'trx_month', 'order_sales_tax_amount', 'decline_reason', 'is_cascaded', 'decline_reason_details', 'is_fraud', 'is_chargeback', 'chargeback_date', 'is_rma', 'rma_number', 'rma_reason', 'is_recurring', 'is_void', 'void_amount', 'void_date', 'is_refund', 'refund_amount', 'refund_date', 'order_confirmed', 'order_confirmed_date', 'acquisition_date', 'is_blacklisted', 'coupon_id', 'created_by_user_name', 'order_sales_tax', 'order_status', 'promo_code', 'recurring_date', 'response_code', 'return_reason');
         
         // $total_rows = 30000;
-        if ($start_date != null && $end_date != null){
+        if ($start_date != null && $end_date != null) {
             $start_date = date('Y-m-d', strtotime($request->start_date));
             $end_date = date('Y-m-d', strtotime($request->start_date));
-            $query->whereBetween('acquisition_date', [$start_date.' 00:00:00', $end_date.' 23:59:59']);
+            $query->whereBetween('acquisition_date', [$start_date . ' 00:00:00', $end_date . ' 23:59:59']);
         }
-        
+
         if ($request->fields != null) {
             $field_array = explode(',', $request->fields);
             $value_array = explode(',', $request->values);
@@ -59,7 +59,7 @@ class OrdersController extends Controller
         //         ->orWhere('is_cascaded', 'like', '%' . $request->search . '%')
         //         ->orWhere('created_by_user_name', 'like', '%' . $request->search . '%');
         //     }
-            
+
         $total_rows = $query->count('id');
         $rows = $query->orderBy('id', 'desc')->SimplePaginate($no_of_records_per_page);
         // $total_rows = 303502;
@@ -751,7 +751,7 @@ class OrdersController extends Controller
                         $updated_orders++;
                         $db_order = Order::where(['order_id' => $result->order_id])->first();
                         $db_order->update((array)$result);
-                        
+
                         $mass_assignment = $this->get_order_product_mass($result);
                         $order_product = OrderProduct::where(['order_id' => $db_order->order_id])->update($mass_assignment);
 
@@ -1116,9 +1116,92 @@ class OrdersController extends Controller
             return response()->json(['status' => true, 'New Record in todays API' => $new_orders, 'Previous orders to be updated in orders table' => $updated_orders]);
         }
     }
-    public static function testFunction(){
+    public static function testFunction()
+    {
         $data['NAME'] = 'name';
         $data['ADDRESS'] = 'address';
         return DB::table('EMPLOYEES')->insert($data);
+    }
+
+    public function order_history()
+    {
+        ini_set('memory_limit', '512M');
+        set_time_limit(0);
+        $new_orders = 0;
+        $updated_orders = 0;
+        $order_ids = [];
+
+        $username = "yasir_dev";
+        $password = "yyutmzvRpy5TPU";
+        $start_date = '2022-01-11 00:00:00';
+        $end_date = '2022-01-11 23:59:59';
+        $url = 'https://thinkbrain.sticky.io/api/v2/orders/histories?start_at=' . $start_date . '&end_at=' . $end_date;
+
+        $api_data = json_decode(Http::asForm()->withBasicAuth($username, $password)->accept('application/json')
+            ->get($url)->getBody()->getContents());
+
+        if ($api_data->status == "SUCCESS") {
+            $last_page = $api_data->last_page;
+            $total = $api_data->total;
+            $orders = $api_data->data;
+            $order_ids = array_merge($order_ids, array_column($orders, 'order_id'));
+
+            for ($i = 2; $i <= $last_page; $i++) {
+                $api_data = json_decode(Http::asForm()->withBasicAuth($username, $password)->accept('application/json')
+                    ->get($url . '&page=' . $i)->getBody()->getContents());
+
+                $orders = $api_data->data;
+                // dd($orders);
+                $order_ids = array_merge($order_ids, array_column($orders, 'order_id'));
+            }
+            $order_ids = array_unique($order_ids);
+            // dd($order_ids);
+
+            if ($total < 50000) {
+
+                $chunked_array = array_chunk($order_ids, 500);
+                // dd($chunked_array);
+                foreach ($chunked_array as $chucked_ids) {
+                    $order_view_api = 'https://thinkbrain.sticky.io/api/v1/order_view';
+                    $order_views = json_decode(Http::asForm()->withBasicAuth($username, $password)->accept('application/json')
+                        ->post($order_view_api, ['order_id' => $chucked_ids])->getBody()->getContents());
+
+                    $results = $order_views->data;
+                    foreach ($results as $result) {
+
+                        $month = Carbon::parse($result->time_stamp)->format('F');
+                        $year = Carbon::parse($result->time_stamp)->format('Y');
+                        $result->acquisition_month = $month;
+                        $result->acquisition_year = $year;
+                        $result->trx_month = $month;
+                        $result->billing_email = $result->email_address;
+                        $result->billing_telephone = $result->customers_telephone;
+                        $result->shipping_email = $result->email_address;
+                        $result->shipping_telephone = $result->customers_telephone;
+                        if (property_exists($result, 'employeeNotes')) {
+                            $result->employeeNotes = serialize($result->employeeNotes);
+                        }
+                        $result->utm_info = serialize($result->utm_info);
+                        if (property_exists($result, 'products')) {
+                            $result->products = serialize($result->products);
+                        }
+                        $result->systemNotes = serialize($result->systemNotes);
+                        $result->totals_breakdown = serialize($result->totals_breakdown);
+                    //update
+                        $updated_orders++;
+                        $db_order = Order::where(['order_id' => $result->order_id])->first();
+                        $db_order->update((array)$result);
+
+                        $mass_assignment = $this->get_order_product_mass($result);
+                        $order_product = OrderProduct::where(['order_id' => $db_order->order_id])->update($mass_assignment);
+                    }
+                    $data = null;
+                    $results = null;
+                }
+                return response()->json(['status' => true, 'New Record in todays API' => $new_orders, 'Previous orders to be updated in orders table' => $updated_orders]);
+            } else {
+                return response()->json(['status' => false, 'message' => 'data exceeded 50000 records']);
+            }
+        }
     }
 }
