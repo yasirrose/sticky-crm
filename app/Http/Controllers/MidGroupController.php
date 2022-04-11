@@ -38,6 +38,15 @@ class MidGroupController extends Controller
         }
         return response()->json(['status' => true, 'data' => $data]);
     }
+    public function get_assigned_mids(Request $request)
+    {
+        $data = MidGroup::where('group_name', 'like', '%' . $request->value . '%')->get('assigned_mids')->first();
+        if(isset($data)){
+            return response()->json(['status' => true, 'mids' => $data->assigned_mids]);
+        } else {
+            return response()->json(['status' => false, 'mids' => 0]);
+        }
+    }
 
     /**
      * Show the form for creating a new resource.

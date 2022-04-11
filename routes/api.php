@@ -93,6 +93,7 @@ Route::get('assign_mid_group', [MidController::class, 'assign_mid_group']);
 Route::get('get_first_mid', [MidController::class, 'get_first_mid']);
 Route::get('refresh_mid_count', [MidController::class, 'refresh_mid_count']);
 Route::get('get_mid_count_detail', [MidController::class, 'get_mid_count_detail']);
+Route::get('get_assigned_mids', [MidGroupController::class, 'get_assigned_mids']);
 Route::get('user-details', [DashboardController::class, 'user_data']);
 Route::post('destroy_customers', [CustomerController::class, 'destroy_customers']);
 Route::get('destroy_affiliates', [AffiliateController::class, 'destroy_affiliates']);
