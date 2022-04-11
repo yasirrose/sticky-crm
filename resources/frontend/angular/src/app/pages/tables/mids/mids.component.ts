@@ -220,10 +220,10 @@ export class MidsComponent implements OnInit, AfterViewInit, OnDestroy {
     }
     return midCountArray;
   }
-  openDialog(id, gateway_id, evt: MouseEvent, mid_count){
+  openDialog(id, gateway_id, evt: MouseEvent, total_count, status){
     const target = new ElementRef(evt.currentTarget);
     const dialogRef = this.dialog.open(MidDetailDialogComponent, {
-      data: { trigger: target, id: id, gateway_id : gateway_id, start_date : this.start_date, end_date : this.end_date, mid_count : mid_count }
+      data: { trigger: target, id: id, gateway_id : gateway_id, start_date : this.start_date, end_date : this.end_date, total_count : total_count, status : status }
     });    
   }
 

@@ -14,7 +14,8 @@ export class MidDetailDialogComponent implements OnInit {
   gateway_id : string;
   start_date : string;
   end_date : string;
-  mid_count : number;
+  total_count : number;
+  status : number;
   endPoint = '';
   filters = {};
   isLoading = false;
@@ -25,16 +26,16 @@ export class MidDetailDialogComponent implements OnInit {
       this.gateway_id = data.gateway_id;
       this.start_date = data.start_date;
       this.end_date = data.end_date;
-      this.mid_count = data.mid_count;
+      this.total_count = data.total_count;
+      this.status = data.status;
       this.endPoint = environment.endpoint;
   }
 
   ngOnInit(): void {
-    const response = fetch(`${this.endPoint}/api/get_mid_count_detail?gateway_id=${this.gateway_id}&start_date=${this.start_date}&end_date=${this.end_date}&mid_count=${this.mid_count}`).then(res => res.json()).then((data) => {
+    const response = fetch(`${this.endPoint}/api/get_mid_count_detail?gateway_id=${this.gateway_id}&start_date=${this.start_date}&end_date=${this.end_date}&total_count=${this.total_count}&status=${this.status}`).then(res => res.json()).then((data) => {
       if(data.status){
         this.details = data.data;
         this.isLoading = true;
-        console.log('Details :',this.details)
       }
     });
   }

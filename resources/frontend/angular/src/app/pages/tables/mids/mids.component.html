@@ -153,7 +153,7 @@
                     <!-- mid_count column  -->
                     <ng-container matColumnDef="mid_count">
                         <th *matHeaderCellDef mat-header-cell>Mid Count</th>
-                        <td *matCellDef="let row" (click)="openDialog(row.id, row.gateway_id, $event, row.mid_count)">
+                        <td *matCellDef="let row" (click)="openDialog(row.id, row.gateway_id, $event, row.mid_count, 2)">
                             <a routerLink="#">{{ row.mid_count | number }}</a>
                         </td>
                     </ng-container>
@@ -167,9 +167,10 @@
                     </ng-container>
                     
                     <ng-container matColumnDef="decline_per">
-                        <th *matHeaderCellDef mat-header-cell mat-sort-header>Decline %</th>
+                        <th *matHeaderCellDef mat-header-cell mat-sort-header>Decline%</th>
                         <td *matCellDef="let row" mat-cell>
-                            {{ row.decline_per | number }} %
+                            <a routerLink="#" (click)="openDialog(row.id, row.gateway_id, $event, row.decline_count, 7)">{{ row.decline_per | number : '1.2-2' }}%</a>
+                            <!-- /<a routerLink="#" (click)="openDialog(row.id, row.gateway_id, $event, row.mid_count, 2)">{{ row.approved_per | number : '1.2-2' }}</a> % -->
                         </td>
                     </ng-container>
 
