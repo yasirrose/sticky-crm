@@ -145,18 +145,18 @@ export class AppComponent {
             position: 12
           },
           {
-            name: 'Golden STicket(Daily)',
-            routeOrFunction: '/campaigns/sticket-daily',
+            name: 'Golden Ticket (Daily)',
+            routeOrFunction: '/campaigns/ticket-daily',
             position: 13
           },
           {
-            name: 'Golden STicket(Weekly)',
-            routeOrFunction: '/campaigns/sticket-weekly',
+            name: 'Golden Ticket (Weekly)',
+            routeOrFunction: '/campaigns/ticket-weekly',
             position: 14
           },
           {
-            name: 'Golden STicket(Monthly)',
-            routeOrFunction: '/campaigns/sticket-monthly',
+            name: 'Golden Ticket (Monthly)',
+            routeOrFunction: '/campaigns/ticket-monthly',
             position: 15
           }
         ]

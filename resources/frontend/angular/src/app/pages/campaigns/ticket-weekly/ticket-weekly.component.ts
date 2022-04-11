@@ -1,28 +1,31 @@
+
+
+
+
+
 import { AfterViewInit, Component, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { ListColumn } from '../../../../@fury/shared/list/list-column.model';
-// import { Order } from './order.model';
 import { fadeInRightAnimation } from '../../../../@fury/animations/fade-in-right.animation';
 import { fadeInUpAnimation } from '../../../../@fury/animations/fade-in-up.animation';
-
-//self imports
 import { FormGroup, FormControl } from '@angular/forms';
-import { GoldenTicketService } from './golden-ticket.service';
+import { TicketWeeklyService } from './ticket-weekly.service';
 import { CampaignService } from './../campaign.service';
 import { Subscription } from 'rxjs';
 import { formatDate } from '@angular/common';
 import { Notyf } from 'notyf';
 
+
 @Component({
-  selector: 'fury-golden-ticket',
-  templateUrl: './golden-ticket.component.html',
-  styleUrls: ['./golden-ticket.component.scss'],
+  selector: 'fury-ticket-weekly',
+  templateUrl: './ticket-weekly.component.html',
+  styleUrls: ['./ticket-weekly.component.scss'],
   animations: [fadeInRightAnimation, fadeInUpAnimation]
 })
-export class GoldenTicketComponent implements OnInit {
+export class TicketWeeklyComponent implements OnInit {
 
   tickets: [];
 
@@ -34,24 +37,23 @@ export class GoldenTicketComponent implements OnInit {
   currentPage = 0;
   pageSizeOptions: number[] = [5, 10, 25, 100];
   filters = {};
-  month: string = null;
-  months: string[] = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-  year: string = null;
-  years: number[] = [];
-  notyf = new Notyf({ types: [{ type: 'info', background: '#6495ED', icon: '<i class="fa-solid fa-clock"></i>' }] });
+  // month: string = null;
+  // months: string[] = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+  // year: string = null;
+  // years: number[] = [];
+    notyf = new Notyf({ types: [ { type: 'info', background: '#6495ED', icon: '<i class="fa-solid fa-clock"></i>' }] });
 
   @Input()
   columns: ListColumn[] = [
+
     { name: 'Checkbox', property: 'checkbox', visible: false },
-    { name: 'Month', property: 'month', visible: true, isModelProperty: true },
-    { name: 'Year', property: 'year', visible: true, isModelProperty: true },
-    { name: 'Initials', property: 'initials', visible: true, isModelProperty: true },
+    { name: 'Week', property: 'week', visible: true, isModelProperty: true },
+    // { name: 'Year', property: 'year', visible: true, isModelProperty: true },
+    { name: 'Volume', property: 'volume', visible: true, isModelProperty: true },
     { name: 'Rebills', property: 'rebills', visible: true, isModelProperty: true },
-    { name: 'Cycle 1 %', property: 'cycle_1_per', visible: true, isModelProperty: true },
-    { name: 'Cycle 2', property: 'cycle_2', visible: true, isModelProperty: true },
-    { name: 'Cycle 2 %', property: 'cycle_2_per', visible: true, isModelProperty: true },
-    { name: 'Cycle 3+', property: 'cycle_3_plus', visible: true, isModelProperty: true },
-    { name: 'Cycle 3+ %', property: 'cycle_3_plus_per', visible: true, isModelProperty: true },
+    { name: 'Rebill %', property: 'rebill_per', visible: true, isModelProperty: true },
+    { name: 'AVG Day %', property: 'avg_per', visible: true, isModelProperty: true },
+    { name: '% Filled', property: 'filled_per', visible: true, isModelProperty: true },
     { name: 'Avg Ticket', property: 'avg_ticket', visible: true, isModelProperty: true },
     { name: 'Revenue', property: 'revenue', visible: true, isModelProperty: true },
     { name: 'Refund', property: 'refund', visible: true, isModelProperty: true },
@@ -67,28 +69,19 @@ export class GoldenTicketComponent implements OnInit {
     { name: 'CLV', property: 'clv', visible: true, isModelProperty: true },
 
   ] as ListColumn[];
+
   dataSource: MatTableDataSource<null>;
 
   @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
   @ViewChild(MatSort, { static: true }) sort: MatSort;
 
-  constructor(private dialog: MatDialog, private goldenTicketService: GoldenTicketService, private campaignService: CampaignService) {
-    this.getYearsArray(new Date);
+  constructor(private dialog: MatDialog, private goldenTicketService: TicketWeeklyService, private campaignService: CampaignService) {
   }
 
   get visibleColumns() {
     return this.columns.filter(column => column.visible).map(column => column.property);
   }
 
-  getYearsArray(date) {
-    var c_year = date.getFullYear();
-    for (var i = c_year; i > c_year - 5; i--) {
-      this.years.unshift(i);
-    }
-    for (var i = c_year + 1; i < c_year + 5; i++) {
-      this.years.push(i);
-    }
-  }
 
   /**
    * Example on how to get data and pass it to the table - usually you would want a dedicated service with a HTTP request for this
@@ -96,10 +89,8 @@ export class GoldenTicketComponent implements OnInit {
    */
 
   ngOnInit() {
-    this.getSubscription = this.campaignService.ticketsGetResponse$
-      .subscribe(data => this.manageGetResponse(data));
+    this.getSubscription = this.campaignService.ticketWeeklyResponse$.subscribe(data => this.manageGetResponse(data));
     this.getData();
-    // this.getDropData();
 
     this.dataSource = new MatTableDataSource();
   }
@@ -117,7 +108,7 @@ export class GoldenTicketComponent implements OnInit {
 
   async getData() {
     this.isLoading = true;
-    await this.campaignService.getGoldenTicketData()
+    await this.campaignService.getWeeklyTicket()
       .then(tickets => {
         this.tickets = tickets.data;
         this.dataSource.data = tickets.data;
@@ -154,79 +145,14 @@ export class GoldenTicketComponent implements OnInit {
     this.dataSource.filter = value;
   }
 
-  async filterRecord() {
-    if (this.month != null || this.year != null) {
-      // this.isLoading = true;
-      await this.campaignService.filterGoldenTicket(this.month, this.year)
-        .then(response => {
-          if (response.data.length != 0) {
-            this.tickets = response.data;
-            this.dataSource.data = response.data;
-            this.isLoading = false;
-            this.notyf.success('Data Found Successfully');
-          } else {
-            this.notyf.error('Oops! No Data Found');
-          }
-        }, error => {
-          this.isLoading = false;
-          this.notyf.error(error.message);
-        });
-    } else { this.notyf.error("Please select filter options"); }
-  }
-
-  async addCustomMonth() {
-    if(this.month && this.year){
-      await this.campaignService.addCurrentMonth(this.month, this.year)
-      .then(response => {
-        if (response.status == true) {
-          // this.isLoading = false;
-          this.notyf.success(response.message);
-          this.getData();
-        } else {
-          this.notyf.success(response.message);
-        }
-      }, error => {
-        this.isLoading = false;
-        this.notyf.error(error.message);
-      });
-    }else{ this.notyf.error("Select Month and Year");}
-  }
-
-  async addCurrentMonth() {
-    var currentMonth = this.months[new Date().getMonth()];
-    var currentYear = new Date().getFullYear();
-    await this.campaignService.addCurrentMonth(currentMonth, currentYear)
-      .then(response => {
-        if (response.status == true) {
-          // this.isLoading = false;
-          this.notyf.success(response.message);
-          this.getData();
-        } else {
-          this.notyf.success(response.message);
-        }
-      }, error => {
-        this.isLoading = false;
-        this.notyf.error(error.message);
-      });
-  }
-
-  resetFilters() {
-    this.month = null;
-    this.year = null;
-  }
-
   async refresh() {
-    this.resetFilters();
+    this.notyf.open({ type: 'info', message: 'Records will be refreshed soon...' });
     this.isLoading = true;
-        this.notyf.open({ type: 'info', message: 'Records will be refreshed soon...' });
-    await this.campaignService.refreshGoldenTicket()
+    await this.campaignService.refreshWeeklyTicket()
       .then(tickets => {
         this.tickets = tickets.data;
         this.dataSource.data = tickets.data;
-        setTimeout(() => {
-          // this.paginator.pageIndex = this.currentPage;
-          // this.paginator.length = tickets.pag.count;
-        });
+        this.notyf.success('Records are updated successfully');
         this.isLoading = false;
       }, error => {
         this.isLoading = false;

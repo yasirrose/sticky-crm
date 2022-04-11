@@ -22,11 +22,74 @@ class MidController extends Controller
      */
     public function index(Request $request)
     {
+        // $data = Mid::all();
         $start_date = $request->start_date;
         $end_date = $request->end_date;
+        // dd($end_date);
+
         if ($start_date != null && $end_date != null) {
-            $start_date = Carbon::parse($start_date)->startOfDay();
-            $end_date = Carbon::parse($end_date)->endOfDay();
+
+            $from = Carbon::parse($start_date)->startOfDay();
+            $to = Carbon::parse($end_date)->endOfDay();
+
+            // dd($orders);
+// $data = Mid::take(5)->with(['orders' => function ($query) use ($from, $to) {
+//     $query->where('acquisition_date', '>=', $from)
+//         ->where('acquisition_date', '<=', $to);
+
+// }])->with(['approved_orders' => function ($query) use ($from, $to) {
+//     $query->where('acquisition_date', '>=', $from)
+//     ->where('acquisition_date', '<=', $to)
+//     ->where(['order_status' => 2]);
+
+// }
+// ])->with (['declined_orders' => function ($query) use ($from, $to) {
+//     $query->where('acquisition_date', '>=', $from)
+//         ->where('acquisition_date', '<=', $to)
+//         ->where(['order_status' => 7]);
+// }])->get ();
+            // dd($data);
+            
+            $data = DB::table('mids')->take(1)->join('orders', 'orders.gateway_id', '=', 'mids.gateway_id')
+                ->join('profiles', 'profiles.alias', '=', 'mids.gateway_alias')
+                ->whereDate('orders.acquisition_date', '>=', $from)
+                ->whereDate('orders.acquisition_date', '<=', $to)
+                ->where(['orders.order_status' => 2])
+                ->select('mids.*', 'profiles.global_fields',  DB::raw('count(orders.id) as total_orders'),  DB::raw('SUM(orders.order_total) as current_monthly_amount'), DB::raw('COUNT(orders.id)  as mid_count'))
+                ->groupBy('mids.id')->get();
+
+            dd($data);
+
+
+        } else {
+            // dd(0);
+
+            $from = Carbon::now()->subMonth(1)->startOfMonth();
+            $to = Carbon::now()->subMonth(1)->endOfMonth();
+            $data = Mid::with(['orders' => function ($query) use ($from, $to) {
+                $query->where('acquisition_date', '>=', $from)
+                    ->where('acquisition_date', '<=', $to);
+
+            }])->with(['approved_orders' => function ($query) use ($from, $to) {
+                $query->where('acquisition_date', '>=', $from)
+                ->where('acquisition_date', '<=', $to)
+                ->where(['order_status' => 2]);
+
+            }
+            ])->with (['declined_orders' => function ($query) use ($from, $to) {
+                $query->where('acquisition_date', '>=', $from)
+                    ->where('acquisition_date', '<=', $to)
+                    ->where(['order_status' => 7]);
+            }])->get ();
+
+            // dd($data[0]);
+            // $data = DB::table('mids')->join('orders', 'orders.gateway_id', '=', 'mids.gateway_id')
+            //     // ->join('profiles', 'profiles.alias', '=', 'mids.gateway_alias')
+            //     ->where('orders.acquisition_date', '>=', $start_date)
+            //     ->where('orders.acquisition_date', '<=', $end_date)
+            //     ->where(['orders.order_status' => 2])
+            //     ->select('mids.*', DB::raw('SUM(orders.order_total) as current_monthly_amount'), DB::raw('COUNT(orders.id)  as mid_count'))
+            //     ->groupBy('mids.id')->get();
         }
         if (isset($request->search) && $request->search != '') {
             $query = $query->search($request->search, null, true, true);
@@ -59,7 +122,6 @@ class MidController extends Controller
         ->select('order_products.name as name')
         ->addSelect(DB::raw('COUNT(order_products.name) as total_count'))
         ->groupby('order_products.name')->distinct()->get();
-
         foreach($details as $detail){
             $data['name'] = $detail->name;
             $data['total_count'] = $detail->total_count;
