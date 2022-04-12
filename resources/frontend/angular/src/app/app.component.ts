@@ -103,11 +103,23 @@ export class AppComponent {
             routeOrFunction: '/affiliates-network',
             position: 11
           },
+          // {
+          //   name: 'Affiliates',
+          //   routeOrFunction: '/affiliates',
+          //   position: 12
+          // }
+        ]
+      },
+      {
+        name: 'Campaigns Menu',
+        icon: 'equalizer',
+        position: 12,
+        subItems: [
           {
-            name: 'Affiliates',
-            routeOrFunction: '/affiliates',
-            position: 12
-          }
+            name: 'Campaigns Network',
+            routeOrFunction: '/campaigns-network',
+            position: 13
+          },
         ]
       },
       {

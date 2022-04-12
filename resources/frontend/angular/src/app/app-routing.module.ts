@@ -46,9 +46,13 @@ const routes: Routes = [
         path: 'affiliates-network',
         loadChildren: () => import('./pages/tables/affiliates-network/affiliates-network.module').then(m => m.AffiliatesNetworkModule),
       },
+      // {
+      //   path: 'affiliates',
+      //   loadChildren: () => import('./pages/tables/affiliates/affiliates.module').then(m => m.AffiliatesModule),
+      // },
       {
-        path: 'affiliates',
-        loadChildren: () => import('./pages/tables/affiliates/affiliates.module').then(m => m.AffiliatesModule),
+        path: 'campaigns-network',
+        loadChildren: () => import('./pages/tables/campaigns/campaigns.module').then(m => m.CampaignsModule),
       },
       {
         path: 'orders/product-detail',
@@ -78,7 +82,6 @@ const routes: Routes = [
         path: 'campaigns/ticket-monthly',
         loadChildren: () => import('./pages/campaigns/ticket-monthly/ticket-monthly.module').then(m => m.TicketMonthlyModule),
       },
-
     ]
   }
 ];
