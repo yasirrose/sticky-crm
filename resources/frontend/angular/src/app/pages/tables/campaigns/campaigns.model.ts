@@ -40,7 +40,7 @@ export class Campaign {
     fraud_providers: string;
     volume_discounts: string;
 
-    constructor(campaign){
+    constructor(campaign) {
         this.id = campaign.id;
         this.campaign_id = campaign.campaign_id;
         this.gateway_id = campaign.gateway_id;
@@ -57,7 +57,11 @@ export class Campaign {
         this.updated_at = campaign.updated_at;
         this.archived_at = campaign.archived_at;
         this.name = campaign.name;
-        this.description = campaign.description;
+        if (campaign.description) {
+            this.description = campaign.description;
+        } else {
+            this.description = '-';
+        }
         this.pre_auth_amount = campaign.pre_auth_amount;
         this.creator = campaign.creator;
         this.updator = campaign.updator;
