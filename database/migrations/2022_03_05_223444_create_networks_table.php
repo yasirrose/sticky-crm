@@ -3,8 +3,9 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
-class CreateAffiliatesTable extends Migration
+class CreateNetworksTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,7 +14,7 @@ class CreateAffiliatesTable extends Migration
      */
     public function up()
     {
-        Schema::create('affiliates', function (Blueprint $table) {
+        Schema::create('networks', function (Blueprint $table) {
             $table->id();
             $table->string('network_affiliate_id')->nullable()->default(null);
             $table->string('network_id')->nullable()->default(null);
@@ -32,6 +33,7 @@ class CreateAffiliatesTable extends Migration
             $table->string('time_saved')->nullable()->default(null);
             $table->json('relationship')->nullable()->default(null);
             $table->string('referrer_id')->nullable()->default(null);
+            $table->softDeletes();
             $table->timestamps();
         });
     }
@@ -43,6 +45,6 @@ class CreateAffiliatesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('affiliates');
+        Schema::dropIfExists('networks');
     }
 }

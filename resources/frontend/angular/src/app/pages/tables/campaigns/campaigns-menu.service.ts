@@ -5,27 +5,26 @@ import { ApiService } from 'src/app/api.service';
 @Injectable({
   providedIn: 'root'
 })
-export class AffiliatesNetworkService {
-
-  networks: any;
+export class CampaignsMenuService {
+  campaigns: any;
   gateway: any;
   columns: any;
-  public affiliatesGetResponse = new BehaviorSubject([]);
+  public campaignsGetResponse = new BehaviorSubject([]);
   public deleteResponse = new BehaviorSubject([]);
   public columnsResponse = new BehaviorSubject([]);
 
-  affiliatesGetResponse$ = this.affiliatesGetResponse.asObservable();
+  campaignsGetResponse$ = this.campaignsGetResponse.asObservable();
   deleteResponse$ = this.deleteResponse.asObservable();
   columnsResponse$ = this.columnsResponse.asObservable();
 
   constructor(private apiService: ApiService) { }
 
-  async getAffiliates(filters): Promise<any> {
-    await this.apiService.getData(`networks?start_date=${filters.start}&end_date=${filters.end}&fields=${filters.all_fields}&values=${filters.all_values}&search=${filters.search}`).then(res => res.json()).then((data) => {
-      this.networks = data;
-      // this.affiliatesGetResponse.next(data);
+  async getCampaigns(filters): Promise<any> {
+    await this.apiService.getData(`campaigns?start_date=${filters.start}&end_date=${filters.end}&fields=${filters.all_fields}&values=${filters.all_values}&search=${filters.search}`).then(res => res.json()).then((data) => {
+      this.campaigns = data;
+      // this.campaignsGetResponse.next(data);
     });
-    return this.networks;
+    return this.campaigns;
   }
   async deleteData(id): Promise<any> {
     await this.apiService.getData(`w?id=${id}`).then(res => res.json()).then((data) => {

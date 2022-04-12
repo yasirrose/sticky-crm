@@ -22,7 +22,6 @@ import { MaterialModule } from '../../../../@fury/shared/material-components.mod
 import { AffiliatesNetworkRoutingModule } from './affiliates-network-routing.module';
 import { AffiliatesNetworkComponent } from './affiliates-network.component';
 
-
 @NgModule({
   imports: [
     CommonModule,
@@ -42,11 +41,8 @@ import { AffiliatesNetworkComponent } from './affiliates-network.component';
     MatNativeDateModule,
     MatExpansionModule,
     NgbModule,
-
-    // Core
     ListModule,
     BreadcrumbsModule,
-
     MatTableModule,
     MatPaginatorModule,
     MatProgressBarModule,
@@ -55,4 +51,5 @@ import { AffiliatesNetworkComponent } from './affiliates-network.component';
   exports: [AffiliatesNetworkComponent],
 
 })
+
 export class AffiliatesNetworkModule { }

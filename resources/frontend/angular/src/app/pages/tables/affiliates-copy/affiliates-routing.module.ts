@@ -1,12 +1,11 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { AffiliatesNetworkComponent } from './affiliates-network.component';
-
+import { AffiliatesComponent } from './affiliates.component';
 
 const routes: Routes = [
   {
     path: '',
-    component: AffiliatesNetworkComponent
+    component: AffiliatesComponent
   }
 ];
 
@@ -14,5 +13,5 @@ const routes: Routes = [
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule]
 })
-export class AffiliatesNetworkRoutingModule {
+export class AffiliatesRoutingModule {
 }

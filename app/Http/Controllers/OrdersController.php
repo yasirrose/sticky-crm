@@ -1134,8 +1134,8 @@ class OrdersController extends Controller
 
         $username = "yasir_dev";
         $password = "yyutmzvRpy5TPU";
-        $start_date = '2022-01-11 00:00:00';
-        $end_date = '2022-01-11 23:59:59';
+        $start_date = '2022-01-16 00:00:00';
+        $end_date = '2022-01-25 23:59:59';
         $url = 'https://thinkbrain.sticky.io/api/v2/orders/histories?start_at=' . $start_date . '&end_at=' . $end_date;
 
         $api_data = json_decode(Http::asForm()->withBasicAuth($username, $password)->accept('application/json')

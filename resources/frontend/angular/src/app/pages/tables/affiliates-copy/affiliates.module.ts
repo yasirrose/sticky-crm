@@ -19,14 +19,14 @@ import { FurySharedModule } from '../../../../@fury/fury-shared.module';
 import { BreadcrumbsModule } from '../../../../@fury/shared/breadcrumbs/breadcrumbs.module';
 import { ListModule } from '../../../../@fury/shared/list/list.module';
 import { MaterialModule } from '../../../../@fury/shared/material-components.module';
-import { AffiliatesNetworkRoutingModule } from './affiliates-network-routing.module';
-import { AffiliatesNetworkComponent } from './affiliates-network.component';
+import { AffiliatesRoutingModule } from './affiliates-routing.module';
+import { AffiliatesComponent } from './affiliates.component';
 
 
 @NgModule({
   imports: [
     CommonModule,
-    AffiliatesNetworkRoutingModule,
+    AffiliatesRoutingModule,
     FormsModule,
     ReactiveFormsModule,
     MaterialModule,
@@ -51,8 +51,8 @@ import { AffiliatesNetworkComponent } from './affiliates-network.component';
     MatPaginatorModule,
     MatProgressBarModule,
   ],
-  declarations: [AffiliatesNetworkComponent],
-  exports: [AffiliatesNetworkComponent],
+  declarations: [AffiliatesComponent],
+  exports: [AffiliatesComponent],
 
 })
-export class AffiliatesNetworkModule { }
+export class AffiliatesModule { }

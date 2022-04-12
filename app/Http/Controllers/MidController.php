@@ -33,19 +33,20 @@ class MidController extends Controller
         }
 
         $data = DB::table('mids')->join('orders', 'orders.gateway_id', '=', 'mids.gateway_id')
-        ->where('orders.time_stamp', '>=', $start_date)
-        ->where('orders.time_stamp', '<=', $end_date)
-        ->select(DB::raw('mids.*'))
-        ->addSelect(DB::raw('COUNT(orders.id) as total_count'))
-        ->addSelect(DB::raw('SUM(orders.order_total) as sum'))
-        ->selectRaw("count(case when orders.order_status = '2' then 1 end) as mid_count")
-        ->selectRaw("count(case when orders.order_status = '7' then 1 end) as decline_per")
-        ->groupBy('mids.id')->get();
+            ->where('orders.time_stamp', '>=', $start_date)
+            ->where('orders.time_stamp', '<=', $end_date)
+            ->select(DB::raw('mids.*'))
+            ->addSelect(DB::raw('COUNT(orders.id) as total_count'))
+            ->addSelect(DB::raw('SUM(orders.order_total) as sum'))
+            ->selectRaw("count(case when orders.order_status = '2' then 1 end) as mid_count")
+            ->selectRaw("count(case when orders.order_status = '7' then 1 end) as decline_per")
+            ->groupBy('mids.id')->get();
 
         // $data = Mid::get();
         return response()->json(['status' => true, 'data' => $data]);
     }
-    public function get_mid_count_detail(Request $request){
+    public function get_mid_count_detail(Request $request)
+    {
         $start_date = $request->start_date;
         $end_date = $request->end_date;
         $gateway_id = $request->gateway_id;
@@ -53,20 +54,20 @@ class MidController extends Controller
 
         $array = [];
         $details = DB::table('orders')
-        ->where('orders.gateway_id', $gateway_id)
-        ->where('orders.acquisition_date', '>=', $start_date)
-        ->where('orders.acquisition_date', '<=', $end_date)
-        ->where('orders.order_status', $status)
-        ->join('order_products', 'orders.order_id', '=', 'order_products.order_id')
-        ->select('order_products.name as name')
-        ->addSelect(DB::raw('COUNT(order_products.name) as total_count'))
-        ->groupby('order_products.name')->distinct()->get();
-        
-        foreach($details as $detail){
+            ->where('orders.gateway_id', $gateway_id)
+            ->where('orders.acquisition_date', '>=', $start_date)
+            ->where('orders.acquisition_date', '<=', $end_date)
+            ->where('orders.order_status', $status)
+            ->join('order_products', 'orders.order_id', '=', 'order_products.order_id')
+            ->select('order_products.name as name')
+            ->addSelect(DB::raw('COUNT(order_products.name) as total_count'))
+            ->groupby('order_products.name')->distinct()->get();
+
+        foreach ($details as $detail) {
             $data['name'] = $detail->name;
             $data['total_count'] = $detail->total_count;
-            $data['percentage'] = round(($detail->total_count / $request->total_count)*100, 2);
-            array_push($array,$data);
+            $data['percentage'] = round(($detail->total_count / $request->total_count) * 100, 2);
+            array_push($array, $data);
         }
         return response()->json(['status' => true, 'data' => $array]);
     }

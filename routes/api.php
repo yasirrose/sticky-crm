@@ -18,7 +18,7 @@ use App\Http\Controllers\MidController;
 use App\Http\Controllers\MidGroupController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ColumnController;
-use App\Http\Controllers\AffiliateController;
+// use App\Http\Controllers\NetworkController;
 use App\Http\Controllers\NetworkController;
 
 /*
@@ -53,7 +53,7 @@ Route::resource('mids', MidController::class);
 Route::resource('mid-groups', MidGroupController::class);
 Route::resource('profiles', ProfileController::class);
 Route::resource('columns', ColumnController::class);
-Route::resource('affiliates', AffiliateController::class);
+// Route::resource('affiliates', NetworkController::class);
 Route::resource('networks', NetworkController::class);
 Route::get('golden-ticket/create/{month}/{year}', [GoldenTicketController::class, 'create']);
 Route::get('get_campaigns', [CampaignsController::class, 'get_campaigns']);
@@ -96,12 +96,12 @@ Route::get('get_mid_count_detail', [MidController::class, 'get_mid_count_detail'
 Route::get('get_assigned_mids', [MidGroupController::class, 'get_assigned_mids']);
 Route::get('user-details', [DashboardController::class, 'user_data']);
 Route::post('destroy_customers', [CustomerController::class, 'destroy_customers']);
-Route::get('destroy_affiliates', [AffiliateController::class, 'destroy_affiliates']);
+Route::get('destroy_affiliates', [NetworkController::class, 'destroy_affiliates']);
 Route::post('assign_bulk_group', [MidController::class, 'assign_bulk_group']);
 Route::post('remove_groups', [MidController::class, 'remove_groups']);
 Route::post('change_column', [ColumnController::class, 'change_column']);
 Route::post('delete_prospects', [ProspectController::class, 'delete_prospects']);
-Route::get('pull_affiliates', [AffiliateController::class, 'pull_affiliates']);
+Route::get('pull_affiliates', [NetworkController::class, 'pull_affiliates']);
 Route::get('pull_networks', [NetworkController::class, 'pull_networks']);
 Route::get('refresh_decline_percentage', [MidController::class, 'refresh_decline_percentage']);
 Route::get('get_mids_decline_data', [MidController::class, 'get_mids_decline_data']);

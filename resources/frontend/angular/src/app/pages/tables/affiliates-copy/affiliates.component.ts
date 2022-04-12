@@ -9,8 +9,8 @@ import { ListColumn } from 'src/@fury/shared/list/list-column.model';
 import { fadeInRightAnimation } from 'src/@fury/animations/fade-in-right.animation';
 import { fadeInUpAnimation } from 'src/@fury/animations/fade-in-up.animation';
 import { FormGroup, FormControl } from '@angular/forms';
-import { Network } from './affiliates-network.model';
-import { AffiliatesNetworkService } from './affiliates-network.service';
+import { Affiliate } from './affiliates.model';
+import { AffiliatesService } from './affiliates.service';
 import { Subscription } from 'rxjs';
 import { SelectionModel } from '@angular/cdk/collections';
 import { formatDate } from '@angular/common';
@@ -22,17 +22,17 @@ import { ConfirmationDialogModel } from '../../confirmation-dialog/confirmation-
 import { Notyf } from 'notyf';
 
 @Component({
-  selector: 'fury-affiliates-network',
-  templateUrl: './affiliates-network.component.html',
-  styleUrls: ['./affiliates-network.component.scss'],
+  selector: 'fury-affiliates',
+  templateUrl: './affiliates.component.html',
+  styleUrls: ['./affiliates.component.scss'],
   animations: [fadeInRightAnimation, fadeInUpAnimation]
 
 })
-export class AffiliatesNetworkComponent implements OnInit {
-  subject$: ReplaySubject<Network[]> = new ReplaySubject<Network[]>(1);
-  data$: Observable<Network[]> = this.subject$.asObservable();
+export class AffiliatesComponent implements OnInit {
+  subject$: ReplaySubject<Affiliate[]> = new ReplaySubject<Affiliate[]>(1);
+  data$: Observable<Affiliate[]> = this.subject$.asObservable();
 
-  affiliates: Network[];
+  affiliates: Affiliate[];
   getSubscription: Subscription;
   deleteSubscription: Subscription;
   isLoading = false;
@@ -60,20 +60,20 @@ export class AffiliatesNetworkComponent implements OnInit {
   });
 
   @Input()
-  dataSource: MatTableDataSource<Network>;
-  selection = new SelectionModel<Network>(true, []);
+  dataSource: MatTableDataSource<Affiliate>;
+  selection = new SelectionModel<Affiliate>(true, []);
 
   @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
   @ViewChild(MatSort, { static: true }) sort: MatSort;
 
-  constructor(private dialog: MatDialog, private affiliatesService: AffiliatesNetworkService) { }
+  constructor(private dialog: MatDialog, private affiliatesService: AffiliatesService) { }
 
   get visibleColumns() {
     return this.columns.filter(column => column.visible).map(column => column.property);
   }
 
   mapData() {
-    return of(this.affiliates.map(midGroup => new Network(midGroup)));
+    return of(this.affiliates.map(midGroup => new Affiliate(midGroup)));
   }
 
   ngOnInit(): void {
@@ -168,7 +168,7 @@ export class AffiliatesNetworkComponent implements OnInit {
       if (dialogResult) {
         this.affiliatesService.deleteData(id);
         this.getData();
-        this.notyf.success('Network deleted successfully!');
+        this.notyf.success('Affiliate deleted successfuly!');
       }
     });
   }
