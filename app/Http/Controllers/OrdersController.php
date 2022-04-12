@@ -1116,8 +1116,9 @@ class OrdersController extends Controller
             return response()->json(['status' => true, 'New Record in todays API' => $new_orders, 'Previous orders to be updated in orders table' => $updated_orders]);
         }
     }
-    public static function testFunction()
-    {
+
+    public static function testFunctions(){
+      
         $data['NAME'] = 'name';
         $data['ADDRESS'] = 'address';
         return DB::table('EMPLOYEES')->insert($data);
