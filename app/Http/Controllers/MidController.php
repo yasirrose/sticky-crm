@@ -33,16 +33,17 @@ class MidController extends Controller
         }
 
         $data = DB::table('mids')->join('orders', 'orders.gateway_id', '=', 'mids.gateway_id')
-            ->where('orders.time_stamp', '>=', $start_date)
-            ->where('orders.time_stamp', '<=', $end_date)
-            ->select(DB::raw('mids.*'))
-            ->addSelect(DB::raw('COUNT(orders.id) as total_count'))
-            ->addSelect(DB::raw('SUM(orders.order_total) as sum'))
-            ->selectRaw("count(case when orders.order_status = '2' then 1 end) as mid_count")
-            ->selectRaw("count(case when orders.order_status = '7' then 1 end) as decline_per")
-            ->groupBy('mids.id')->get();
-
-        // $data = Mid::get();
+        ->join('profiles','mids.gateway_alias', '=', 'profiles.alias')
+        ->where('orders.time_stamp', '>=', $start_date)
+        ->where('orders.time_stamp', '<=', $end_date)
+        ->select(DB::raw('mids.*'))
+        ->addSelect(DB::raw('COUNT(orders.id) as total_count'))
+        ->addSelect(DB::raw('SUM(orders.order_total) as sum'))
+        ->selectRaw("count(case when orders.order_status = '2' then 1 end) as mid_count")
+        ->selectRaw("count(case when orders.order_status = '7' then 1 end) as decline_per")
+        ->addSelect('profiles.global_fields->mid_group as group_name')
+        ->groupBy('mids.id','profiles.global_fields->mid_group')
+        ->get();
         return response()->json(['status' => true, 'data' => $data]);
     }
     public function get_mid_count_detail(Request $request)
