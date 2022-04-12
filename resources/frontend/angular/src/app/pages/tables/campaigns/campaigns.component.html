@@ -11,7 +11,7 @@
   
   <fury-page-layout mode="simple">
     <fury-page-layout-content [@fadeInUp]>
-      <fury-list name="Campaigns" [columns]="columns" (filterChange)="onFilterChange($event)">
+      <fury-list  style="box-shadow:none;"  name="Campaigns Network" [columns]="columns" (filterChange)="onFilterChange($event)">
         <mat-progress-bar mode="query" color="warn" *ngIf="isDeleting"></mat-progress-bar>
         <!-- <ngx-ui-loader></ngx-ui-loader> -->
         <mat-progress-bar mode="indeterminate" *ngIf="isLoading"></mat-progress-bar>
@@ -21,7 +21,7 @@
           <mat-progress-spinner color="primary" mode="indeterminate">
           </mat-progress-spinner>http://ec2-184-72-73-137.compute-1.amazonaws.com/orders
         </div> -->
-        <div class="sticky-columns">
+        <!-- <div class="sticky-columns"> -->
           <table [dataSource]="dataSource" mat-table matSort>
   
             <!-- Checkbox Column -->
@@ -77,12 +77,11 @@
             <tr *matHeaderRowDef="visibleColumns; sticky: true" mat-header-row></tr>
             <tr *matRowDef="let row; columns: visibleColumns;" class="clickable route-animations-elements" mat-row></tr>
           </table>
-        </div>
+        <!-- </div> -->
   
-        <!-- <mat-paginator class="paginator" [pageSize]="pageSize"></mat-paginator> -->
-        <mat-paginator #paginator [length]="totalRows" [pageIndex]="currentPage" [pageSize]="pageSize" [pageSizeOptions]="pageSizeOptions"
+        <!-- <mat-paginator #paginator [length]="totalRows" [pageIndex]="currentPage" [pageSize]="pageSize" [pageSizeOptions]="pageSizeOptions"
           (page)="pageChanged($event)" aria-label="Select page">
-        </mat-paginator>
+        </mat-paginator> -->
   
       </fury-list>
   

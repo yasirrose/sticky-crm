@@ -108,3 +108,4 @@ Route::get('get_mids_decline_data', [MidController::class, 'get_mids_decline_dat
 Route::get('get_mids_count_data', [MidController::class, 'get_mids_count_data']);
 Route::get('mids_order_total/{id}', [MidController::class, 'mids_order_total']);
 Route::get('order_history', [OrdersController::class, 'order_history']);
+Route::get('daily_order_history', [OrdersController::class, 'daily_order_history']);
