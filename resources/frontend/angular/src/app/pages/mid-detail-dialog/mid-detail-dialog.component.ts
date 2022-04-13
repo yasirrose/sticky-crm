@@ -9,7 +9,6 @@ import { environment } from 'src/environments/environment';
   styleUrls: ['./mid-detail-dialog.component.scss']
 })
 export class MidDetailDialogComponent implements OnInit {
-
   id : string;
   gateway_id : string;
   start_date : string;

@@ -32,7 +32,8 @@ class MidController extends Controller
             $query = $query->search($request->search, null, true, true);
         }
 
-        $data = DB::table('mids')->join('orders', 'orders.gateway_id', '=', 'mids.gateway_id')
+        $data = DB::table('mids')
+        ->join('orders', 'orders.gateway_id', '=', 'mids.gateway_id')
         ->join('profiles','mids.gateway_alias', '=', 'profiles.alias')
         ->where('orders.time_stamp', '>=', $start_date)
         ->where('orders.time_stamp', '<=', $end_date)
