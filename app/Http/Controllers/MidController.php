@@ -139,8 +139,6 @@ class MidController extends Controller
     }
     public function pull_payment_router_view()
     {
-        // dd('die');
-        // return response()->json(['status' => false, '']);
         $new_gateways = 0;
         $updated_gateways = 0;
         $db_gateway_alias = Mid::all()->pluck('gateway_alias')->toArray();
@@ -150,14 +148,11 @@ class MidController extends Controller
 
         $api_data = json_decode(Http::asForm()->withBasicAuth($username, $password)->accept('application/json')->post($url, ['payment_router_id' => 1])->getBody()->getContents());
         $routers = $api_data->data;
-        // dd($routers);
         if ($routers) {
-            //adding or updating page 1 campaigns
             foreach ($routers as $router) {
                 $gateways = $router->gateways;
 
                 foreach ($gateways as $gateway) {
-                    // dd($gateway);
                     if (in_array($gateway->gateway_alias, $db_gateway_alias)) {
                         $update = Mid::where(['gateway_alias' => $gateway->gateway_alias])->first();
                         $gateway->router_id = $router->id;
@@ -186,6 +181,7 @@ class MidController extends Controller
                 }
             }
         }
+        // app(\App\Http\Controllers\ProfileController::class)->update_profiles();
         return response()->json(['status' => true, 'data' => ['new_mids' => $new_gateways, 'updated_mids' => $updated_gateways]]);
     }
     public function get_gateway_ids()
