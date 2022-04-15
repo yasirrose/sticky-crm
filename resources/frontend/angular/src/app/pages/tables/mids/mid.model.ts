@@ -29,9 +29,8 @@ export class Mid {
     constructor(mid) {
         this.id = mid.id;
         this.router_id = mid.router_id;
-        if (mid.global_fields) {
-            this.mid_group_name = mid.global_fields.mid_group;
-        }
+        
+        this.mid_group_name = mid.group_name;
         this.mid_count = mid.mid_count;
         
         this.router_date_in = datePipe.transform(mid.router_date_in, 'MM-dd-yyyy');

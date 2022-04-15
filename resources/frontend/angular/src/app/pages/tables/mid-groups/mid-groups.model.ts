@@ -12,6 +12,7 @@ export class MidGroup {
     bank_per: string;
     target_bank_balance: string;
     updated_at: string;
+    balance : number;
 
     constructor(midGroup) {
         this.id = midGroup.id;
@@ -21,7 +22,8 @@ export class MidGroup {
         this.mids_data = midGroup.mids_data;
         this.gross_revenue = '$' + nf.format(midGroup.gross_revenue);
         this.bank_per = midGroup.bank_per + ' %';
-        this.target_bank_balance = '$' + nf.format(midGroup.target_bank_balance);
+        this.balance = (midGroup.gross_revenue * midGroup.bank_per) / 100;
+        this.target_bank_balance = '$' + nf.format(this.balance);
         this.updated_at = '-';
     }
     numberWithCommas(x) {
