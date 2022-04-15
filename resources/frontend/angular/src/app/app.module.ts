@@ -14,6 +14,7 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { MidGroupsRoutingModule } from './pages/tables/mid-groups/mid-groups-routing.module';
 import { MidDetailDialogComponent } from './pages/mid-detail-dialog/mid-detail-dialog.component';
 import { Spinner2Component } from './pages/spinner/spinner2/spinner2.component';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 
 @NgModule({
@@ -26,6 +27,7 @@ import { Spinner2Component } from './pages/spinner/spinner2/spinner2.component';
     LayoutModule,
     PendingInterceptorModule,
     NgbModule,
+    MatProgressSpinnerModule,
   ],
   declarations: [AppComponent, MidDetailDialogComponent, Spinner2Component],
   bootstrap: [AppComponent],

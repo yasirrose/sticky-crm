@@ -32,19 +32,21 @@ class MidController extends Controller
             $query = $query->search($request->search, null, true, true);
         }
 
-        $data = DB::table('mids')
-        ->join('orders', 'orders.gateway_id', '=', 'mids.gateway_id')
-        ->join('profiles','mids.gateway_alias', '=', 'profiles.alias')
-        ->where('orders.time_stamp', '>=', $start_date)
-        ->where('orders.time_stamp', '<=', $end_date)
-        ->select(DB::raw('mids.*'))
-        ->addSelect(DB::raw('COUNT(orders.id) as total_count'))
-        ->addSelect(DB::raw('SUM(orders.order_total) as sum'))
-        ->selectRaw("count(case when orders.order_status = '2' then 1 end) as mid_count")
-        ->selectRaw("count(case when orders.order_status = '7' then 1 end) as decline_per")
-        ->addSelect('profiles.global_fields->mid_group as group_name')
-        ->groupBy('mids.id','profiles.global_fields->mid_group')
-        ->get();
+        // $data = DB::table('mids')
+        // ->join('orders', 'orders.gateway_id', '=', 'mids.gateway_id')
+        // ->join('profiles','mids.gateway_alias', '=', 'profiles.alias')
+        // ->where('orders.time_stamp', '>=', $start_date)
+        // ->where('orders.time_stamp', '<=', $end_date)
+        // ->select(DB::raw('mids.*'))
+        // ->addSelect(DB::raw('COUNT(orders.id) as total_count'))
+        // ->addSelect(DB::raw('SUM(orders.order_total) as sum'))
+        // ->selectRaw("count(case when orders.order_status = '2' then 1 end) as mid_count")
+        // ->selectRaw("count(case when orders.order_status = '7' then 1 end) as decline_per")
+        // ->addSelect('profiles.global_fields->mid_group as group_name')
+        // ->groupBy('mids.id','profiles.global_fields->mid_group')
+        // ->get();
+
+        $data = Mid::all();
         return response()->json(['status' => true, 'data' => $data]);
     }
     public function get_mid_count_detail(Request $request)
@@ -139,8 +141,6 @@ class MidController extends Controller
     }
     public function pull_payment_router_view()
     {
-        // dd('die');
-        // return response()->json(['status' => false, '']);
         $new_gateways = 0;
         $updated_gateways = 0;
         $db_gateway_alias = Mid::all()->pluck('gateway_alias')->toArray();
@@ -150,14 +150,11 @@ class MidController extends Controller
 
         $api_data = json_decode(Http::asForm()->withBasicAuth($username, $password)->accept('application/json')->post($url, ['payment_router_id' => 1])->getBody()->getContents());
         $routers = $api_data->data;
-        // dd($routers);
         if ($routers) {
-            //adding or updating page 1 campaigns
             foreach ($routers as $router) {
                 $gateways = $router->gateways;
 
                 foreach ($gateways as $gateway) {
-                    // dd($gateway);
                     if (in_array($gateway->gateway_alias, $db_gateway_alias)) {
                         $update = Mid::where(['gateway_alias' => $gateway->gateway_alias])->first();
                         $gateway->router_id = $router->id;
@@ -186,6 +183,7 @@ class MidController extends Controller
                 }
             }
         }
+        // app(\App\Http\Controllers\ProfileController::class)->update_profiles();
         return response()->json(['status' => true, 'data' => ['new_mids' => $new_gateways, 'updated_mids' => $updated_gateways]]);
     }
     public function get_gateway_ids()

@@ -82,24 +82,29 @@
         </div>
         <!-- <div class="mt mb"> -->
         <div fxLayout="row" class="large mb" *ngIf="!isLoading">
-            <div fxFlex="25" class="col1">
+            <div fxFlex="20" class="col1">
                 <div class="items-box">
                     Total Mids: {{totalMids}}
                 </div>
             </div>
-            <div fxFlex="25" class="col2">
+            <div fxFlex="20" class="col2">
                 <div class="items-box">
                     Assigned Mids: {{assignedMids}}
                 </div>
             </div>
-            <div fxFlex="25" class="col3">
+            <div fxFlex="20" class="col3">
                 <div class="items-box">
                     Unassigned Mids: {{unAssignedMids}}
                 </div>
             </div>
-            <div fxFlex="25" class="col4">
+            <div fxFlex="20" class="col4">
                 <div class="items-box">
                     Uninitialized Mids: {{unInitializedMids}}
+                </div>
+            </div>
+            <div fxFlex="20" class="col3">
+                <div class="items-box">
+                    Closed Mids: {{totalClosed}}
                 </div>
             </div>
         </div>
@@ -137,7 +142,7 @@
                     <!-- Group name column -->
                     <ng-container matColumnDef="gateway_alias">
                         <th *matHeaderCellDef mat-header-cell mat-sort-header>Gateway Alias</th>
-                        <td *matCellDef="let row" (click)="openRevenueDialog(row)" mat-cell>
+                        <td *matCellDef="let row" (click)="openRevenueDialog(row)" mat-cell [ngClass]="row.gateway_alias.indexOf('CLOSED') !== -1 ? 'highlight-grey' : ''">
                             {{ row.gateway_alias }}
                         </td>
                     </ng-container>
