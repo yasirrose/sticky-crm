@@ -82,29 +82,34 @@
         </div>
         <!-- <div class="mt mb"> -->
         <div fxLayout="row" class="large mb" *ngIf="!isLoading">
-            <div fxFlex="20" class="col1">
+            <div fxFlex="16.66" class="col1">
                 <div class="items-box">
                     Total Mids: {{totalMids}}
                 </div>
             </div>
-            <div fxFlex="20" class="col2">
+            <div fxFlex="16.66" class="col2">
                 <div class="items-box">
                     Assigned Mids: {{assignedMids}}
                 </div>
             </div>
-            <div fxFlex="20" class="col3">
+            <div fxFlex="16.66" class="col3">
                 <div class="items-box">
                     Unassigned Mids: {{unAssignedMids}}
                 </div>
             </div>
-            <div fxFlex="20" class="col4">
+            <div fxFlex="16.66" class="col4">
                 <div class="items-box">
                     Uninitialized Mids: {{unInitializedMids}}
                 </div>
             </div>
-            <div fxFlex="20" class="col3">
+            <div fxFlex="16.66" class="col3">
                 <div class="items-box">
                     Closed Mids: {{totalClosed}}
+                </div>
+            </div>
+            <div fxFlex="16.66" class="col3 custom-orange">
+                <div class="items-box">
+                    Paused Mids: {{totalPaused}}
                 </div>
             </div>
         </div>
@@ -142,7 +147,7 @@
                     <!-- Group name column -->
                     <ng-container matColumnDef="gateway_alias">
                         <th *matHeaderCellDef mat-header-cell mat-sort-header>Gateway Alias</th>
-                        <td *matCellDef="let row" (click)="openRevenueDialog(row)" mat-cell [ngClass]="row.gateway_alias.indexOf('CLOSED') !== -1 ? 'highlight-grey' : ''">
+                        <td *matCellDef="let row" (click)="openRevenueDialog(row)" mat-cell [ngClass]="row.gateway_alias.indexOf('CLOSED') !== -1 ? 'highlight-grey' : row.global_monthly_cap == '$0.00' ? 'highlight-orange' : ''">
                             {{ row.gateway_alias }}
                         </td>
                     </ng-container>
@@ -163,7 +168,6 @@
                         </td>
                     </ng-container>
 
-                    <!-- Global monthly cap column -->
                     <ng-container matColumnDef="current_monthly_amount">
                         <th *matHeaderCellDef mat-header-cell mat-sort-header>Current Monthly Amount</th>
                         <td *matCellDef="let row" mat-cell [ngClass]="row.current_monthly_amount == '0.00' ? 'highlight-danger' : ''">

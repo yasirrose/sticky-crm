@@ -82,6 +82,7 @@ export class MidsComponent implements OnInit, AfterViewInit, OnDestroy {
   unAssignedMids: number = 0;
   unInitializedMids: number = 0;
   totalClosed: number = 0;
+  totalPaused: number = 0;
   selectedRows: Mid[] = [];
   selectAll: boolean = false;
   isBulkUpdate: boolean = false;
@@ -242,9 +243,13 @@ export class MidsComponent implements OnInit, AfterViewInit, OnDestroy {
       } else {
         this.assignedMids++;
       }
-      console.log('alias are', mid.gateway_alias);
+      
       if(mid.gateway_alias.indexOf("CLOSED") !== -1){
         this.totalClosed++;
+      }
+      
+      if(mid.global_monthly_cap == '$0.00'){
+        this.totalPaused++;
       }
     });
   }
