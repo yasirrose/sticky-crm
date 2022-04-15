@@ -271,37 +271,41 @@ class TicketDailyController extends Controller
             $EOT_declines = 0;
             $EOT_approved = 0;
             $EOT_per = 0;
-            // $start_day = '2022-01-04 00:00:00';
-            // $end_day = '2022-01-04 23:59:59';
-            // $start_day = Carbon::parse('2022-03-02')->startOfDay();
-            // $end_day = Carbon::parse('2022-03-02')->endOfDay();
+            // $start_day = '2022-04-13 00:00:00';
+            // $end_day = '2022-04-13 23:59:59';
+            // $start_day = Carbon::parse('2022-02-03')->startOfDay();
+            // $end_day = Carbon::parse('2022-02-03')->endOfDay();
             $start_day = Carbon::parse($day->date)->startOfDay();
             $end_day = Carbon::parse($day->date)->endOfDay();
             // dd($end_day);
 
 
-            // $decline = Order::where(['prepaid_match' => 'No', 'is_test_cc' => 0, 'order_status' => 2, 'campaign_id' => 2])
-            //     ->where('time_stamp', '>=', $start_day)
-            //     ->where('time_stamp', '<=', $end_day)
-            //     ->pluck('order_id')->toArray();
-            // dd($decline);
+            $initials = Order::where(['prepaid_match' => 'No', 'is_test_cc' => 0, 'order_status' => 2, 'campaign_id' => 2])
+                ->where('time_stamp', '>=', $start_day)
+                ->where('time_stamp', '<=', $end_day)
+                ->select('order_id')->get()->count();
+            // dd($initials);
 
-            $orders = DB::table('orders')->where(['orders.prepaid_match' => 'No', 'orders.is_test_cc' => 0, 'orders.campaign_id' => 2])
+            $declines = DB::table('orders')->where(['orders.prepaid_match' => 'No', 'orders.is_test_cc' => 0, 'orders.order_status' => 7, 'orders.campaign_id' => 2])
                 ->where('orders.time_stamp', '>=', $start_day)
                 ->where('orders.time_stamp', '<=', $end_day)
-                ->select('orders.order_id', 'orders.time_stamp', 'orders.acquisition_month', 'orders.acquisition_year');
-            // dd($orders->get());
+                ->select('orders.order_id', 'orders.time_stamp', 'orders.acquisition_month', 'orders.acquisition_year', 'orders.order_status')
+                ->get()->count();
+            // dd($orders->where(['orders.order_status'=>2])->get()->count());
 
-            $join = $orders->join('order_products', 'orders.order_id', 'order_products.order_id')
-                ->select('order_products.*')
-                ->groupBy('orders.order_id');
-            $decline = $orders->where(['orders.order_status' => 7])->get()->count();
-            $initials = $join->where(['orders.order_status' => 7])->where(['order_products.offer_name' => 'Golden Ticket Offer'])->where('order_products.name', 'LIKE', '%(c)%')->get()->count();
-            // $initials = $orders->where(['billing_cycle' => 0])->get()->count();
-            // dd($initials);
+            // $join = $orders->join('order_products', 'orders.order_id', 'order_products.order_id')
+            //     ->select('order_products.*')
+            //     ->groupBy('orders.order_id');
+            
+            // dd($join->get()->count());
+
+            // $initials = $join->where(['orders.order_status' => 2])->where(['order_products.offer_name' => 'Golden Ticket Offer'])->where('order_products.name', 'LIKE', '%(c)%')->get()->count();
+            // $initials = $orders->where(['orders.billing_cycle' => 0])->get()->count();
+            // $initials = $orders->where(['orders.order_status' => 2])->get()->count();
+            // dd($declines);
             $EOT_approved = $join->where(['order_products.offer_name' => 'EssentialSweep'])->where('order_products.name', 'LIKE', '%(CR1)%')->get()->count();
 
-            
+
             if ($initials != 0) {
                 $decline_per = ($decline / $initials) * 100;
                 $EOT_per = $EOT_approved / $initials;
