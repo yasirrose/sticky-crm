@@ -17,7 +17,7 @@ export class MidDetailDialogComponent implements OnInit {
   status : number;
   endPoint = '';
   filters = {};
-  isLoading = false;
+  isLoading = true;
   details = [];
 
   constructor(public dialogRef: MatDialogRef<MidDetailDialogComponent>,
@@ -32,9 +32,10 @@ export class MidDetailDialogComponent implements OnInit {
 
   ngOnInit(): void {
     const response = fetch(`${this.endPoint}/api/get_mid_count_detail?gateway_id=${this.gateway_id}&start_date=${this.start_date}&end_date=${this.end_date}&total_count=${this.total_count}&status=${this.status}`).then(res => res.json()).then((data) => {
+      this.isLoading = false;
       if(data.status){
         this.details = data.data;
-        this.isLoading = true;
+        this.isLoading = false;
       }
     });
   }
